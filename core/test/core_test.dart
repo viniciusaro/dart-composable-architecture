@@ -5,6 +5,11 @@ import 'package:test/test.dart';
 
 final class AppState {
   int count = 0;
+
+  @override
+  String toString() {
+    return "AppState: count: $count";
+  }
 }
 
 enum AppAction {
@@ -73,12 +78,6 @@ void main() {
     });
 
     test('debug reducer prints debug information', () {
-      var printedLines = <String>[];
-
-      final specification = ZoneSpecification(
-        print: (self, parent, zone, line) => printedLines.add(line),
-      );
-
       Effect<AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
@@ -90,6 +89,12 @@ void main() {
         }
       }
 
+      var printedLines = <String>[];
+
+      final specification = ZoneSpecification(
+        print: (self, parent, zone, line) => printedLines.add(line),
+      );
+
       runZoned(() {
         final store = Store(initialState: AppState(), reducer: debug(reducer));
         store.send(AppAction.increment);
@@ -98,7 +103,7 @@ void main() {
       expect(printedLines, [
         "--------",
         "received action: AppAction.increment",
-        "state: Instance of 'AppState'",
+        "state: AppState: count: 1",
       ]);
     });
   });
