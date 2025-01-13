@@ -9,11 +9,33 @@ Reducer<State, Action> debug<State, Action>(Reducer<State, Action> other) {
     final effect = other(state, action);
     final msgState = "state: $state";
 
-    return Effect((send) {
-      print(msgHeader);
-      print(msgAction);
-      print(msgState);
-      effect.run(send);
-    });
+    switch (effect) {
+      case CancelEffect():
+        print(msgHeader);
+        print(msgAction);
+        print(msgState);
+        return Effect.cancel(effect.id);
+      case FutureEffect():
+        return FutureEffect(() {
+          print(msgHeader);
+          print(msgAction);
+          print(msgState);
+          return effect.run();
+        });
+      case RunEffect<Action>():
+        return Effect.run((send) {
+          print(msgHeader);
+          print(msgAction);
+          print(msgState);
+          effect.run(send);
+        });
+      case StreamEffect<Action>():
+        return Effect.stream(effect.id, () {
+          print(msgHeader);
+          print(msgAction);
+          print(msgState);
+          return effect.run();
+        });
+    }
   };
 }

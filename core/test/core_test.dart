@@ -51,7 +51,7 @@ void main() {
         switch (action) {
           case AppAction.increment:
             state.count += 1;
-            return Effect((send) {
+            return Effect.run((send) {
               Future.delayed(delay, () {
                 send(AppAction.decrement);
               });
