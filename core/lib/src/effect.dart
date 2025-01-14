@@ -1,7 +1,5 @@
 import 'dart:async';
 
-part 'effect_with_checks.dart';
-
 sealed class Effect<Action> {
   static Effect<Action> none<Action>() => //
       RunEffect((_) {});
