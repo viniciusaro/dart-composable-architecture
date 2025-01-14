@@ -55,15 +55,15 @@ void main() {
       Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effects.merge(
+            return Effects.merge([
               Effect.mutate((state) => state.copyWith(count: state.count + 1)),
               Effect.future(() {
                 return Future.delayed(
                   Duration(milliseconds: 10),
                   () => AppAction.decrement,
                 );
-              }),
-            );
+              })
+            ]);
           case AppAction.decrement:
             return Effect.mutate(
               (state) => state.copyWith(count: state.count - 1),

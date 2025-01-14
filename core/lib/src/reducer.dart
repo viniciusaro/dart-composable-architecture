@@ -11,8 +11,9 @@ Reducer<State, Action> debug<State extends Equatable, Action>(
     final effect = other(state, action);
 
     return Effect(
-      effect.id,
-      (state) {
+      id: effect.id,
+      cancellationId: effect.cancellationId,
+      mutation: (state) {
         print("--------");
         print("received action: $action");
         final updated = effect.mutation?.call(state) ?? state;
@@ -23,7 +24,7 @@ Reducer<State, Action> debug<State extends Equatable, Action>(
         }
         return updated;
       },
-      effect.builder,
+      builder: effect.builder,
     );
   };
 }

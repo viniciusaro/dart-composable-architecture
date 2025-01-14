@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:core/src/effect.dart';
 import 'package:equatable/equatable.dart';
 
 import 'reducer.dart';
@@ -19,22 +18,17 @@ final class Store<State extends Equatable, Action> {
 
   void send(Action action) {
     final effect = _reducer(_state, action);
-    final id = effect.id?.hashCode;
     _state = effect.mutation?.call(state) ?? _state;
 
-    final subscription = effect.builder().listen((action) {
-      switch (action) {
-        case Cancel<Action>():
-          final id = effect.id?.hashCode;
-          if (id != null) {
-            _subscriptions[id]?.cancel();
-            _subscriptions.remove(id);
-          }
-        case Forward<Action>():
-          send(action.action);
-      }
-    });
+    final cancellationId = effect.cancellationId?.hashCode;
+    if (cancellationId != null) {
+      _subscriptions[cancellationId]?.cancel();
+      _subscriptions.remove(cancellationId);
+    }
 
+    final subscription = effect.builder().listen(send);
+
+    final id = effect.id?.hashCode;
     if (id != null) {
       _subscriptions[id] = subscription;
     }
