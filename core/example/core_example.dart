@@ -15,10 +15,10 @@ final class CounterState extends Equatable {
 }
 
 enum CounterAction {
-  cancelIncrementRepeatedly,
   increment,
   incrementRepeatedly,
   incrementWithDelay,
+  cancelIncrementRepeatedly,
 }
 
 enum CounterTimerId { id }
@@ -28,8 +28,6 @@ Effect<CounterState, CounterAction> counterReducer(
   CounterAction action,
 ) {
   switch (action) {
-    case CounterAction.cancelIncrementRepeatedly:
-      return Effect.cancel(id: CounterTimerId.id);
     case CounterAction.increment:
       return Effect.sync(
         (state) => state.copyWith(count: state.count + 1),
@@ -49,5 +47,7 @@ Effect<CounterState, CounterAction> counterReducer(
         await Future.delayed(Duration(seconds: 1));
         return CounterAction.increment;
       });
+    case CounterAction.cancelIncrementRepeatedly:
+      return Effect.cancel(id: CounterTimerId.id);
   }
 }

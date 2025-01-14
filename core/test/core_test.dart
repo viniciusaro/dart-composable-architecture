@@ -52,11 +52,12 @@ void main() {
       Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effect.run(
+            return Effect.future(
               mutation: (state) => state.copyWith(count: state.count + 1),
-              run: (send) => Future.delayed(Duration(milliseconds: 10), () {
-                send(AppAction.decrement);
-              }),
+              run: () => Future.delayed(
+                Duration(milliseconds: 10),
+                () => AppAction.decrement,
+              ),
             );
           case AppAction.decrement:
             return Effect.sync(
@@ -67,7 +68,7 @@ void main() {
 
       final store = Store(
         initialState: AppState(),
-        reducer: debug(reducer),
+        reducer: reducer,
       );
 
       store.send(AppAction.increment);

@@ -32,8 +32,8 @@ final class Store<State extends Equatable, Action> {
       case StreamEffect():
         final stream = effect.run();
         _subscriptions[effect.id.hashCode] = stream.listen(send);
-      case RunEffect():
-        effect.run(send);
+      case SyncEffect():
+        break;
     }
   }
 }

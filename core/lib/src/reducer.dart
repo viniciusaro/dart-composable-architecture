@@ -30,10 +30,9 @@ Reducer<State, Action> debug<State extends Equatable, Action>(
           mutation: mutateAndPrint,
           run: effect.run,
         );
-      case RunEffect():
-        return Effect.run(
-          mutation: mutateAndPrint,
-          run: effect.run,
+      case SyncEffect():
+        return Effect.sync(
+          mutateAndPrint,
         );
       case StreamEffect():
         return Effect.stream(
