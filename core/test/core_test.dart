@@ -28,18 +28,21 @@ void main() {
       Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effect.sync(
+            return Effect.mutate(
               (state) => state.copyWith(count: state.count + 1),
             );
 
           case AppAction.decrement:
-            return Effect.sync(
+            return Effect.mutate(
               (state) => state.copyWith(count: state.count - 1),
             );
         }
       }
 
-      final store = Store(initialState: AppState(), reducer: reducer);
+      final store = Store(
+        initialState: AppState(),
+        reducer: reducer,
+      );
 
       store.send(AppAction.increment);
       expect(store.state.count, 1);
@@ -52,15 +55,17 @@ void main() {
       Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effect.future(
-              mutation: (state) => state.copyWith(count: state.count + 1),
-              run: () => Future.delayed(
-                Duration(milliseconds: 10),
-                () => AppAction.decrement,
-              ),
+            return Effects.merge(
+              Effect.mutate((state) => state.copyWith(count: state.count + 1)),
+              Effect.future(() {
+                return Future.delayed(
+                  Duration(milliseconds: 10),
+                  () => AppAction.decrement,
+                );
+              }),
             );
           case AppAction.decrement:
-            return Effect.sync(
+            return Effect.mutate(
               (state) => state.copyWith(count: state.count - 1),
             );
         }
@@ -82,11 +87,11 @@ void main() {
       Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effect.sync(
+            return Effect.mutate(
               (state) => state.copyWith(count: state.count + 1),
             );
           case AppAction.decrement:
-            return Effect.sync(
+            return Effect.mutate(
               (state) => state.copyWith(count: state.count - 1),
             );
         }

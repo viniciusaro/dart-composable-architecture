@@ -29,13 +29,13 @@ Effect<CounterState, CounterAction> counterReducer(
 ) {
   switch (action) {
     case CounterAction.increment:
-      return Effect.sync(
+      return Effect.mutate(
         (state) => state.copyWith(count: state.count + 1),
       );
     case CounterAction.incrementRepeatedly:
       return Effect.stream(
-        id: CounterTimerId.id,
-        run: () async* {
+        CounterTimerId.id,
+        () async* {
           while (true) {
             await Future.delayed(Duration(seconds: 1));
             yield CounterAction.increment;
@@ -43,11 +43,11 @@ Effect<CounterState, CounterAction> counterReducer(
         },
       );
     case CounterAction.incrementWithDelay:
-      return Effect.future(run: () async {
+      return Effect.future(() async {
         await Future.delayed(Duration(seconds: 1));
         return CounterAction.increment;
       });
     case CounterAction.cancelIncrementRepeatedly:
-      return Effect.cancel(id: CounterTimerId.id);
+      return Effect.cancel(CounterTimerId.id);
   }
 }

@@ -1,61 +1,53 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
+
 typedef Mutation<State> = State Function(State);
 
-sealed class Effect<State, Action> {
-  Mutation<State>? get mutation;
-
-  static Effect<State, Action> sync<State, Action>(
-    Mutation<State>? mutation,
-  ) => //
-      SyncEffect(mutation);
-
-  static Effect<State, Action> future<State, Action>({
-    Mutation<State>? mutation,
-    required Future<Action> Function() run,
-  }) => //
-      FutureEffect<State, Action>(mutation, run);
-
-  static Effect<State, Action> stream<State, Action>({
-    Mutation<State>? mutation,
-    required dynamic id,
-    required Stream<Action> Function() run,
-  }) => //
-      StreamEffect(mutation, id, run);
-
-  static Effect<State, Action> cancel<State, Action>({
-    Mutation<State>? mutation,
-    required dynamic id,
-  }) => //
-      CancelEffect(mutation, id);
-}
-
-final class CancelEffect<State, Action> extends Effect<State, Action> {
-  @override
-  final Mutation<State>? mutation;
-
+final class Effect<State, Action> {
   final dynamic id;
-  CancelEffect(this.mutation, this.id);
+  final Mutation<State>? mutation;
+  final Stream<EffectAction<Action>> Function() builder;
+
+  Effect(this.id, this.mutation, this.builder);
+
+  static Effect<S, A> mutate<S, A>(Mutation<S> mutation) =>
+      Effect<S, A>(null, mutation, () => Stream.empty());
+
+  static Effect<S, A> stream<ID, S, A>(ID id, Stream<A> Function() builder) =>
+      Effect<S, A>(id, null, () => builder().map(Forward.new));
+
+  static Effect<S, A> future<S, A>(Future<A> Function() builder) =>
+      Effect<S, A>(null, null, () => builder().asStream().map(Forward.new));
+
+  static Effect<S, A> cancel<ID, S, A>(ID id) => //
+      Effect<S, A>(id, null, () => Stream.value(Cancel()));
 }
 
-final class FutureEffect<State, Action> extends Effect<State, Action> {
-  @override
-  final Mutation<State>? mutation;
-
-  final Future<Action> Function() run;
-  FutureEffect(this.mutation, this.run);
+extension Effects on Effect {
+  static Effect<State, Action> merge<Action, State>(
+    Effect<State, Action> effectA,
+    Effect<State, Action> effectB,
+  ) {
+    return Effect<State, Action>(
+      null,
+      (state) {
+        final updateA = effectA.mutation?.call(state) ?? state;
+        final updateB = effectB.mutation?.call(updateA) ?? updateA;
+        return updateB;
+      },
+      () {
+        return StreamGroup.merge([effectA.builder(), effectB.builder()]);
+      },
+    );
+  }
 }
 
-final class SyncEffect<State, Action> extends Effect<State, Action> {
-  @override
-  final Mutation<State>? mutation;
-  SyncEffect(this.mutation);
-}
+sealed class EffectAction<Action> {}
 
-final class StreamEffect<State, Action> extends Effect<State, Action> {
-  @override
-  final Mutation<State>? mutation;
-  final dynamic id;
-  final Stream<Action> Function() run;
-  StreamEffect(this.mutation, this.id, this.run);
+final class Cancel<Action> extends EffectAction<Action> {}
+
+final class Forward<Action> extends EffectAction<Action> {
+  final Action action;
+  Forward(this.action);
 }

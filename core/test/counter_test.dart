@@ -31,12 +31,14 @@ void main() {
         reducer: counterReducer,
       );
 
-      fakeAsync((async) {
+      fakeAsync((async) async {
         store.send(CounterAction.incrementRepeatedly);
         async.elapse(Duration(seconds: 10));
         expect(store.state.count, 10);
 
         store.send(CounterAction.cancelIncrementRepeatedly);
+        await Future.delayed(const Duration(milliseconds: 1));
+
         async.elapse(Duration(seconds: 10));
         expect(store.state.count, 10);
       });
