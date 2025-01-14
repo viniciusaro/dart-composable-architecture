@@ -23,31 +23,37 @@ enum CounterAction {
 
 enum CounterTimerId { id }
 
-Effect<CounterState, CounterAction> counterReducer(
+ReducerResult<CounterState, CounterAction> counterReducer(
   CounterState state,
   CounterAction action,
 ) {
   switch (action) {
     case CounterAction.increment:
-      return Effect.mutate(
-        (state) => state.copyWith(count: state.count + 1),
+      return ReducerResult(
+        mutation: (state) => state.copyWith(count: state.count + 1),
       );
     case CounterAction.incrementRepeatedly:
-      return Effect.stream(
-        CounterTimerId.id,
-        () async* {
-          while (true) {
-            await Future.delayed(Duration(seconds: 1));
-            yield CounterAction.increment;
-          }
-        },
+      return ReducerResult(
+        effect: Effect.stream(
+          CounterTimerId.id,
+          () async* {
+            while (true) {
+              await Future.delayed(Duration(seconds: 1));
+              yield CounterAction.increment;
+            }
+          },
+        ),
       );
     case CounterAction.incrementWithDelay:
-      return Effect.future(() async {
-        await Future.delayed(Duration(seconds: 1));
-        return CounterAction.increment;
-      });
+      return ReducerResult(
+        effect: Effect.future(() async {
+          await Future.delayed(Duration(seconds: 1));
+          return CounterAction.increment;
+        }),
+      );
     case CounterAction.cancelIncrementRepeatedly:
-      return Effect.cancel(CounterTimerId.id);
+      return ReducerResult(
+        effect: Effect.cancel(CounterTimerId.id),
+      );
   }
 }

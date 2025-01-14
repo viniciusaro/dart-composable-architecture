@@ -25,16 +25,16 @@ enum AppAction {
 void main() {
   group('A group of tests', () {
     test('store send updates state', () {
-      Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
+      ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effect.mutate(
-              (state) => state.copyWith(count: state.count + 1),
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count + 1),
             );
 
           case AppAction.decrement:
-            return Effect.mutate(
-              (state) => state.copyWith(count: state.count - 1),
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count - 1),
             );
         }
       }
@@ -52,21 +52,23 @@ void main() {
     });
 
     test('store send feeds effect action back to system', () async {
-      Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
+      ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effects.merge([
-              Effect.mutate((state) => state.copyWith(count: state.count + 1)),
-              Effect.future(() {
-                return Future.delayed(
-                  Duration(milliseconds: 10),
-                  () => AppAction.decrement,
-                );
-              })
-            ]);
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count + 1),
+              effect: Effect.future(
+                () {
+                  return Future.delayed(
+                    Duration(milliseconds: 10),
+                    () => AppAction.decrement,
+                  );
+                },
+              ),
+            );
           case AppAction.decrement:
-            return Effect.mutate(
-              (state) => state.copyWith(count: state.count - 1),
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count - 1),
             );
         }
       }
@@ -84,15 +86,15 @@ void main() {
     });
 
     test('debug reducer prints debug information', () {
-      Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
+      ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Effect.mutate(
-              (state) => state.copyWith(count: state.count + 1),
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count + 1),
             );
           case AppAction.decrement:
-            return Effect.mutate(
-              (state) => state.copyWith(count: state.count - 1),
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count - 1),
             );
         }
       }
