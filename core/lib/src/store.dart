@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:equatable/equatable.dart';
 
-import 'reducer.dart';
+part 'effect.dart';
+part 'reducer.dart';
 
 final class Store<State extends Equatable, Action> {
   final Reducer<State, Action> _reducer;

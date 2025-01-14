@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-import 'effect.dart';
+part of 'store.dart';
 
 typedef Reducer<State extends Equatable, Action> = Effect<State, Action> Function(State, Action);
 
@@ -10,7 +8,7 @@ Reducer<State, Action> debug<State extends Equatable, Action>(
   return (state, action) {
     final effect = other(state, action);
 
-    return Effect(
+    return Effect._(
       id: effect.id,
       cancellationId: effect.cancellationId,
       mutation: (state) {
