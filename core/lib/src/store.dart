@@ -19,21 +19,20 @@ final class Store<State extends Equatable, Action> {
         _reducer = reducer;
 
   void send(Action action) {
-    final mutation = _reducer(_state, action);
-    final effect = mutation.effect;
-    _state = mutation.update(_state);
+    final effect = _reducer(_state, action);
+    _state = effect.mutation?.call(_state) ?? _state;
 
     switch (effect) {
-      case CancelEffect<Action>():
+      case CancelEffect():
         _subscriptions[effect.id.hashCode]?.cancel();
         _subscriptions.remove(effect.id.hashCode);
-      case FutureEffect<Action>():
+      case FutureEffect():
         final result = effect.run();
         result.then(send);
-      case StreamEffect<Action>():
+      case StreamEffect():
         final stream = effect.run();
         _subscriptions[effect.id.hashCode] = stream.listen(send);
-      case RunEffect<Action>():
+      case RunEffect():
         effect.run(send);
     }
   }

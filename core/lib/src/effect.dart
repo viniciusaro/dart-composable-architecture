@@ -1,48 +1,69 @@
 import 'dart:async';
 
-sealed class Effect<Action> {
-  static Effect<Action> none<Action>() => //
-      RunEffect((_) {});
+typedef Mutation<State> = State Function(State);
 
-  static Effect<Action> future<Action>(
-    Future<Action> Function() run,
-  ) => //
-      FutureEffect<Action>(run);
+sealed class Effect<State, Action> {
+  Mutation<State>? get mutation;
 
-  static Effect<Action> run<Action>(
-    void Function(void Function(Action)) run,
+  static Effect<State, Action> sync<State, Action>(
+    Mutation<State>? mutation,
   ) => //
-      RunEffect<Action>(run);
+      RunEffect(mutation, (_) {});
 
-  static Effect<Action> stream<Action>(
-    dynamic id,
-    Stream<Action> Function() run,
-  ) => //
-      StreamEffect(id, run);
+  static Effect<State, Action> future<State, Action>({
+    Mutation<State>? mutation,
+    required Future<Action> Function() run,
+  }) => //
+      FutureEffect<State, Action>(mutation, run);
 
-  static Effect<Action> cancel<Action>(
-    dynamic id,
-  ) => //
-      CancelEffect(id);
+  static Effect<State, Action> run<State, Action>({
+    Mutation<State>? mutation,
+    required void Function(void Function(Action)) run,
+  }) => //
+      RunEffect<State, Action>(mutation, run);
+
+  static Effect<State, Action> stream<State, Action>({
+    Mutation<State>? mutation,
+    required dynamic id,
+    required Stream<Action> Function() run,
+  }) => //
+      StreamEffect(mutation, id, run);
+
+  static Effect<State, Action> cancel<State, Action>({
+    Mutation<State>? mutation,
+    required dynamic id,
+  }) => //
+      CancelEffect(mutation, id);
 }
 
-final class CancelEffect<Action> extends Effect<Action> {
+final class CancelEffect<State, Action> extends Effect<State, Action> {
+  @override
+  final Mutation<State>? mutation;
+
   final dynamic id;
-  CancelEffect(this.id);
+  CancelEffect(this.mutation, this.id);
 }
 
-final class FutureEffect<Action> extends Effect<Action> {
+final class FutureEffect<State, Action> extends Effect<State, Action> {
+  @override
+  final Mutation<State>? mutation;
+
   final Future<Action> Function() run;
-  FutureEffect(this.run);
+  FutureEffect(this.mutation, this.run);
 }
 
-final class RunEffect<Action> extends Effect<Action> {
+final class RunEffect<State, Action> extends Effect<State, Action> {
+  @override
+  final Mutation<State>? mutation;
+
   final void Function(void Function(Action)) run;
-  RunEffect(this.run);
+  RunEffect(this.mutation, this.run);
 }
 
-final class StreamEffect<Action> extends Effect<Action> {
+final class StreamEffect<State, Action> extends Effect<State, Action> {
+  @override
+  final Mutation<State>? mutation;
   final dynamic id;
   final Stream<Action> Function() run;
-  StreamEffect(this.id, this.run);
+  StreamEffect(this.mutation, this.id, this.run);
 }

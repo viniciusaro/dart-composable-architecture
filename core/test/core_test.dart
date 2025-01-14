@@ -24,22 +24,17 @@ enum AppAction {
 
 void main() {
   group('A group of tests', () {
-    setUp(() {
-      // Additional setup goes here.
-    });
-
     test('store send updates state', () {
-      Mutation<AppState, AppAction> reducer(AppState state, AppAction action) {
+      Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Mutation.mutate(
+            return Effect.sync(
               (state) => state.copyWith(count: state.count + 1),
-              Effect.none(),
             );
+
           case AppAction.decrement:
-            return Mutation.mutate(
+            return Effect.sync(
               (state) => state.copyWith(count: state.count - 1),
-              Effect.none(),
             );
         }
       }
@@ -54,54 +49,44 @@ void main() {
     });
 
     test('store send feeds effect action back to system', () async {
-      final delay = Duration(milliseconds: 10);
-
-      Mutation<AppState, AppAction> reducer(AppState state, AppAction action) {
+      Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Mutation.mutate(
-              (state) => state.copyWith(count: state.count + 1),
-              Effect.run((send) {
-                Future.delayed(delay, () {
-                  send(AppAction.decrement);
-                });
+            return Effect.run(
+              mutation: (state) => state.copyWith(count: state.count + 1),
+              run: (send) => Future.delayed(Duration(milliseconds: 10), () {
+                send(AppAction.decrement);
               }),
             );
           case AppAction.decrement:
-            return Mutation.mutate(
+            return Effect.sync(
               (state) => state.copyWith(count: state.count - 1),
-              Effect.none(),
             );
         }
       }
 
-      final store = Store(initialState: AppState(), reducer: reducer);
+      final store = Store(
+        initialState: AppState(),
+        reducer: debug(reducer),
+      );
 
       store.send(AppAction.increment);
       expect(store.state.count, 1);
 
-      store.send(AppAction.decrement);
+      await Future.delayed(Duration(milliseconds: 10));
       expect(store.state.count, 0);
-
-      final count = await Future.delayed(delay, () {
-        return store.state.count;
-      });
-
-      expect(count, -1);
     });
 
     test('debug reducer prints debug information', () {
-      Mutation<AppState, AppAction> reducer(AppState state, AppAction action) {
+      Effect<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            return Mutation.mutate(
+            return Effect.sync(
               (state) => state.copyWith(count: state.count + 1),
-              Effect.none(),
             );
           case AppAction.decrement:
-            return Mutation.mutate(
+            return Effect.sync(
               (state) => state.copyWith(count: state.count - 1),
-              Effect.none(),
             );
         }
       }
@@ -120,7 +105,7 @@ void main() {
       expect(printedLines, [
         "--------",
         "received action: AppAction.increment",
-        "state: AppState: count: 1",
+        "state: AppState(1)",
       ]);
     });
   });
