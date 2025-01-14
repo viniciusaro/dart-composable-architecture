@@ -1,11 +1,13 @@
 import 'dart:async';
 
+part 'effect_with_checks.dart';
+
 sealed class Effect<Action> {
   static Effect<Action> none<Action>() => //
       RunEffect((_) {});
 
   static Effect<Action> future<Action>(
-    FutureOr<Action> Function() run,
+    Future<Action> Function() run,
   ) => //
       FutureEffect<Action>(run);
 
@@ -32,7 +34,7 @@ final class CancelEffect<Action> extends Effect<Action> {
 }
 
 final class FutureEffect<Action> extends Effect<Action> {
-  final FutureOr<Action> Function() run;
+  final Future<Action> Function() run;
   FutureEffect(this.run);
 }
 

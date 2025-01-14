@@ -1,11 +1,16 @@
 import 'package:core/core.dart';
+import 'package:equatable/equatable.dart';
 
-final class CounterState {
-  int count = 0;
+final class CounterState extends Equatable {
+  final int count;
+
+  CounterState({this.count = 0});
 
   @override
-  String toString() {
-    return "AppState: count: $count";
+  List<Object?> get props => [count];
+
+  CounterState copyWith({required int count}) {
+    return CounterState(count: count);
   }
 }
 
@@ -18,24 +23,35 @@ enum CounterAction {
 
 enum CounterTimerId { id }
 
-Effect<CounterAction> counterReducer(CounterState state, CounterAction action) {
+Mutation<CounterState, CounterAction> counterReducer(
+  CounterState state,
+  CounterAction action,
+) {
   switch (action) {
     case CounterAction.cancelIncrementRepeatedly:
-      return Effect.cancel(CounterTimerId.id);
+      return Mutation.none(
+        Effect.cancel(CounterTimerId.id),
+      );
     case CounterAction.increment:
-      state.count += 1;
-      return Effect.none();
+      return Mutation.mutate(
+        (state) => state.copyWith(count: state.count + 1),
+        Effect.none(),
+      );
     case CounterAction.incrementRepeatedly:
-      return Effect.stream(CounterTimerId.id, () async* {
-        while (true) {
-          await Future.delayed(Duration(seconds: 1));
-          yield CounterAction.increment;
-        }
-      });
+      return Mutation.none(
+        Effect.stream(CounterTimerId.id, () async* {
+          while (true) {
+            await Future.delayed(Duration(seconds: 1));
+            yield CounterAction.increment;
+          }
+        }),
+      );
     case CounterAction.incrementWithDelay:
-      return Effect.future(() async {
-        await Future.delayed(Duration(seconds: 1));
-        return CounterAction.increment;
-      });
+      return Mutation.none(
+        Effect.future(() async {
+          await Future.delayed(Duration(seconds: 1));
+          return CounterAction.increment;
+        }),
+      );
   }
 }

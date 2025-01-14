@@ -1,14 +1,19 @@
 import 'dart:async';
 
 import 'package:core/core.dart';
+import 'package:equatable/equatable.dart';
 import 'package:test/test.dart';
 
-final class AppState {
-  int count = 0;
+final class AppState extends Equatable {
+  final int count;
+
+  AppState({this.count = 0});
 
   @override
-  String toString() {
-    return "AppState: count: $count";
+  List<Object?> get props => [count];
+
+  AppState copyWith({required int count}) {
+    return AppState(count: count);
   }
 }
 
@@ -24,14 +29,18 @@ void main() {
     });
 
     test('store send updates state', () {
-      Effect<AppAction> reducer(AppState state, AppAction action) {
+      Mutation<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            state.count += 1;
-            return Effect.none();
+            return Mutation.mutate(
+              (state) => state.copyWith(count: state.count + 1),
+              Effect.none(),
+            );
           case AppAction.decrement:
-            state.count -= 1;
-            return Effect.none();
+            return Mutation.mutate(
+              (state) => state.copyWith(count: state.count - 1),
+              Effect.none(),
+            );
         }
       }
 
@@ -47,18 +56,22 @@ void main() {
     test('store send feeds effect action back to system', () async {
       final delay = Duration(milliseconds: 10);
 
-      Effect<AppAction> reducer(AppState state, AppAction action) {
+      Mutation<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            state.count += 1;
-            return Effect.run((send) {
-              Future.delayed(delay, () {
-                send(AppAction.decrement);
-              });
-            });
+            return Mutation.mutate(
+              (state) => state.copyWith(count: state.count + 1),
+              Effect.run((send) {
+                Future.delayed(delay, () {
+                  send(AppAction.decrement);
+                });
+              }),
+            );
           case AppAction.decrement:
-            state.count -= 1;
-            return Effect.none();
+            return Mutation.mutate(
+              (state) => state.copyWith(count: state.count - 1),
+              Effect.none(),
+            );
         }
       }
 
@@ -78,14 +91,18 @@ void main() {
     });
 
     test('debug reducer prints debug information', () {
-      Effect<AppAction> reducer(AppState state, AppAction action) {
+      Mutation<AppState, AppAction> reducer(AppState state, AppAction action) {
         switch (action) {
           case AppAction.increment:
-            state.count += 1;
-            return Effect.none();
+            return Mutation.mutate(
+              (state) => state.copyWith(count: state.count + 1),
+              Effect.none(),
+            );
           case AppAction.decrement:
-            state.count -= 1;
-            return Effect.none();
+            return Mutation.mutate(
+              (state) => state.copyWith(count: state.count - 1),
+              Effect.none(),
+            );
         }
       }
 
