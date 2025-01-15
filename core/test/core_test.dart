@@ -23,6 +23,15 @@ enum AppAction {
 }
 
 void main() {
+  Effect<AppAction> infiniteIncrementEffect() => Effect.stream(
+        () async* {
+          while (true) {
+            await Future.delayed(Duration(milliseconds: 10));
+            yield AppAction.increment;
+          }
+        },
+      );
+
   group('A group of tests', () {
     test('store send updates state', () {
       ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
@@ -58,12 +67,10 @@ void main() {
             return ReducerResult(
               mutation: (state) => state.copyWith(count: state.count + 1),
               effect: Effect.stream(
-                () {
-                  return Future.delayed(
-                    Duration(milliseconds: 10),
-                    () => AppAction.decrement,
-                  ).asStream();
-                },
+                () => Future.delayed(
+                  Duration(milliseconds: 10),
+                  () => AppAction.decrement,
+                ).asStream(),
               ),
             );
           case AppAction.decrement:
@@ -83,6 +90,94 @@ void main() {
 
       await Future.delayed(Duration(milliseconds: 10));
       expect(store.state.count, 0);
+    });
+
+    test('effect merge sends every action into the system', () async {
+      ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
+        switch (action) {
+          case AppAction.increment:
+            return ReducerResult(
+              effect: Effect.merge([
+                Effect.stream(() => Stream.value(AppAction.decrement)),
+                Effect.stream(() => Stream.value(AppAction.decrement)),
+              ]),
+            );
+          case AppAction.decrement:
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count - 1),
+            );
+        }
+      }
+
+      final store = Store(
+        initialState: AppState(),
+        reducer: reducer,
+      );
+
+      store.send(AppAction.increment);
+      await Future.delayed(Duration.zero);
+      expect(store.state.count, -2);
+    });
+
+    test('effect cancellable works on merged effects', () async {
+      ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
+        switch (action) {
+          case AppAction.increment:
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count + 1),
+              effect: Effect.merge([
+                infiniteIncrementEffect().cancellable(#a),
+                infiniteIncrementEffect().cancellable(#b),
+              ]),
+            );
+          case AppAction.decrement:
+            return ReducerResult(
+              effect: Effect.merge([
+                Effect.cancel(#a),
+                Effect.cancel(#b),
+              ]),
+            );
+        }
+      }
+
+      final store = Store(
+        initialState: AppState(),
+        reducer: reducer,
+      );
+
+      store.send(AppAction.increment);
+      store.send(AppAction.decrement);
+      await Future.delayed(Duration(milliseconds: 20));
+      expect(store.state.count, 1);
+    });
+
+    test('effect cancellable works on parent effects', () async {
+      ReducerResult<AppState, AppAction> reducer(AppState state, AppAction action) {
+        switch (action) {
+          case AppAction.increment:
+            return ReducerResult(
+              mutation: (state) => state.copyWith(count: state.count + 1),
+              effect: Effect.merge([
+                infiniteIncrementEffect(),
+                infiniteIncrementEffect(),
+              ]).cancellable(#parent),
+            );
+          case AppAction.decrement:
+            return ReducerResult(
+              effect: Effect.cancel(#parent),
+            );
+        }
+      }
+
+      final store = Store(
+        initialState: AppState(),
+        reducer: reducer,
+      );
+
+      store.send(AppAction.increment);
+      store.send(AppAction.decrement);
+      await Future.delayed(Duration(milliseconds: 20));
+      expect(store.state.count, 1);
     });
 
     test('debug reducer prints debug information', () {
