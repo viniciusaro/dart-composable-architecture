@@ -35,20 +35,18 @@ ReducerResult<CounterState, CounterAction> counterReducer(
     case CounterAction.incrementRepeatedly:
       return ReducerResult(
         effect: Effect.stream(
-          CounterTimerId.id,
           () async* {
             while (true) {
               await Future.delayed(Duration(seconds: 1));
               yield CounterAction.increment;
             }
           },
-        ),
+        ).cancellable(CounterTimerId.id),
       );
     case CounterAction.incrementWithDelay:
       return ReducerResult(
-        effect: Effect.future(() async {
-          await Future.delayed(Duration(seconds: 1));
-          return CounterAction.increment;
+        effect: Effect.stream(() {
+          return Future.delayed(Duration(seconds: 1), () => CounterAction.increment).asStream();
         }),
       );
     case CounterAction.cancelIncrementRepeatedly:

@@ -37,8 +37,6 @@ void main() {
         expect(store.state.count, 10);
 
         store.send(CounterAction.cancelIncrementRepeatedly);
-        await Future.delayed(const Duration(milliseconds: 1));
-
         async.elapse(Duration(seconds: 10));
         expect(store.state.count, 10);
       });

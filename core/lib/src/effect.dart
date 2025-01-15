@@ -1,51 +1,39 @@
 part of 'store.dart';
 
+var _cancellableEffects = <int, dynamic>{};
+var _effectSubscriptions = <dynamic, StreamSubscription>{};
+
 final class Effect<Action> {
-  final dynamic id;
-  final dynamic cancellationId;
+  int get _cancellableId => hashCode;
   final Stream<Action> Function() builder;
 
-  const Effect._({
-    required this.id,
-    required this.cancellationId,
-    required this.builder,
-  });
+  Effect(this.builder);
 
-  static Effect<A> stream<ID, A>(ID id, Stream<A> Function() builder) => Effect<A>._(
-        id: id,
-        cancellationId: null,
-        builder: builder,
-      );
+  static Effect<Action> none<Action>() {
+    return Effect(() => Stream.empty());
+  }
 
-  static Effect<A> future<A>(Future<A> Function() builder) => Effect<A>._(
-        id: null,
-        cancellationId: null,
-        builder: () => builder().asStream(),
-      );
+  static Effect<Action> stream<Action>(Stream<Action> Function() builder) {
+    return Effect(builder);
+  }
 
-  static Effect<A> cancel<ID, A>(ID id) => Effect<A>._(
-        id: null,
-        cancellationId: id,
-        builder: () => Stream.empty(),
-      );
-
-  static Effect<A> none<A>() => Effect<A>._(
-        id: null,
-        cancellationId: null,
-        builder: () => Stream.empty(),
-      );
+  static Effect<Action> cancel<ID, Action>(ID id) => Effects.cancel(id);
 }
 
-extension Effects on Effect {
-  static Effect<Action> merge<Action>(
-    List<Effect<Action>> effects,
-  ) {
-    return Effect<Action>._(
-      id: effects.firstOrNull?.id, // TODO update
-      cancellationId: effects.firstOrNull?.cancellationId, // TODO update
-      builder: () {
-        return StreamGroup.merge(effects.map((e) => e.builder()));
-      },
-    );
+extension Effects<Action> on Effect<Action> {
+  static Effect<Action> cancel<ID, Action>(ID id) {
+    return Effect<Action>(() {
+      _effectSubscriptions[id]?.cancel();
+      _effectSubscriptions.remove(id);
+      return Stream.empty();
+    });
+  }
+}
+
+extension CancellableEffect<Action> on Effect<Action> {
+  Effect<Action> cancellable<ID>(ID id) {
+    final cancellable = Effect(builder);
+    _cancellableEffects[cancellable._cancellableId] = id;
+    return cancellable;
   }
 }

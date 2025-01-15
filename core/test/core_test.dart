@@ -57,12 +57,12 @@ void main() {
           case AppAction.increment:
             return ReducerResult(
               mutation: (state) => state.copyWith(count: state.count + 1),
-              effect: Effect.future(
+              effect: Effect.stream(
                 () {
                   return Future.delayed(
                     Duration(milliseconds: 10),
                     () => AppAction.decrement,
-                  );
+                  ).asStream();
                 },
               ),
             );
