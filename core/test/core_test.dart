@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:core/core.dart';
+import 'package:composable_architecture/core.dart';
 import 'package:test/test.dart';
 
 // ignore: must_be_immutable
