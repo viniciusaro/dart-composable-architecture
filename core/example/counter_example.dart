@@ -1,10 +1,13 @@
 import 'package:core/core.dart';
 
-// ignore: must_be_immutable
 final class CounterState extends Equatable {
-  int count;
+  final int count;
 
   CounterState({this.count = 0});
+
+  CounterState copyWith({required int count}) {
+    return CounterState(count: count);
+  }
 
   @override
   List<Object?> get props => [count];
@@ -22,7 +25,7 @@ enum CounterTimerId { id }
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterAction.increment:
-      state.value.count += 1;
+      state.mutate((s) => s.copyWith(count: s.count + 1));
       return Effect.none();
     case CounterAction.incrementRepeatedly:
       return Effect.stream<CounterAction>(
