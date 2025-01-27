@@ -1,5 +1,7 @@
 part of 'store.dart';
 
+typedef Reducer<State, Action> = Effect<Action> Function(Inout<State>, Action);
+
 final class Inout<T> {
   T _value;
   bool _isMutationAllowed = false;
@@ -13,8 +15,6 @@ final class Inout<T> {
     }
   }
 }
-
-typedef Reducer<State, Action> = Effect<Action> Function(Inout<State>, Action);
 
 Reducer<State, Action> debug<State, Action>(
   Reducer<State, Action> other,

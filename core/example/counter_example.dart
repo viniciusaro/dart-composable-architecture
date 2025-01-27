@@ -28,7 +28,7 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       state.mutate((s) => s.copyWith(count: s.count + 1));
       return Effect.none();
     case CounterAction.incrementRepeatedly:
-      return Effect.stream<CounterAction>(
+      return Effect.stream(
         () async* {
           while (true) {
             await Future.delayed(Duration(seconds: 1));
