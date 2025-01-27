@@ -8,7 +8,6 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  # path: ^1.8.0
   async: ^2.12.0
   equatable: ^2.0.7
 

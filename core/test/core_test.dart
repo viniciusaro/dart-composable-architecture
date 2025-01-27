@@ -32,24 +32,20 @@ void main() {
         },
       );
 
+  Effect<AppAction> counterReducer(Inout<AppState> state, AppAction action) {
+    switch (action) {
+      case AppAction.actionA:
+        state.mutate((s) => s.copyWith(count: s.count + 1));
+        return Effect.none();
+      case AppAction.actionB:
+        state.mutate((s) => s.copyWith(count: s.count - 1));
+        return Effect.none();
+    }
+  }
+
   group('A group of tests', () {
     test('store send updates state', () {
-      Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
-        switch (action) {
-          case AppAction.actionA:
-            state.mutate((s) => s.copyWith(count: s.count + 1));
-            return Effect.none();
-
-          case AppAction.actionB:
-            state.mutate((s) => s.copyWith(count: s.count - 1));
-            return Effect.none();
-        }
-      }
-
-      final store = Store(
-        initialState: AppState(),
-        reducer: reducer,
-      );
+      final store = Store(initialState: AppState(), reducer: counterReducer);
 
       store.send(AppAction.actionA);
       expect(store.state.count, 1);
@@ -204,17 +200,6 @@ void main() {
     });
 
     test('debug reducer prints debug information', () {
-      Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
-        switch (action) {
-          case AppAction.actionA:
-            state.mutate((s) => s.copyWith(count: s.count + 1));
-            return Effect.none();
-          case AppAction.actionB:
-            state.mutate((s) => s.copyWith(count: s.count - 1));
-            return Effect.none();
-        }
-      }
-
       var printedLines = <String>[];
 
       final specification = ZoneSpecification(
@@ -222,7 +207,7 @@ void main() {
       );
 
       runZoned(() {
-        final store = Store(initialState: AppState(), reducer: debug(reducer));
+        final store = Store(initialState: AppState(), reducer: debug(counterReducer));
         store.send(AppAction.actionA);
       }, zoneSpecification: specification);
 
