@@ -2,7 +2,7 @@ import 'package:core/core.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
-import '../example/core_example.dart';
+import '../example/counter_example.dart';
 
 void main() {
   group('counter tests', () {
