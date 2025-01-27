@@ -7,10 +7,7 @@ import '../example/counter_example.dart';
 void main() {
   group('counter tests', () {
     test('increment repeatedly increments on every second tick', () {
-      final store = Store(
-        initialState: CounterState(),
-        reducer: counterReducer,
-      );
+      final store = Store(initialState: CounterState(), reducer: counterReducer);
 
       fakeAsync((async) {
         store.send(CounterAction.incrementRepeatedly);
@@ -26,10 +23,7 @@ void main() {
     });
 
     test('increment repeatedly stops repeating after cancellation', () {
-      final store = Store(
-        initialState: CounterState(),
-        reducer: counterReducer,
-      );
+      final store = Store(initialState: CounterState(), reducer: counterReducer);
 
       fakeAsync((async) async {
         store.send(CounterAction.incrementRepeatedly);
@@ -43,10 +37,7 @@ void main() {
     });
 
     test('increment with delay increments after 1 second', () {
-      final store = Store(
-        initialState: CounterState(),
-        reducer: counterReducer,
-      );
+      final store = Store(initialState: CounterState(), reducer: counterReducer);
 
       fakeAsync((async) {
         store.send(CounterAction.incrementWithDelay);

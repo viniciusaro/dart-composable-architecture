@@ -58,7 +58,7 @@ void main() {
       expect(store.state.count, 0);
     });
 
-    test('store send throws error if mutation is detected inside effect', () {
+    test('store send throws error if mutation is detected inside effect', () async {
       Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
         switch (action) {
           case AppAction.actionA:
@@ -68,7 +68,9 @@ void main() {
             });
 
           case AppAction.actionB:
-            return Effect.none();
+            return Effect(() async* {
+              state.mutate((s) => s.copyWith(count: s.count + 1));
+            });
         }
       }
 
@@ -81,6 +83,18 @@ void main() {
         () => store.send(AppAction.actionA),
         throwsA(EffectfullStateMutation()),
       );
+
+      expect(store.state.count, 0);
+
+      Object asyncError = -1;
+      runZonedGuarded(
+        () => store.send(AppAction.actionB),
+        (e, s) => asyncError = e,
+      );
+
+      await Future.delayed(Duration.zero);
+      expect(asyncError, EffectfullStateMutation());
+      expect(store.state.count, 0);
     });
 
     test('store send feeds effect action back into the system', () async {

@@ -1,26 +1,31 @@
 part of 'store.dart';
 
-final class Inout<T extends Equatable> {
+final class Inout<T> {
   T _value;
   T get value => _value;
+  bool _isMutationAllowed = false;
   Inout({required T value}) : _value = value;
 
   void mutate(T Function(T) mutation) {
-    _value = mutation(_value);
+    if (_isMutationAllowed) {
+      _value = mutation(_value);
+    } else {
+      throw EffectfullStateMutation();
+    }
   }
 }
 
-typedef Reducer<State extends Equatable, Action> = Effect<Action> Function(Inout<State>, Action);
+typedef Reducer<State, Action> = Effect<Action> Function(Inout<State>, Action);
 
-Reducer<State, Action> debug<State extends Equatable, Action>(
+Reducer<State, Action> debug<State, Action>(
   Reducer<State, Action> other,
 ) {
   return (state, action) {
     final msgHeader = "--------";
     final msgAction = "received action: $action";
-    final previous = state.value;
+    final previous = state._value;
     final effect = other(state, action);
-    final updated = state.value;
+    final updated = state._value;
     final msgUpdate = previous == updated ? "state: no changes detected" : "state: $updated";
 
     return Effect(() {

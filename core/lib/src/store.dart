@@ -6,10 +6,10 @@ part 'effect.dart';
 part 'reducer.dart';
 part 'store_exceptions.dart';
 
-final class Store<State extends Equatable, Action> {
+final class Store<State, Action> {
   final Reducer<State, Action> _reducer;
   final Inout<State> _state;
-  State get state => _state.value;
+  State get state => _state._value;
 
   Store({
     required State initialState,
@@ -18,16 +18,11 @@ final class Store<State extends Equatable, Action> {
         _reducer = reducer;
 
   void send(Action action) {
+    _state._isMutationAllowed = true;
     final effect = _reducer(_state, action);
+    _state._isMutationAllowed = false;
 
-    final beforeEffect = _state.value.hashCode;
     final stream = effect.builder();
-    final afterEffect = _state.value.hashCode;
-
-    if (afterEffect != beforeEffect) {
-      throw EffectfullStateMutation();
-    }
-
     final id = _cancellableEffects[effect._cancellableId];
     final subscription = stream.listen(send);
 
