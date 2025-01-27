@@ -35,3 +35,11 @@ Reducer<State, Action> debug<State, Action>(
     });
   };
 }
+
+Reducer<State, Action> combine<State, Action>(List<Reducer<State, Action>> reducers) {
+  return (state, action) {
+    return Effect.merge(
+      reducers.map((reducer) => reducer(state, action)).toList(),
+    );
+  };
+}

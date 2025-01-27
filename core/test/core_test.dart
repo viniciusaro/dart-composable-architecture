@@ -217,5 +217,38 @@ void main() {
         "state: AppState(1)",
       ]);
     });
+
+    test('combine runs every reducer in list', () {
+      Effect<AppAction> reducer1(Inout<AppState> state, AppAction action) {
+        switch (action) {
+          case AppAction.actionA:
+            state.mutate((s) => s.copyWith(count: s.count + 10));
+            return Effect.none();
+          case AppAction.actionB:
+            return Effect.none();
+        }
+      }
+
+      Effect<AppAction> reducer2(Inout<AppState> state, AppAction action) {
+        switch (action) {
+          case AppAction.actionA:
+            state.mutate((s) => s.copyWith(count: s.count + 1));
+            return Effect.none();
+          case AppAction.actionB:
+            return Effect.none();
+        }
+      }
+
+      final store = Store(
+        initialState: AppState(),
+        reducer: combine([
+          reducer1,
+          reducer2,
+        ]),
+      );
+
+      store.send(AppAction.actionA);
+      expect(store.state.count, 11);
+    });
   });
 }
