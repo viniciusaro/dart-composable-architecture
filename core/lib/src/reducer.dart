@@ -2,7 +2,6 @@ part of 'store.dart';
 
 final class Inout<T> {
   T _value;
-  T get value => _value;
   bool _isMutationAllowed = false;
   Inout({required T value}) : _value = value;
 
