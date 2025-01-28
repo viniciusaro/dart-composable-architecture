@@ -43,3 +43,21 @@ Reducer<State, Action> combine<State, Action>(List<Reducer<State, Action>> reduc
     );
   };
 }
+
+Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
+  Reducer<LocalState, LocalAction> other, {
+  required LocalState Function(GlobalState) toLocalState,
+  required GlobalState Function(LocalState) toGlobalState,
+  required LocalAction Function(GlobalAction) toLocalAction,
+  required GlobalAction Function(LocalAction) toGlobalAction,
+}) {
+  return (globalState, globalAction) {
+    final localState = Inout(value: toLocalState(globalState._value));
+    final localAction = toLocalAction(globalAction);
+    localState._isMutationAllowed = true;
+    final localEffect = other(localState, localAction);
+    localState._isMutationAllowed = false;
+    globalState._value = toGlobalState(localState._value);
+    return localEffect.map(toGlobalAction);
+  };
+}

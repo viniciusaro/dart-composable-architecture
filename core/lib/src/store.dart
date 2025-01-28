@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 
+part '_exceptions.dart';
 part 'effect.dart';
 part 'reducer.dart';
-part 'store_exceptions.dart';
 
 final class Store<State, Action> {
   final Reducer<State, Action> _reducer;

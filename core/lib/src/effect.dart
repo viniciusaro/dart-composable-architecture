@@ -9,6 +9,10 @@ final class Effect<Action> {
 
   Effect(this.builder);
 
+  Effect<B> map<B>(B Function(Action) transform) {
+    return Effect(() => builder().map(transform));
+  }
+
   static Effect<Action> none<Action>() {
     return Effect(() => Stream.empty());
   }

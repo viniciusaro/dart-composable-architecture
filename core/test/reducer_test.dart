@@ -58,5 +58,23 @@ void main() {
       store.send(AppAction.actionA);
       expect(store.state.count, 11);
     });
+
+    test('pullback transforms local reducer into global one', () {
+      final Reducer<AppState, AppAction> reducer = pullback(
+        intCounterReducer,
+        toLocalState: (appState) => appState.count,
+        toGlobalState: (int count) => AppState(count: count),
+        toLocalAction: (appAction) => appAction,
+        toGlobalAction: (appAction) => appAction,
+      );
+
+      final store = Store(initialState: AppState(), reducer: reducer);
+
+      store.send(AppAction.actionA);
+      expect(store.state.count, 1);
+
+      store.send(AppAction.actionB);
+      expect(store.state.count, 0);
+    });
   });
 }

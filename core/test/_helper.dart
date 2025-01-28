@@ -39,3 +39,14 @@ Effect<AppAction> counterReducer(Inout<AppState> state, AppAction action) {
       return Effect.none();
   }
 }
+
+Effect<AppAction> intCounterReducer(Inout<int> state, AppAction action) {
+  switch (action) {
+    case AppAction.actionA:
+      state.mutate((s) => s + 1);
+      return Effect.none();
+    case AppAction.actionB:
+      state.mutate((s) => s - 1);
+      return Effect.none();
+  }
+}
