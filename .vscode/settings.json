@@ -1,14 +1,18 @@
 {
-    "editor.formatOnSave": true,
-    "dart.lineLength": 100,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/.fvm": true,
-        "**/.dart_tool": true,
-    }
+  "editor.formatOnSave": true,
+  "dart.lineLength": 100,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.fvm": true,
+    "**/.dart_tool": true
+  },
+  "dart.cliAdditionalArgs": [
+    "--enable-experiment=macros"
+  ],
+  "dart.flutterSdkPath": ".fvm/versions/3.27.0"
 }
