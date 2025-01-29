@@ -26,7 +26,10 @@ macro class KeyPathable implements ClassDeclarationsMacro {
         code = """
   static final ${prop}Path = kp.WritableKeyPath<$rootType, $propType>(
     get: (obj) => obj.$prop,
-    set: (obj, $prop) => obj.$prop = $prop,
+    set: (obj, $prop) {
+      obj.$prop = $prop;
+      return obj;
+    },
   );""";
       }
 

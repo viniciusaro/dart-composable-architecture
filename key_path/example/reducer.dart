@@ -2,51 +2,96 @@ import 'package:key_path/key_path.dart';
 
 @KeyPathable()
 final class AppState {
-  int count;
-  AppState(int? count) : count = count ?? 0;
+  CounterState counter = CounterState();
+  FavoritesState favorites = FavoritesState();
 }
 
-enum AppAction {
-  increment,
+@CaseKeyPathable()
+abstract class AppAction<
+    OnViewAppear,
+    Counter extends CounterAction,
+    Favorites extends FavoritesAction //
+    > {}
+
+@KeyPathable()
+final class CounterState {
+  int count = 0;
 }
 
-int counterReducer(int state, AppAction action) {
+@CaseKeyPathable()
+abstract class CounterAction<
+    Increment,
+    Decrement //
+    > {}
+
+final class FavoritesState {
+  List<int> favorites = [];
+}
+
+@CaseKeyPathable()
+abstract class FavoritesAction<
+    Add extends AddToFavorites,
+    Remove extends RemoveFromFavorites //
+    > {}
+
+class AddToFavorites {
+  final int number;
+  AddToFavorites(this.number);
+}
+
+class RemoveFromFavorites {
+  final int index;
+  RemoveFromFavorites(this.index);
+}
+
+CounterState counterReducer(CounterState state, CounterAction action) {
   switch (action) {
-    case AppAction.increment:
-      state += 1;
+    case CounterActionIncrement():
+      state.count += 1;
+      return state;
+    case CounterActionDecrement():
+      state.count -= 1;
       return state;
   }
+  throw Exception("invalid action");
 }
 
-T identity<T>(T value) => value;
+FavoritesState favoritesReducer(FavoritesState state, FavoritesAction action) {
+  switch (action) {
+    case FavoritesActionAdd():
+      state.favorites.add(action.add.number);
+      return state;
+    case FavoritesActionRemove():
+      state.favorites.removeAt(action.remove.index);
+      return state;
+  }
+  throw Exception("invalid action");
+}
 
 typedef Reducer<State, Action> = State Function(State, Action);
 
-Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
-  Reducer<LocalState, LocalAction> other, {
-  required LocalState Function(GlobalState) toLocalState,
-  required GlobalState Function(LocalState) toGlobalState,
-  required LocalAction Function(GlobalAction) toLocalAction,
-  required GlobalAction Function(LocalAction) toGlobalAction,
-}) {
-  return (globalState, globalAction) {
-    var localState = toLocalState(globalState);
-    final localAction = toLocalAction(globalAction);
-    localState = other(localState, localAction);
-    globalState = toGlobalState(localState);
-    return globalState;
+Reducer<State, Action> combine<State, Action>(List<Reducer<State, Action>> reducers) {
+  return (state, action) {
+    for (final reducer in reducers) {
+      state = reducer(state, action);
+    }
+    return state;
   };
 }
 
-Reducer<GlobalState, GlobalAction> pullbackKP<GlobalState, GlobalAction, LocalState, LocalAction>(
+Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
   Reducer<LocalState, LocalAction> other, {
   required WritableKeyPath<GlobalState, LocalState> state,
-  required LocalAction Function(GlobalAction) toLocalAction,
-  required GlobalAction Function(LocalAction) toGlobalAction,
+  required KeyPath<GlobalAction, LocalAction?> action,
 }) {
   return (globalState, globalAction) {
     var localState = state.get(globalState);
-    final localAction = toLocalAction(globalAction);
+    final localAction = action.get(globalAction);
+
+    if (localAction == null) {
+      return globalState;
+    }
+
     localState = other(localState, localAction);
     state.set(globalState, localState);
     return globalState;
@@ -54,31 +99,23 @@ Reducer<GlobalState, GlobalAction> pullbackKP<GlobalState, GlobalAction, LocalSt
 }
 
 void main() {
-  regularPullback();
-  keyPathPullback();
-}
+  final Reducer<AppState, AppAction> appReducer = combine([
+    pullback(
+      counterReducer,
+      state: AppState.counterPath,
+      action: AppAction.counterPath,
+    ),
+    pullback(
+      favoritesReducer,
+      state: AppState.favoritesPath,
+      action: AppAction.favoritesPath,
+    ),
+  ]);
 
-void regularPullback() {
-  final appReducer = pullback(
-    counterReducer,
-    toLocalState: (AppState appState) => appState.count,
-    toGlobalState: (count) => AppState(count),
-    toLocalAction: (AppAction action) => action,
-    toGlobalAction: (AppAction action) => action,
-  );
-
-  final state = appReducer(AppState(0), AppAction.increment);
-  print("state (regular): ${state.count}"); // 1
-}
-
-void keyPathPullback() {
-  final appReducer = pullbackKP(
-    counterReducer,
-    state: AppState.countPath,
-    toLocalAction: (AppAction action) => action,
-    toGlobalAction: (AppAction action) => action,
-  );
-
-  final state = appReducer(AppState(0), AppAction.increment);
-  print("state (key path): ${state.count}"); // 1
+  var state = AppState();
+  state = appReducer(state, AppAction.counter(CounterAction.increment()));
+  state = appReducer(state, AppAction.favorites(FavoritesAction.add(AddToFavorites(1))));
+  state = appReducer(state, AppAction.favorites(FavoritesAction.add(AddToFavorites(2))));
+  print("count: ${state.counter.count}"); // 1
+  print("favorites: ${state.favorites.favorites}"); // [1, 2]
 }

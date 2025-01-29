@@ -62,7 +62,7 @@ extension KeyPathX<Root, Prop> on KeyPath<Root, Prop> {
 final class WritableKeyPath<Root, Prop> implements KeyPath<Root, Prop> {
   @override
   final Prop Function(Root) get;
-  final void Function(Root, Prop) set;
+  final Root Function(Root, Prop) set;
   WritableKeyPath({required this.get, required this.set});
 }
 
@@ -75,6 +75,7 @@ extension WritableKeyPathX<Root, Prop> on WritableKeyPath<Root, Prop> {
       final prop = get(root);
       deeper.set(prop, deep);
       set(root, prop);
+      return root;
     });
   }
 }

@@ -14,5 +14,5 @@
   "dart.cliAdditionalArgs": [
     "--enable-experiment=macros"
   ],
-  "dart.flutterSdkPath": ".fvm/versions/3.27.0"
+  "dart.flutterSdkPath": ".fvm/versions/master"
 }
