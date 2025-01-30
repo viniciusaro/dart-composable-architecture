@@ -4,11 +4,20 @@ import 'package:test/test.dart';
 
 @KeyPathable()
 class RootState {
+  CounterState counter = CounterState();
   FavoritesState favorites = FavoritesState();
 }
 
 @CaseKeyPathable()
-final class RootAction<Favorites extends FavoritesAction> {}
+final class RootAction<Counter extends CounterAction, Favorites extends FavoritesAction> {}
+
+@KeyPathable()
+final class CounterState {
+  int count = 0;
+}
+
+@CaseKeyPathable()
+final class CounterAction<Increment, Decrement> {}
 
 @KeyPathable()
 class FavoritesState {
@@ -26,6 +35,21 @@ class FavoritesAdd {
 class FavoritesRemoveAt {
   final int index;
   FavoritesRemoveAt(this.index);
+}
+
+Effect<CounterAction> counterReducer(
+  Inout<CounterState> state,
+  CounterAction action,
+) {
+  switch (action) {
+    case CounterActionIncrement():
+      state.mutate((s) => s..count += 1);
+      return Effect.none();
+    case CounterActionDecrement():
+      state.mutate((s) => s..count -= 1);
+      return Effect.none();
+  }
+  throw Exception("invalid action");
 }
 
 Effect<FavoritesAction> favoritesReducer(
@@ -59,6 +83,10 @@ Effect<FavoritesAction> favoritesAnalyticsReducer(
 var analytics = <String>[];
 
 void main() {
+  setUp(() {
+    analytics = [];
+  });
+
   group('reducer', () {
     test('pullback transforms local reducer into global one', () {
       final Reducer<RootState, RootAction> reducer = pullback(
@@ -91,6 +119,29 @@ void main() {
       expect(store.state.favorites, []);
 
       expect(analytics, ["add 1", "remove at 0"]);
+    });
+
+    test('pullback and combine works together', () {
+      final Reducer<RootState, RootAction> reducer = combine([
+        pullback(
+          counterReducer,
+          state: RootState.counterPath,
+          action: RootAction.counterPath,
+        ),
+        pullback(
+          favoritesReducer,
+          state: RootState.favoritesPath,
+          action: RootAction.favoritesPath,
+        ),
+      ]);
+
+      final store = Store(initialState: RootState(), reducer: reducer);
+
+      store.send(RootAction.counter(CounterAction.increment()));
+      expect(store.state.counter.count, 1);
+
+      store.send(RootAction.favorites(FavoritesAction.add(FavoritesAdd(1))));
+      expect(store.state.favorites.favorites, [1]);
     });
   });
 }
