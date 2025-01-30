@@ -21,6 +21,10 @@ final class Effect<Action> {
     return Effect(builder);
   }
 
+  static Effect<Action> future<Action>(Future<Action> Function() builder) {
+    return Effect(() => builder().asStream());
+  }
+
   static Effect<Action> cancel<ID, Action>(ID id) {
     return Effects.cancel(id);
   }
