@@ -15,6 +15,13 @@ macro class KeyPathable implements ClassDeclarationsMacro {
     for (final field in fields) {
       final propType = (field.type as NamedTypeAnnotation).identifier.name;
       final prop = field.identifier.name;
+      var propAssignment = prop;
+      if (propType == "List") {
+        propAssignment = "List.from($prop)";
+      } else if (propType == "Map") {
+        propAssignment = "Map.from($prop)";
+      }
+
       String code;
 
       if (field.hasFinal) {
@@ -26,10 +33,7 @@ macro class KeyPathable implements ClassDeclarationsMacro {
         code = """
   static final ${prop}Path = kp.WritableKeyPath<$rootType, $propType>(
     get: (obj) => obj.$prop,
-    set: (obj, $prop) {
-      obj.$prop = $prop;
-      return obj;
-    },
+    set: (obj, $prop) => obj..$prop = $propAssignment,
   );""";
       }
 

@@ -28,6 +28,13 @@ final class Effect<Action> {
   static Effect<Action> merge<Action>(List<Effect<Action>> effects) {
     return Effects.merge(effects);
   }
+
+  static Effect<Action> sync<Action>(void Function() body) {
+    return Effect(() {
+      body();
+      return Stream.empty();
+    });
+  }
 }
 
 extension Effects on Effect {

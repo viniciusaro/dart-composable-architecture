@@ -1,6 +1,15 @@
 final class KeyPath<Root, Prop> {
   final Prop Function(Root) get;
   KeyPath({required this.get});
+
+  static WritableKeyPath<A, A> identity<A>() {
+    return WritableKeyPath(
+        get: (a) => a,
+        set: (a, b) {
+          a = b;
+          return a;
+        });
+  }
 }
 
 KeyPath<Root, Prop> path0<Root, Prop>(

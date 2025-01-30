@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:key_path/key_path.dart';
 
 part '_exceptions.dart';
 part 'effect.dart';

@@ -28,7 +28,7 @@ macro class CaseKeyPathable implements ClassTypesMacro, ClassDeclarationsMacro {
 
     for (final typeIndexed in clazz.typeParameters.indexed) {
       final typeName = typeIndexed.$2.name;
-      final prop = typeName.toLowerCase();
+      final prop = typeName.lowerCaseFirst();
       final newClassName = "$rootType$typeName";
       final genericTypeName = extendsOf(typeIndexed.$2);
       final genericLetter = letters[typeIndexed.$1];
