@@ -46,18 +46,24 @@ Reducer<State, Action> combine<State, Action>(List<Reducer<State, Action>> reduc
 
 Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
   Reducer<LocalState, LocalAction> other, {
-  required LocalState Function(GlobalState) toLocalState,
-  required GlobalState Function(LocalState) toGlobalState,
-  required LocalAction Function(GlobalAction) toLocalAction,
-  required GlobalAction Function(LocalAction) toGlobalAction,
+  required WritableKeyPath<GlobalState, LocalState> state,
+  required WritableKeyPath<GlobalAction, LocalAction?> action,
 }) {
   return (globalState, globalAction) {
-    final localState = Inout(value: toLocalState(globalState._value));
-    final localAction = toLocalAction(globalAction);
+    final localState = Inout(value: state.get(globalState._value));
+    final localAction = action.get(globalAction);
+    if (localAction == null) {
+      return Effect.none();
+    }
+
     localState._isMutationAllowed = true;
     final localEffect = other(localState, localAction);
     localState._isMutationAllowed = false;
-    globalState._value = toGlobalState(localState._value);
-    return localEffect.map(toGlobalAction);
+    state.set(globalState._value, localState._value);
+
+    return localEffect.map((localAction) {
+      action.set(globalAction, localAction);
+      return globalAction;
+    });
   };
 }

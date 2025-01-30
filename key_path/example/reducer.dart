@@ -7,7 +7,7 @@ final class AppState {
 }
 
 @CaseKeyPathable()
-abstract class AppAction<
+final class AppAction<
     OnViewAppear,
     Counter extends CounterAction,
     Favorites extends FavoritesAction //
@@ -19,17 +19,18 @@ final class CounterState {
 }
 
 @CaseKeyPathable()
-abstract class CounterAction<
+final class CounterAction<
     Increment,
     Decrement //
     > {}
 
+@KeyPathable()
 final class FavoritesState {
   List<int> favorites = [];
 }
 
 @CaseKeyPathable()
-abstract class FavoritesAction<
+final class FavoritesAction<
     Add extends AddToFavorites,
     Remove extends RemoveFromFavorites //
     > {}
@@ -118,4 +119,11 @@ void main() {
   state = appReducer(state, AppAction.favorites(FavoritesAction.add(AddToFavorites(2))));
   print("count: ${state.counter.count}"); // 1
   print("favorites: ${state.favorites.favorites}"); // [1, 2]
+
+  switch (CounterAction.decrement()) {
+    case CounterActionDecrement():
+      print("decrement");
+    default:
+      print("other");
+  }
 }
