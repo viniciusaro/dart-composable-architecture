@@ -1,5 +1,4 @@
-import 'package:composable_architecture/core.dart';
-import 'package:key_path/key_path.dart';
+import 'package:composable_architecture/composable_architecture.dart';
 import 'package:test/test.dart';
 
 @KeyPathable()

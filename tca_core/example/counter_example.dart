@@ -1,4 +1,4 @@
-import 'package:composable_architecture/core.dart';
+import 'package:composable_architecture/composable_architecture.dart';
 
 final class CounterState extends Equatable {
   final int count;

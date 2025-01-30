@@ -1,4 +1,4 @@
-import 'package:composable_architecture/core.dart';
+import 'package:composable_architecture/composable_architecture.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 

@@ -1,5 +1,5 @@
 // ignore: must_be_immutable
-import 'package:composable_architecture/core.dart';
+import 'package:composable_architecture/composable_architecture.dart';
 
 // ignore: must_be_immutable
 final class AppState extends Equatable {
