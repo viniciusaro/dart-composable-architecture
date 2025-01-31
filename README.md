@@ -119,3 +119,7 @@ class FeatureWidget extends StatelessWidget {
   }
 }
 ```
+
+The final result is something like the following:
+
+![Simulator Screen Recording - iPhone 16 Pro - 2025-01-31 at 11 07 36](https://github.com/user-attachments/assets/6d94c617-0318-48ba-806a-0b7d6ca50a93)
