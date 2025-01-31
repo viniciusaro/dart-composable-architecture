@@ -1,4 +1,4 @@
-# The Composable Architecture - Dart
+# The Composable Architecture - Dart (experimental)
 
 Port of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA, for short) for the [Dart Language](https://dart.dev) and [Flutter Framework](https://flutter.dev).
 
@@ -29,11 +29,11 @@ We also need to define a type for the feature's actions. There are the obvious a
 ```dart 
 @CaseKeyPathable()
 final class FeatureAction<
-    DecrementButtonTapped,
-    IncrementButtonTapped,
-    NumberFactButtonTapped,
-    NumberFactResponse extends NumberFactResponseValue //
-    > {}
+  DecrementButtonTapped,
+  IncrementButtonTapped,
+  NumberFactButtonTapped,
+  NumberFactResponse extends NumberFactResponseValue //
+> {}
 
 final class NumberFactResponseValue {
   final String value;
@@ -55,19 +55,67 @@ Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction ac
       return Effect.none();
 
     case FeatureActionNumberFactButtonTapped():
-      return Effect.future(() {
-        final uri = Uri.parse("http://numbersapi.com/${state.value.count})/trivia");
-        return http.post(uri).then(
-              (response) => FeatureAction.numberFactResponse(
-                NumberFactResponseValue(response.body),
-              ),
-            );
+      return Effect.future(() async {
+        final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
+        final response = await http.get(uri);
+        return FeatureAction.numberFactResponse(NumberFactResponseValue(response.body));
       });
-      
+
     case FeatureActionNumberFactResponse():
       state.mutate((s) => s..numberFact = action.numberFactResponse.value);
       return Effect.none();
   }
   throw Exception("invalid action");
+}
+```
+
+And then finally we define the widget that displays the feature. It holds onto a `Store<FeatureState, FeatureAction>` and wraps it's body in a `WithViewStore<FeatureState, FeatureAction>` so that it can observe all changes to the state and re-render. We can send all user actions to the store so that state changes:
+
+```dart
+class FeatureWidget extends StatelessWidget {
+  final Store<FeatureState, FeatureAction> store;
+
+  const FeatureWidget({super.key, required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    return WithViewStore<FeatureState, FeatureAction>(
+      store,
+      body: (viewStore) {
+        return Center(
+          child: Column(
+            spacing: 8,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Count: ${viewStore.state.count}"),
+              ElevatedButton(
+                onPressed: () => viewStore.send(FeatureAction.numberFactButtonTapped()),
+                child: Text("Number Fact"),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => viewStore.send(FeatureAction.incrementButtonTapped()),
+                    child: Text("+"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => viewStore.send(FeatureAction.decrementButtonTapped()),
+                    child: Text("-"),
+                  ),
+                ],
+              ),
+              if (viewStore.state.numberFact != null)
+                Padding(
+                  padding: EdgeInsets.all(18),
+                  child: Text("Fact: ${viewStore.state.numberFact}", textAlign: TextAlign.center),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 ```

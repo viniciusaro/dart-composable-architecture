@@ -1,69 +1,101 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(
-    MaterialApp(home: Counter(store: Store(initialState: CounterState(), reducer: counterReducer))),
+    MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: FeatureWidget(store: Store(initialState: FeatureState(), reducer: featureReducer)),
+      ),
+    ),
   );
 }
 
 @KeyPathable()
-final class CounterState {
+final class FeatureState {
   int count = 0;
+  String? numberFact;
 }
 
 @CaseKeyPathable()
-final class CounterAction<Increment, Decrement> {}
+final class FeatureAction<
+  DecrementButtonTapped,
+  IncrementButtonTapped,
+  NumberFactButtonTapped,
+  NumberFactResponse extends NumberFactResponseValue //
+> {}
 
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
-  switch (action) {
-    case CounterActionIncrement():
-      state.mutate((s) => s..count += 1);
-      return Effect.none();
-    case CounterActionDecrement():
-      state.mutate((s) => s..count -= 1);
-      return Effect.none();
-  }
-  return Effect.none();
+final class NumberFactResponseValue {
+  final String value;
+  NumberFactResponseValue(this.value);
 }
 
-class Counter extends StatelessWidget {
-  final Store<CounterState, CounterAction> store;
+Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction action) {
+  switch (action) {
+    case FeatureActionDecrementButtonTapped():
+      state.mutate((s) => s..count -= 1);
+      return Effect.none();
 
-  const Counter({super.key, required this.store});
+    case FeatureActionIncrementButtonTapped():
+      state.mutate((s) => s..count += 1);
+      return Effect.none();
+
+    case FeatureActionNumberFactButtonTapped():
+      return Effect.future(() async {
+        final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
+        final response = await http.get(uri);
+        return FeatureAction.numberFactResponse(NumberFactResponseValue(response.body));
+      });
+
+    case FeatureActionNumberFactResponse():
+      state.mutate((s) => s..numberFact = action.numberFactResponse.value);
+      return Effect.none();
+  }
+  throw Exception("invalid action");
+}
+
+class FeatureWidget extends StatelessWidget {
+  final Store<FeatureState, FeatureAction> store;
+
+  const FeatureWidget({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore<CounterState, CounterAction>(
+    return WithViewStore<FeatureState, FeatureAction>(
       store,
       body: (viewStore) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Count: ${viewStore.state.count}"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        viewStore.send(CounterAction.increment());
-                      },
-                      child: Text("+"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        viewStore.send(CounterAction.decrement());
-                      },
-                      child: Text("-"),
-                    ),
-                  ],
+        return Center(
+          child: Column(
+            spacing: 8,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Count: ${viewStore.state.count}"),
+              ElevatedButton(
+                onPressed: () => viewStore.send(FeatureAction.numberFactButtonTapped()),
+                child: Text("Number Fact"),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => viewStore.send(FeatureAction.incrementButtonTapped()),
+                    child: Text("+"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => viewStore.send(FeatureAction.decrementButtonTapped()),
+                    child: Text("-"),
+                  ),
+                ],
+              ),
+              if (viewStore.state.numberFact != null)
+                Padding(
+                  padding: EdgeInsets.all(18),
+                  child: Text("Fact: ${viewStore.state.numberFact}", textAlign: TextAlign.center),
                 ),
-              ],
-            ),
+            ],
           ),
         );
       },
