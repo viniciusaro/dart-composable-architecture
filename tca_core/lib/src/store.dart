@@ -11,6 +11,8 @@ final class Store<State, Action> {
   final Reducer<State, Action> _reducer;
   final Inout<State> _state;
   State get state => _state._value;
+  final StreamController<State> _stateController = StreamController.broadcast();
+  Stream<State> get stream => _stateController.stream;
 
   Store({
     required State initialState,
@@ -22,6 +24,7 @@ final class Store<State, Action> {
     _state._isMutationAllowed = true;
     final effect = _reducer(_state, action);
     _state._isMutationAllowed = false;
+    _stateController.add(_state._value);
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];

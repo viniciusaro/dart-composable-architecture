@@ -17,10 +17,10 @@ As a basic example, consider a UI that shows a number along with "+" and "−" b
 To implement this feature we start by defining a new type for the feature's state, which consists of an integer for the current count, as well as an optional string that represents the fact being presented:
 
 ```dart
-@KeyPathable
+@KeyPathable()
 final class FeatureState {
-    int count = 0;
-    String? numberFact;
+  int count = 0;
+  String? numberFact;
 }
 ```
 
