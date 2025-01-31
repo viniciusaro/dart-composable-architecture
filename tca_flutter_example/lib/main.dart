@@ -16,6 +16,7 @@ void main() {
 @KeyPathable()
 final class FeatureState {
   int count = 0;
+  bool isLoading = false;
   String? numberFact;
 }
 
@@ -43,6 +44,7 @@ Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction ac
       return Effect.none();
 
     case FeatureActionNumberFactButtonTapped():
+      state.mutate((s) => s..isLoading = true);
       return Effect.future(() async {
         final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
         final response = await http.get(uri);
@@ -50,11 +52,17 @@ Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction ac
       });
 
     case FeatureActionNumberFactResponse():
-      state.mutate((s) => s..numberFact = action.numberFactResponse.value);
+      state.mutate((s) {
+        return s
+          ..isLoading = false
+          ..numberFact = action.numberFactResponse.value;
+      });
       return Effect.none();
   }
   throw Exception("invalid action");
 }
+
+final class FeatureReducer<State, Action> {}
 
 class FeatureWidget extends StatelessWidget {
   final Store<FeatureState, FeatureAction> store;
@@ -90,9 +98,14 @@ class FeatureWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              if (viewStore.state.numberFact != null)
+              if (viewStore.state.isLoading)
                 Padding(
-                  padding: EdgeInsets.all(18),
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: CircularProgressIndicator(),
+                )
+              else if (viewStore.state.numberFact != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18),
                   child: Text("Fact: ${viewStore.state.numberFact}", textAlign: TextAlign.center),
                 ),
             ],
