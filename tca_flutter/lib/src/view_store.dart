@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:flutter/material.dart';
 
@@ -14,14 +12,15 @@ class WithViewStore<S, A> extends StatefulWidget {
 }
 
 class _WithViewStoreState<S, A> extends State<WithViewStore<S, A>> {
-  StreamSubscription<S>? _subscription;
+  SyncStreamSubscription? _subscription;
 
   @override
   void initState() {
-    _subscription = widget._store.stream.listen((_) {
+    super.initState();
+    _subscription?.cancel();
+    _subscription = widget._store.syncStream.listen((_) {
       setState(() {});
     });
-    super.initState();
   }
 
   @override
@@ -32,6 +31,7 @@ class _WithViewStoreState<S, A> extends State<WithViewStore<S, A>> {
   @override
   void dispose() {
     _subscription?.cancel();
+    widget._store.close();
     super.dispose();
   }
 }

@@ -5,11 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "tca_flutter_example",
+            "name": "Example - Number Fact",
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart",
+            "program": "lib/number_fact.dart",
+            "args": [
+                "--enable-experiment=macros"
+            ]
+        },
+        {
+            "name": "Example - Feature Composition",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/feature_composition.dart",
             "args": [
                 "--enable-experiment=macros"
             ]
