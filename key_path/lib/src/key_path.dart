@@ -7,7 +7,7 @@ final class KeyPath<Root, Prop> {
         get: (a) => a,
         set: (a, b) {
           a = b;
-          return a;
+          return a ?? b;
         });
   }
 }
@@ -71,7 +71,7 @@ extension KeyPathX<Root, Prop> on KeyPath<Root, Prop> {
 final class WritableKeyPath<Root, Prop> implements KeyPath<Root, Prop> {
   @override
   final Prop Function(Root) get;
-  final Root Function(Root, Prop) set;
+  final Root Function(Root?, Prop) set;
   WritableKeyPath({required this.get, required this.set});
 }
 
@@ -81,10 +81,10 @@ extension WritableKeyPathX<Root, Prop> on WritableKeyPath<Root, Prop> {
       final prop = get(root);
       return deeper.get(prop);
     }, set: (root, deep) {
-      final prop = get(root);
-      deeper.set(prop, deep);
-      set(root, prop);
-      return root;
+      final prop = root != null ? get(root) : null;
+      final updatedProp = deeper.set(prop, deep);
+      final updatedRoot = set(root, updatedProp);
+      return updatedRoot;
     });
   }
 }

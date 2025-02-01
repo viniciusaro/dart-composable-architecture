@@ -8,12 +8,30 @@ final class Inout<T> {
   bool _isMutationAllowed = false;
   Inout({required T value}) : _value = value;
 
-  void mutate(T Function(T) mutation) {
+  T mutate(T Function(T) mutation) {
     if (_isMutationAllowed) {
       _value = mutation(_value);
+      return _value;
     } else {
       throw EffectfullStateMutation();
     }
+  }
+}
+
+extension ReducerX<State, Action> on Reducer<State, Action> {
+  Reducer<State, Action> onChange<LocalState>({
+    required LocalState Function(State) of,
+    required State Function(State, LocalState) update,
+  }) {
+    return (state, action) {
+      final previousValue = of(state.value);
+      final effect = this(state, action);
+      final updatedValue = of(state.value);
+      if (identical(updatedValue, previousValue) || previousValue != updatedValue) {
+        state.mutate((s) => update(state.value, updatedValue));
+      }
+      return effect;
+    };
   }
 }
 
@@ -26,7 +44,9 @@ Reducer<State, Action> debug<State, Action>(
     final previous = state._value;
     final effect = other(state, action);
     final updated = state._value;
-    final msgUpdate = previous == updated ? "state: no changes detected" : "state: $updated";
+    final msgUpdate = (previous != updated || identical(previous, updated))
+        ? "state: $updated"
+        : "state: no changes detected";
 
     return Effect(() {
       print(msgHeader);

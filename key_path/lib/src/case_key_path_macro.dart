@@ -83,9 +83,12 @@ final class _CaseKeyPathable {
   const _CaseKeyPathable();
 
   FutureOr<void> buildDeclarationsForClass(ClassDeclaration clazz, MemberDeclarationBuilder builder) {
-    builder.declareInLibrary(
-      DeclarationCode.fromString("import 'package:key_path/key_path.dart' as kp;"),
-    );
+        
+    builder.declareInLibrary(DeclarationCode.fromString(
+      """
+// ignore: non_part_of_directive_in_part, duplicate_import
+import 'package:key_path/key_path.dart' as kp;
+"""),);
     final rootType = clazz.identifier.name;
 
     for (final type in clazz.typeParameters) {
@@ -105,7 +108,7 @@ final class _CaseKeyPathable {
     if (propAction != null) {
       rootAction = $rootType.$prop();
     }
-    return rootAction;
+    return rootAction!;
   },);"""));
       } else {
         builder.declareInType(DeclarationCode.fromString("""
@@ -118,7 +121,7 @@ final class _CaseKeyPathable {
     if (propAction != null) {
       rootAction = $rootType.$prop(propAction);
     }
-    return rootAction;
+    return rootAction!;
   },);"""));
       }
     }
