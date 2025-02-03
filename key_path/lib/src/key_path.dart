@@ -10,6 +10,15 @@ final class KeyPath<Root, Prop> {
           return a ?? b;
         });
   }
+
+  static WritableKeyPath<A, A?> identityOptional<A>() {
+    return WritableKeyPath(
+        get: (a) => a,
+        set: (a, b) {
+          a = b;
+          return a!;
+        });
+  }
 }
 
 KeyPath<Root, Prop> path0<Root, Prop>(

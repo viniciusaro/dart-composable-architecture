@@ -1,6 +1,12 @@
 // ignore: must_be_immutable
 import 'package:composable_architecture/composable_architecture.dart';
 
+const unit = Unit._();
+
+final class Unit {
+  const Unit._();
+}
+
 // ignore: must_be_immutable
 final class AppState extends Equatable {
   int count;
