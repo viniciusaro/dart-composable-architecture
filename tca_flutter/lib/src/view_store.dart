@@ -31,7 +31,6 @@ class _WithViewStoreState<S, A> extends State<WithViewStore<S, A>> {
   @override
   void dispose() {
     _subscription?.cancel();
-    widget._store.close();
     super.dispose();
   }
 }

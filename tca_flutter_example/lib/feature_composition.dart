@@ -2,14 +2,21 @@ import 'package:composable_architecture_flutter/composable_architecture_flutter.
 import 'package:flutter/material.dart';
 
 @KeyPathable()
-final class AppState {
-  CounterState counter = CounterState();
-  FavoritesState favorites = FavoritesState();
+final class AppState extends Equatable {
+  final CounterState counter;
+  final FavoritesState favorites;
+
+  const AppState({
+    this.counter = const CounterState(),
+    this.favorites = const FavoritesState(), //
+  });
+
+  AppState copyWith({CounterState? counter, FavoritesState? favorites}) {
+    return AppState(counter: counter ?? this.counter, favorites: favorites ?? this.favorites);
+  }
 
   @override
-  String toString() {
-    return "AppState: counter: $counter, favorites: $favorites";
-  }
+  List<Object?> get props => [counter, favorites];
 }
 
 @CaseKeyPathable()
@@ -19,14 +26,21 @@ final class AppAction<
 > {}
 
 @KeyPathable()
-final class CounterState {
-  int count = 0;
-  Set<int> favorites = {};
+final class CounterState extends Equatable {
+  final int count;
+  final Set<int> favorites;
+
+  const CounterState({this.count = 0, this.favorites = const {}});
+
+  CounterState copyWith({int? count, Set<int>? favorites}) {
+    return CounterState(
+      count: count ?? this.count,
+      favorites: favorites ?? this.favorites, //
+    );
+  }
 
   @override
-  String toString() {
-    return "CounterState: count: $count, favorites: $favorites";
-  }
+  List<Object?> get props => [count, favorites];
 }
 
 @CaseKeyPathable()
@@ -37,14 +51,16 @@ final class CounterAction<
 > {}
 
 @KeyPathable()
-final class FavoritesState {
-  Set<int> favorites = {};
-  FavoritesState();
+final class FavoritesState extends Equatable {
+  final Set<int> favorites;
+  const FavoritesState({this.favorites = const {}});
+
+  FavoritesState copyWith({Set<int>? favorites}) {
+    return FavoritesState(favorites: favorites ?? this.favorites);
+  }
 
   @override
-  String toString() {
-    return "FavortiesState: favorites: $favorites";
-  }
+  List<Object?> get props => [favorites];
 }
 
 @CaseKeyPathable()
@@ -60,13 +76,13 @@ final class RemoveNumber {
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterActionAddToFavoritesButtonTapped():
-      state.mutate((s) => s..favorites.add(state.value.count));
+      state.mutate((s) => s.copyWith(favorites: {...s.favorites, s.count}));
       return Effect.none();
     case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+      state.mutate((s) => s.copyWith(count: s.count + 1));
       return Effect.none();
     case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+      state.mutate((s) => s.copyWith(count: s.count - 1));
       return Effect.none();
   }
   throw Exception("invalid action");
@@ -75,7 +91,10 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
 Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
   switch (action) {
     case FavoritesActionRemove():
-      state.mutate((s) => s..favorites.remove(action.remove.number));
+      state.mutate((s) {
+        final favorites = s.favorites.where((e) => e != action.remove.number);
+        return s.copyWith(favorites: Set.from(favorites));
+      });
       return Effect.none();
   }
   throw Exception("invalid action");
@@ -206,11 +225,15 @@ void main() {
       ])
       .onChange(
         of: (state) => state.counter.favorites,
-        update: (state, favorites) => state..favorites.favorites = favorites,
+        update: (state, favorites) {
+          return state.copyWith(favorites: state.favorites.copyWith(favorites: favorites));
+        },
       )
       .onChange(
         of: (state) => state.favorites.favorites,
-        update: (state, favorites) => state..counter.favorites = favorites,
+        update: (state, favorites) {
+          return state.copyWith(counter: state.counter.copyWith(favorites: favorites));
+        },
       );
 
   runApp(

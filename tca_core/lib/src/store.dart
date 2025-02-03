@@ -8,12 +8,17 @@ part '_syncStream.dart';
 part 'effect.dart';
 part 'reducer.dart';
 
+final class StateUpdate<State> {
+  final State state;
+  final bool fromChild;
+  const StateUpdate(this.state, this.fromChild);
+}
+
 final class Store<State, Action> {
   final Reducer<State, Action> _reducer;
   final Inout<State> _state;
   State get state => _state._value;
-  final syncStream = SyncStream<State>();
-  void Function()? _onClose;
+  final syncStream = SyncStream<StateUpdate<State>>();
 
   Store({
     required State initialState,
@@ -21,22 +26,19 @@ final class Store<State, Action> {
   })  : _state = Inout(value: initialState),
         _reducer = reducer;
 
-  Store._({
-    required State initialState,
-    required Reducer<State, Action> reducer,
-    void Function()? onClose,
-  })  : _state = Inout(value: initialState),
-        _reducer = reducer,
-        _onClose = onClose;
-
   void send(Action action) {
+    _send(action);
+  }
+
+  void _send(Action action, {bool fromChild = false}) {
     _state._isMutationAllowed = true;
     final effect = _reducer(_state, action);
     _state._isMutationAllowed = false;
-    syncStream._add(_state._value);
+    syncStream._add(StateUpdate(_state._value, fromChild));
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];
+
     final subscription = stream.listen(send);
 
     if (id != null) {
@@ -48,28 +50,24 @@ final class Store<State, Action> {
     required WritableKeyPath<State, LocalState> state,
     required WritableKeyPath<Action, LocalAction?> action,
   }) {
-    late Store<LocalState, LocalAction> store;
-
-    final subscription = syncStream.listen((update) {
-      store._state._value = state.get(update);
-    });
-
-    store = Store<LocalState, LocalAction>._(
+    final store = Store<LocalState, LocalAction>(
       initialState: state.get(this.state),
       reducer: (localState, localAction) {
         final globalAction = action.set(null, localAction);
         if (globalAction != null) {
-          send(globalAction);
+          _send(globalAction, fromChild: true);
         }
         return Effect.none();
       },
-      onClose: () => subscription.cancel(),
     );
 
-    return store;
-  }
+    syncStream.listen((update) {
+      store._state._value = state.get(update.state);
+      if (!update.fromChild) {
+        store.syncStream._add(StateUpdate(state.get(update.state), false));
+      }
+    });
 
-  void close() {
-    _onClose?.call();
+    return store;
   }
 }

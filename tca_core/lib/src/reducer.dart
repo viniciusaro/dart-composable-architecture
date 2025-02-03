@@ -18,7 +18,7 @@ final class Inout<T> {
   }
 }
 
-extension ReducerX<State, Action> on Reducer<State, Action> {
+extension ReducerChangeEquatable<State extends Equatable, Action> on Reducer<State, Action> {
   Reducer<State, Action> onChange<LocalState>({
     required LocalState Function(State) of,
     required State Function(State, LocalState) update,
@@ -27,7 +27,7 @@ extension ReducerX<State, Action> on Reducer<State, Action> {
       final previousValue = of(state.value);
       final effect = this(state, action);
       final updatedValue = of(state.value);
-      if (identical(updatedValue, previousValue) || previousValue != updatedValue) {
+      if (previousValue != updatedValue) {
         state.mutate((s) => update(state.value, updatedValue));
       }
       return effect;
@@ -80,7 +80,7 @@ Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalStat
     localState._isMutationAllowed = true;
     final localEffect = other(localState, localAction);
     localState._isMutationAllowed = false;
-    state.set(globalState._value, localState._value);
+    globalState._value = state.set(globalState._value, localState._value);
 
     return localEffect.map((localAction) {
       action.set(globalAction, localAction);
