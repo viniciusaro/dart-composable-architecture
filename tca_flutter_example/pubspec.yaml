@@ -31,6 +31,8 @@ dependencies:
   composable_architecture_flutter:
     path: ../tca_flutter
 
+  equatable: 2.0.7
+
   flutter:
     sdk: flutter  
 
