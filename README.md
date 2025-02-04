@@ -2,6 +2,9 @@
 
 Port of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA, for short) for the [Dart Language](https://dart.dev) and [Flutter Framework](https://flutter.dev).
 
+- [Examples](https://github.com/viniciusaro/dart-composable-architecture/tree/main/tca_flutter_example/lib)
+- [Basic Usage](https://github.com/viniciusaro/dart-composable-architecture?tab=readme-ov-file#basic-usage)
+
 ## Basic Usage
 
 To build a feature using the Composable Architecture you define some types and values that model your domain:
