@@ -33,6 +33,12 @@ final class Effect<Action> {
     return Effects.merge(effects);
   }
 
+  static Effect<Action> async<Action>(Future<void> Function() body) {
+    return Effect(() async* {
+      await body();
+    });
+  }
+
   static Effect<Action> sync<Action>(void Function() body) {
     return Effect(() {
       body();
