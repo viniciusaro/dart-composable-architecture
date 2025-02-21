@@ -13,7 +13,7 @@ the Composable Architecture. Check out [this](./tca_flutter_example/lib) directo
 
 * [Feature Composition](./tca_flutter_example/lib/feature_composition.dart)
 * [Number Fact](./tca_flutter_example/lib/number_fact.dart)
-* [Realtime Counter Sync](./tca_flutter_example/lib/realtime_sync/realtime_sync.dart)
+* [Realtime Counter Sync](./tca_flutter_example/lib/realtime_counter_sync/realtime_counter_sync.dart)
 
 ## Basic Usage
 

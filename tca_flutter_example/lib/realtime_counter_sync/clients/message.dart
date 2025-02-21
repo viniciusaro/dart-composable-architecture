@@ -1,4 +1,4 @@
-part of 'realtime_sync.dart';
+part of '../realtime_counter_sync.dart';
 
 final class Message {
   final String action;

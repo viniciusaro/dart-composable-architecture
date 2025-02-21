@@ -29,7 +29,7 @@
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/realtime_sync/realtime_sync.dart",
+            "program": "lib/realtime_counter_sync/realtime_counter_sync.dart",
             "args": [
                 "--enable-experiment=macros"
             ]
