@@ -1,4 +1,4 @@
-part of '../realtime_counter_sync.dart';
+part of 'message_broker_client.dart';
 
 final udpMulticastService = UdpMulticastService._();
 

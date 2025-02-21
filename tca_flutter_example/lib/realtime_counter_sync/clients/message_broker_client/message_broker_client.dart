@@ -1,4 +1,13 @@
-part of '../realtime_counter_sync.dart';
+import 'dart:async';
+import 'dart:io';
+
+import '../device_id_client.dart';
+
+part 'message.dart';
+part 'stream.dart';
+part 'udp_multicast_service.dart';
+
+final messageBrokerClient = udpMulticastMessageBrokerClient;
 
 final class MessageBrokerClient {
   Stream<Message> Function() listen;
