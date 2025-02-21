@@ -23,6 +23,16 @@
             "args": [
                 "--enable-experiment=macros"
             ]
+        },
+        {
+            "name": "Example - Realtime Sync",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/realtime_sync/realtime_sync.dart",
+            "args": [
+                "--enable-experiment=macros"
+            ]
         }
     ]
 }
