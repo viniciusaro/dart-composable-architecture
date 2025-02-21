@@ -2,8 +2,20 @@
 
 Port of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA, for short) for the [Dart Language](https://dart.dev) and [Flutter Framework](https://flutter.dev).
 
-- [Examples](https://github.com/viniciusaro/dart-composable-architecture/tree/main/tca_flutter_example/lib)
-- [Basic Usage](https://github.com/viniciusaro/dart-composable-architecture?tab=readme-ov-file#basic-usage)
+- [Examples](#examples)
+- [Basic Usage](#basic-usage)
+
+## Examples
+https://github.com/user-attachments/assets/27af38b1-189b-4f59-8710-f41026ca20fa
+
+The repo comes with many examples to demonstrate how to solve comm
+
+This repo comes with _lots_ of examples to demonstrate how to solve common and complex problems with 
+the Composable Architecture. Check out [this](./tca_flutter_example) directory to see them all, including:
+
+* [Feature Composition](./tca_flutter_example/feature_composition.dart)
+* [Number Fact](./tca_flutter_example/number_fact.dart)
+* [Realtime Counter Sync](./tca_flutter_example/realtime_sync/realtime_sync.dart)
 
 ## Basic Usage
 
