@@ -1,8 +1,11 @@
-part of '../realtime_counter_sync.dart';
+import 'dart:math';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+final deviceIdClient = liveDeviceIdClient;
 
 final class DeviceIdClient {
   Future<String> Function() getDeviceId;
-
   DeviceIdClient({required this.getDeviceId});
 }
 

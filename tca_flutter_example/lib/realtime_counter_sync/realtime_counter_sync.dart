@@ -1,19 +1,9 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:math';
 
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-part 'clients/device_id_client.dart';
-part 'clients/message_broker_client.dart';
-part 'clients/message.dart';
-part 'clients/stream.dart';
-part 'clients/udp_multicast_service.dart';
-
-final deviceIdClient = liveDeviceIdClient;
-final messageBrokerClient = udpMulticastMessageBrokerClient;
+import 'clients/message_broker_client/message_broker_client.dart';
 
 @KeyPathable()
 final class AppState {
