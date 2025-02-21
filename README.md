@@ -9,7 +9,7 @@ Port of [The Composable Architecture](https://github.com/pointfreeco/swift-compo
 https://github.com/user-attachments/assets/27af38b1-189b-4f59-8710-f41026ca20fa
 
 This repo comes with _lots_ of examples to demonstrate how to solve common and complex problems with 
-the Composable Architecture. Check out [this](./tca_flutter_example) directory to see them all, including:
+the Composable Architecture. Check out [this](./tca_flutter_example/lib) directory to see them all, including:
 
 * [Feature Composition](./tca_flutter_example/lib/feature_composition.dart)
 * [Number Fact](./tca_flutter_example/lib/number_fact.dart)
