@@ -9,20 +9,14 @@
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/number_fact.dart",
-            "args": [
-                "--enable-experiment=macros"
-            ]
+            "program": "lib/number_fact/number_fact.dart",
         },
         {
             "name": "Example - Feature Composition",
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/feature_composition.dart",
-            "args": [
-                "--enable-experiment=macros"
-            ]
+            "program": "lib/feature_composition/feature_composition.dart",
         },
         {
             "name": "Example - Realtime Sync",
@@ -30,9 +24,6 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/realtime_counter_sync/realtime_counter_sync.dart",
-            "args": [
-                "--enable-experiment=macros"
-            ]
         }
     ]
 }

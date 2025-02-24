@@ -1,6 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
+part 'feature_composition.g.dart';
+
 @KeyPathable()
 final class AppState extends Equatable {
   final CounterState counter;
@@ -123,17 +125,17 @@ class CounterWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterAction.incrementButtonTapped()),
+                      onPressed: () => viewStore.send(CounterActionEnum.incrementButtonTapped()),
                       child: Text("+"),
                     ),
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterAction.decrementButtonTapped()),
+                      onPressed: () => viewStore.send(CounterActionEnum.decrementButtonTapped()),
                       child: Text("-"),
                     ),
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: () => viewStore.send(CounterAction.addToFavoritesButtonTapped()),
+                  onPressed: () => viewStore.send(CounterActionEnum.addToFavoritesButtonTapped()),
                   child: Text("Add to favorites"),
                 ),
               ],
@@ -166,7 +168,7 @@ class FavoritesWidget extends StatelessWidget {
                 key: Key(item.toString()),
                 child: ListTile(title: Text("$item")),
                 onDismissed: (direction) {
-                  viewStore.send(FavoritesAction.remove(RemoveNumber(item)));
+                  viewStore.send(FavoritesActionEnum.remove(RemoveNumber(item)));
                 },
               );
             },
@@ -200,14 +202,14 @@ class AppWidget extends StatelessWidget {
             children: [
               CounterWidget(
                 store: store.view(
-                  state: AppState.counterPath,
-                  action: AppAction.counterPath, //
+                  state: AppStatePath.counter,
+                  action: AppActionPath.counter, //
                 ),
               ),
               FavoritesWidget(
                 store: store.view(
-                  state: AppState.favoritesPath,
-                  action: AppAction.favoritesPath, //
+                  state: AppStatePath.favorites,
+                  action: AppActionPath.favorites, //
                 ),
               ),
             ],
@@ -220,8 +222,8 @@ class AppWidget extends StatelessWidget {
 
 void main() {
   final appReducer = combine([
-        pullback(counterReducer, state: AppState.counterPath, action: AppAction.counterPath),
-        pullback(favoritesReducer, state: AppState.favoritesPath, action: AppAction.favoritesPath),
+        pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
+        pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
       ])
       .onChange(
         of: (state) => state.counter.favorites,

@@ -1,6 +1,8 @@
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:test/test.dart';
 
+part 'reducer_high_order_test.g.dart';
+
 @KeyPathable()
 class RootState {
   CounterState counter = CounterState();
@@ -90,16 +92,16 @@ void main() {
     test('pullback transforms local reducer into global one', () {
       final Reducer<RootState, RootAction> reducer = pullback(
         favoritesReducer,
-        state: RootState.favoritesPath,
-        action: RootAction.favoritesPath,
+        state: RootStatePath.favorites,
+        action: RootActionPath.favorites,
       );
 
       final store = Store(initialState: RootState(), reducer: reducer);
 
-      store.send(RootAction.favorites(FavoritesAction.add(FavoritesAdd(1))));
+      store.send(RootActionEnum.favorites(FavoritesActionEnum.add(FavoritesAdd(1))));
       expect(store.state.favorites.favorites, [1]);
 
-      store.send(RootAction.favorites(FavoritesAction.removeAt(FavoritesRemoveAt(0))));
+      store.send(RootActionEnum.favorites(FavoritesActionEnum.removeAt(FavoritesRemoveAt(0))));
       expect(store.state.favorites.favorites, []);
     });
 
@@ -111,10 +113,10 @@ void main() {
 
       final store = Store(initialState: FavoritesState(), reducer: reducer);
 
-      store.send(FavoritesAction.add(FavoritesAdd(1)));
+      store.send(FavoritesActionEnum.add(FavoritesAdd(1)));
       expect(store.state.favorites, [1]);
 
-      store.send(FavoritesAction.removeAt(FavoritesRemoveAt(0)));
+      store.send(FavoritesActionEnum.removeAt(FavoritesRemoveAt(0)));
       expect(store.state.favorites, []);
 
       expect(analytics, ["add 1", "remove at 0"]);
@@ -124,22 +126,22 @@ void main() {
       final Reducer<RootState, RootAction> reducer = combine([
         pullback(
           counterReducer,
-          state: RootState.counterPath,
-          action: RootAction.counterPath,
+          state: RootStatePath.counter,
+          action: RootActionPath.counter,
         ),
         pullback(
           favoritesReducer,
-          state: RootState.favoritesPath,
-          action: RootAction.favoritesPath,
+          state: RootStatePath.favorites,
+          action: RootActionPath.favorites,
         ),
       ]);
 
       final store = Store(initialState: RootState(), reducer: reducer);
 
-      store.send(RootAction.counter(CounterAction.increment()));
+      store.send(RootActionEnum.counter(CounterActionEnum.increment()));
       expect(store.state.counter.count, 1);
 
-      store.send(RootAction.favorites(FavoritesAction.add(FavoritesAdd(1))));
+      store.send(RootActionEnum.favorites(FavoritesActionEnum.add(FavoritesAdd(1))));
       expect(store.state.favorites.favorites, [1]);
     });
   });

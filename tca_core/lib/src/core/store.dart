@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:key_path/key_path.dart';
 
-part '_exceptions.dart';
-part '_syncStream.dart';
+import 'key_path.dart';
+
+part '_helpers/_exceptions.dart';
+part '_helpers/_syncStream.dart';
 part 'effect.dart';
 part 'reducer.dart';
 

@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      composable_architecture:key_path:
+        generate_for:
+          - example/*
+          - test/*
+
+builders:
+  key_path:
+    import: "package:composable_architecture/builder.dart"
+    builder_factories: ["keyPathBuilder"]
+    build_extensions: {".dart": [".key_path.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

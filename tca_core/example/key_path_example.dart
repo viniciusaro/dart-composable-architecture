@@ -1,4 +1,6 @@
-import 'package:key_path/key_path.dart';
+import 'package:composable_architecture/composable_architecture.dart';
+
+part 'key_path_example.g.dart';
 
 @KeyPathable()
 class App {
@@ -29,12 +31,12 @@ void main() {
   final app = App(Session(User(UserId(2), "Blob")));
 
   final user = getProp(
-    path(App.sessionPath, Session.userPath),
+    path(AppPath.session, SessionPath.user),
     app,
   );
 
   final id = getProp(
-    path4(App.sessionPath, Session.userPath, User.idPath, UserId.valuePath),
+    path4(AppPath.session, SessionPath.user, UserPath.id, UserIdPath.value),
     app,
   );
 

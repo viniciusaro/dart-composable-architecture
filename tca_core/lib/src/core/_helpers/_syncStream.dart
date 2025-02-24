@@ -1,4 +1,4 @@
-part of 'store.dart';
+part of '../store.dart';
 
 final class SyncStreamSubscription<T> {
   int get id => hashCode;
