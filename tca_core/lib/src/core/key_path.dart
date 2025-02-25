@@ -1,3 +1,5 @@
+part of 'store.dart';
+
 final class KeyPath<Root, Prop> {
   final Prop Function(Root) get;
   KeyPath({required this.get});
@@ -19,6 +21,14 @@ final class KeyPath<Root, Prop> {
           return a!;
         });
   }
+}
+
+final class KeyPathable {
+  const KeyPathable();
+}
+
+final class CaseKeyPathable {
+  const CaseKeyPathable();
 }
 
 KeyPath<Root, Prop> path0<Root, Prop>(
@@ -96,13 +106,4 @@ extension WritableKeyPathX<Root, Prop> on WritableKeyPath<Root, Prop> {
       return updatedRoot;
     });
   }
-}
-
-Prop getProp<Root, Prop>(KeyPath<Root, Prop> keyPath, Root obj) {
-  return keyPath.get(obj);
-}
-
-Root setProp<Root, Prop>(WritableKeyPath<Root, Prop> keyPath, Root obj, Prop value) {
-  keyPath.set(obj, value);
-  return obj;
 }

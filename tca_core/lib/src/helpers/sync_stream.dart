@@ -1,5 +1,3 @@
-part of '../store.dart';
-
 final class SyncStreamSubscription<T> {
   int get id => hashCode;
   final void Function(int) _onCancel;
@@ -13,7 +11,7 @@ final class SyncStreamSubscription<T> {
 final class SyncStream<T> {
   final Map<int, void Function(T)> _listeners = {};
 
-  void _add(T value) {
+  void add(T value) {
     _notifyListeners(value);
   }
 

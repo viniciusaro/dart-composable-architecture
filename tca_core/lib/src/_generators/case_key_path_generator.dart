@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:build/build.dart';
+import 'package:composable_architecture/composable_architecture.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/element.dart';
-
-import '../_annotations/annotations.dart';
 
 class CaseKeyPathGenerator extends GeneratorForAnnotation<CaseKeyPathable> {
   @override

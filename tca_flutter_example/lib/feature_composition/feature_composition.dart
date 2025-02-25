@@ -22,7 +22,7 @@ final class AppState extends Equatable {
 }
 
 @CaseKeyPathable()
-final class AppAction<
+sealed class AppAction<
   Counter extends CounterAction,
   Favorites extends FavoritesAction //
 > {}
@@ -46,7 +46,7 @@ final class CounterState extends Equatable {
 }
 
 @CaseKeyPathable()
-final class CounterAction<
+sealed class CounterAction<
   AddToFavoritesButtonTapped,
   IncrementButtonTapped,
   DecrementButtonTapped //
@@ -66,7 +66,7 @@ final class FavoritesState extends Equatable {
 }
 
 @CaseKeyPathable()
-final class FavoritesAction<
+sealed class FavoritesAction<
   Remove extends RemoveNumber //
 > {}
 
@@ -87,7 +87,6 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       state.mutate((s) => s.copyWith(count: s.count - 1));
       return Effect.none();
   }
-  throw Exception("invalid action");
 }
 
 Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
@@ -99,7 +98,6 @@ Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesA
       });
       return Effect.none();
   }
-  throw Exception("invalid action");
 }
 
 class CounterWidget extends StatelessWidget {
