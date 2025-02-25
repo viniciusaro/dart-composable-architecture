@@ -12,7 +12,7 @@ final class FeatureState {
 }
 
 @CaseKeyPathable()
-final class FeatureAction<
+sealed class FeatureAction<
   DecrementButtonTapped,
   IncrementButtonTapped,
   NumberFactButtonTapped,
@@ -50,7 +50,6 @@ Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction ac
       });
       return Effect.none();
   }
-  throw Exception("invalid action");
 }
 
 final class FeatureReducer<State, Action> {}

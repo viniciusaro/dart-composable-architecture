@@ -18,7 +18,7 @@ final class AppState {
 }
 
 @CaseKeyPathable()
-final class AppAction<
+sealed class AppAction<
   Counter extends CounterAction,
   MessageBroker extends MessageBrokerAction,
   OnInitState //
@@ -64,7 +64,7 @@ final class CounterState {
 }
 
 @CaseKeyPathable()
-final class CounterAction<
+sealed class CounterAction<
   DecrementButtonTapped,
   IncrementButtonTapped //
 > {}
@@ -78,7 +78,6 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       state.mutate((s) => s..count += 1);
       return Effect.none();
   }
-  throw Exception("invalid action");
 }
 
 class CounterWidget extends StatelessWidget {
@@ -123,7 +122,7 @@ class CounterWidget extends StatelessWidget {
 }
 
 @CaseKeyPathable()
-final class MessageBrokerAction<
+sealed class MessageBrokerAction<
   DecrementExternal,
   IncrementExternal //
 > {}
@@ -161,7 +160,6 @@ Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) 
         });
       });
   }
-  return Effect.none();
 }
 
 Future<void> main() async {

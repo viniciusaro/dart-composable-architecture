@@ -29,16 +29,8 @@ class UserId {
 
 void main() {
   final app = App(Session(User(UserId(2), "Blob")));
-
-  final user = getProp(
-    path(AppPath.session, SessionPath.user),
-    app,
-  );
-
-  final id = getProp(
-    path4(AppPath.session, SessionPath.user, UserPath.id, UserIdPath.value),
-    app,
-  );
+  final user = path(AppPath.session, SessionPath.user).get(app);
+  final id = path4(AppPath.session, SessionPath.user, UserPath.id, UserIdPath.value).get(app);
 
   print("user: ${user.id.value}, ${user.name}");
   print("id: $id");

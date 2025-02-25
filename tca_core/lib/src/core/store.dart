@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 
-import 'key_path.dart';
+import '../helpers/sync_stream.dart';
 
-part '_helpers/_exceptions.dart';
-part '_helpers/_syncStream.dart';
+part 'exceptions.dart';
 part 'effect.dart';
+part 'key_path.dart';
 part 'reducer.dart';
 
 final class StateUpdate<State> {
@@ -35,7 +35,7 @@ final class Store<State, Action> {
     _state._isMutationAllowed = true;
     final effect = _reducer(_state, action);
     _state._isMutationAllowed = false;
-    syncStream._add(StateUpdate(_state._value, fromChild));
+    syncStream.add(StateUpdate(_state._value, fromChild));
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];
@@ -65,7 +65,7 @@ final class Store<State, Action> {
     syncStream.listen((update) {
       store._state._value = state.get(update.state);
       if (!update.fromChild) {
-        store.syncStream._add(StateUpdate(state.get(update.state), false));
+        store.syncStream.add(StateUpdate(state.get(update.state), false));
       }
     });
 

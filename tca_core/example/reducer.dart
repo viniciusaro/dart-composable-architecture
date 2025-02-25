@@ -9,7 +9,7 @@ final class AppState {
 }
 
 @CaseKeyPathable()
-final class AppAction<
+sealed class AppAction<
     OnViewAppear,
     Counter extends CounterAction,
     Favorites extends FavoritesAction //
@@ -21,7 +21,7 @@ final class CounterState {
 }
 
 @CaseKeyPathable()
-final class CounterAction<
+sealed class CounterAction<
     Increment,
     Decrement //
     > {}
@@ -32,7 +32,7 @@ final class FavoritesState {
 }
 
 @CaseKeyPathable()
-final class FavoritesAction<
+sealed class FavoritesAction<
     Add extends AddToFavorites,
     Remove extends RemoveFromFavorites //
     > {}
@@ -56,7 +56,6 @@ CounterState counterReducer(CounterState state, CounterAction action) {
       state.count -= 1;
       return state;
   }
-  throw Exception("invalid action");
 }
 
 FavoritesState favoritesReducer(FavoritesState state, FavoritesAction action) {
@@ -68,7 +67,6 @@ FavoritesState favoritesReducer(FavoritesState state, FavoritesAction action) {
       state.favorites.removeAt(action.remove.index);
       return state;
   }
-  throw Exception("invalid action");
 }
 
 typedef Reducer<State, Action> = State Function(State, Action);

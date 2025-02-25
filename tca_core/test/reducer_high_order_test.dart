@@ -10,7 +10,10 @@ class RootState {
 }
 
 @CaseKeyPathable()
-final class RootAction<Counter extends CounterAction, Favorites extends FavoritesAction> {}
+sealed class RootAction<
+    Counter extends CounterAction,
+    Favorites extends FavoritesAction //
+    > {}
 
 @KeyPathable()
 final class CounterState {
@@ -18,7 +21,10 @@ final class CounterState {
 }
 
 @CaseKeyPathable()
-final class CounterAction<Increment, Decrement> {}
+sealed class CounterAction<
+    Increment,
+    Decrement //
+    > {}
 
 @KeyPathable()
 class FavoritesState {
@@ -26,7 +32,10 @@ class FavoritesState {
 }
 
 @CaseKeyPathable()
-final class FavoritesAction<Add extends FavoritesAdd, RemoveAt extends FavoritesRemoveAt> {}
+sealed class FavoritesAction<
+    Add extends FavoritesAdd,
+    RemoveAt extends FavoritesRemoveAt //
+    > {}
 
 class FavoritesAdd {
   final int favorite;
@@ -50,7 +59,6 @@ Effect<CounterAction> counterReducer(
       state.mutate((s) => s..count -= 1);
       return Effect.none();
   }
-  throw Exception("invalid action");
 }
 
 Effect<FavoritesAction> favoritesReducer(
@@ -65,7 +73,6 @@ Effect<FavoritesAction> favoritesReducer(
       state.mutate((s) => s..favorites.removeAt(action.removeAt.index));
       return Effect.none();
   }
-  throw Exception("invalid action");
 }
 
 Effect<FavoritesAction> favoritesAnalyticsReducer(
@@ -78,7 +85,6 @@ Effect<FavoritesAction> favoritesAnalyticsReducer(
     case FavoritesActionRemoveAt():
       return Effect.sync(() => analytics.add("remove at ${action.removeAt.index}"));
   }
-  throw Exception("invalid action");
 }
 
 var analytics = <String>[];
