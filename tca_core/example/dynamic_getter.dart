@@ -1,4 +1,6 @@
-import 'package:key_path/key_path.dart';
+import 'package:composable_architecture/composable_architecture.dart';
+
+part 'dynamic_getter.g.dart';
 
 class Store<T> {
   final T state;
@@ -6,7 +8,7 @@ class Store<T> {
   Store({required this.state});
 
   Prop get<Prop>(KeyPath<T, Prop> keyPath) {
-    return getProp(keyPath, state);
+    return keyPath.get(state);
   }
 }
 
@@ -19,5 +21,5 @@ class State {
 void main() {
   final store = Store(state: State(1));
   print("state id: ${store.state.id}"); // state id: 1
-  print("state id (key path): ${store.get(State.idPath)}"); // state id (key path): 1
+  print("state id (key path): ${store.get(StatePath.id)}"); // state id (key path): 1
 }

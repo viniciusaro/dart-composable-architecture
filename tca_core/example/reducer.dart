@@ -1,4 +1,6 @@
-import 'package:key_path/key_path.dart';
+import 'package:composable_architecture/composable_architecture.dart';
+
+part 'reducer.g.dart';
 
 @KeyPathable()
 final class AppState {
@@ -103,24 +105,24 @@ void main() {
   final Reducer<AppState, AppAction> appReducer = combine([
     pullback(
       counterReducer,
-      state: AppState.counterPath,
-      action: AppAction.counterPath,
+      state: AppStatePath.counter,
+      action: AppActionPath.counter,
     ),
     pullback(
       favoritesReducer,
-      state: AppState.favoritesPath,
-      action: AppAction.favoritesPath,
+      state: AppStatePath.favorites,
+      action: AppActionPath.favorites,
     ),
   ]);
 
   var state = AppState();
-  state = appReducer(state, AppAction.counter(CounterAction.increment()));
-  state = appReducer(state, AppAction.favorites(FavoritesAction.add(AddToFavorites(1))));
-  state = appReducer(state, AppAction.favorites(FavoritesAction.add(AddToFavorites(2))));
+  state = appReducer(state, AppActionEnum.counter(CounterActionEnum.increment()));
+  state = appReducer(state, AppActionEnum.favorites(FavoritesActionEnum.add(AddToFavorites(1))));
+  state = appReducer(state, AppActionEnum.favorites(FavoritesActionEnum.add(AddToFavorites(2))));
   print("count: ${state.counter.count}"); // 1
   print("favorites: ${state.favorites.favorites}"); // [1, 2]
 
-  switch (CounterAction.decrement()) {
+  switch (CounterActionEnum.decrement()) {
     case CounterActionDecrement():
       print("decrement");
     default:

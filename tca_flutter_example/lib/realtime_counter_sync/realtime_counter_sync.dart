@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import 'clients/message_broker_client/message_broker_client.dart';
 
+part 'realtime_counter_sync.g.dart';
+
 @KeyPathable()
 final class AppState {
   CounterState counter = CounterState();
@@ -23,7 +25,7 @@ final class AppAction<
 > {}
 
 final appReducer = combine([
-  pullback(counterReducer, state: AppState.counterPath, action: AppAction.counterPath),
+  pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
   messageBrokerReducer,
 ]);
 
@@ -37,13 +39,13 @@ class AppWidget extends StatelessWidget {
     return WithViewStore(
       store,
       onInitState: (store) {
-        return store.send(AppAction.onInitState());
+        return store.send(AppActionEnum.onInitState());
       },
       body: (store) {
         return CounterWidget(
           store: store.view(
-            state: AppState.counterPath,
-            action: AppAction.counterPath, //
+            state: AppStatePath.counter,
+            action: AppActionPath.counter, //
           ),
         );
       },
@@ -102,11 +104,11 @@ class CounterWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterAction.incrementButtonTapped()),
+                      onPressed: () => viewStore.send(CounterActionEnum.incrementButtonTapped()),
                       child: Text("+"),
                     ),
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterAction.decrementButtonTapped()),
+                      onPressed: () => viewStore.send(CounterActionEnum.decrementButtonTapped()),
                       child: Text("-"),
                     ),
                   ],
@@ -150,9 +152,9 @@ Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) 
         return messageBrokerClient.listen().map((message) {
           switch (message.action) {
             case "decrement":
-              return AppAction.messageBroker(MessageBrokerAction.decrementExternal());
+              return AppActionEnum.messageBroker(MessageBrokerActionEnum.decrementExternal());
             case "increment":
-              return AppAction.messageBroker(MessageBrokerAction.incrementExternal());
+              return AppActionEnum.messageBroker(MessageBrokerActionEnum.incrementExternal());
             default:
               throw Exception("invalid action: $message");
           }

@@ -1,10 +1,7 @@
-# Dart Key Paths
+import 'package:composable_architecture/composable_architecture.dart';
 
-Key Paths are macro generated objects that can be used as getters and setters in generic algorithms.
-They allow writing code that depends on access to objects without actually having that access.
+part 'collections.g.dart';
 
-## Map Example
-```dart
 @KeyPathable()
 final class Session {
   final User user;
@@ -26,9 +23,7 @@ extension IterableKeyPaths<T> on Iterable<T> {
 void main() {
   final sessions = [Session(User("Blob")), Session(User("Blob Jr."))];
   final names = sessions.mapPath(
-    path(Session.userPath, User.namePath),
+    path(SessionPath.user, UserPath.name),
   );
   print("names: $names"); // names: [Blob, Blob Jr.]
 }
-
-```

@@ -2,16 +2,7 @@ import 'package:composable_architecture_flutter/composable_architecture_flutter.
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: FeatureWidget(store: Store(initialState: FeatureState(), reducer: featureReducer)),
-      ),
-    ),
-  );
-}
+part 'number_fact.g.dart';
 
 @KeyPathable()
 final class FeatureState {
@@ -48,7 +39,7 @@ Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction ac
       return Effect.future(() async {
         final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
         final response = await http.get(uri);
-        return FeatureAction.numberFactResponse(NumberFactResponseValue(response.body));
+        return FeatureActionEnum.numberFactResponse(NumberFactResponseValue(response.body));
       });
 
     case FeatureActionNumberFactResponse():
@@ -82,18 +73,18 @@ class FeatureWidget extends StatelessWidget {
             children: [
               Text("Count: ${viewStore.state.count}"),
               ElevatedButton(
-                onPressed: () => viewStore.send(FeatureAction.numberFactButtonTapped()),
+                onPressed: () => viewStore.send(FeatureActionEnum.numberFactButtonTapped()),
                 child: Text("Number Fact"),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureAction.incrementButtonTapped()),
+                    onPressed: () => viewStore.send(FeatureActionEnum.incrementButtonTapped()),
                     child: Text("+"),
                   ),
                   ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureAction.decrementButtonTapped()),
+                    onPressed: () => viewStore.send(FeatureActionEnum.decrementButtonTapped()),
                     child: Text("-"),
                   ),
                 ],
@@ -114,4 +105,15 @@ class FeatureWidget extends StatelessWidget {
       },
     );
   }
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: FeatureWidget(store: Store(initialState: FeatureState(), reducer: featureReducer)),
+      ),
+    ),
+  );
 }
