@@ -63,6 +63,13 @@ final class AppActionCounter<
     extends AppAction<A, B> {
   final A counter;
   AppActionCounter(this.counter) : super();
+
+  @override
+  int get hashCode => counter.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionCounter && other.counter == counter;
 }
 
 final class AppActionFavorites<
@@ -72,6 +79,13 @@ final class AppActionFavorites<
     extends AppAction<A, B> {
   final B favorites;
   AppActionFavorites(this.favorites) : super();
+
+  @override
+  int get hashCode => favorites.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionFavorites && other.favorites == favorites;
 }
 
 extension AppActionPath on AppAction {
@@ -123,21 +137,47 @@ extension CounterActionEnum on CounterAction {
 final class CounterActionAddToFavoritesButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionAddToFavoritesButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CounterActionAddToFavoritesButtonTapped;
 }
 
 final class CounterActionIncrementButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionIncrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionIncrementButtonTapped;
 }
 
 final class CounterActionDecrementButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionDecrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionDecrementButtonTapped;
 }
 
 final class CounterActionRemoveFromFavoritesButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionRemoveFromFavoritesButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CounterActionRemoveFromFavoritesButtonTapped;
 }
 
 extension CounterActionPath on CounterAction {
@@ -213,6 +253,13 @@ final class FavoritesActionRemove<A extends RemoveNumber>
     extends FavoritesAction<A> {
   final A remove;
   FavoritesActionRemove(this.remove) : super();
+
+  @override
+  int get hashCode => remove.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is FavoritesActionRemove && other.remove == remove;
 }
 
 extension FavoritesActionPath on FavoritesAction {

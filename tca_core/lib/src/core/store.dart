@@ -72,3 +72,41 @@ final class Store<State, Action> {
     return store;
   }
 }
+
+final class TestStore<State, Action> {
+  final Inout<State> _state;
+  State get state => _state._value;
+  final Reducer<State, Action> _reducer;
+  final List<Action> expectedActions = [];
+
+  TestStore({required State initialState, required Reducer<State, Action> reducer})
+      : _reducer = reducer,
+        _state = Inout(value: initialState);
+
+  void send(Action action) {
+    _state._isMutationAllowed = true;
+    final effect = _reducer(_state, action);
+    _state._isMutationAllowed = false;
+
+    final stream = effect.builder();
+    final id = _cancellableEffects[effect._cancellableId];
+
+    final subscription = stream.listen((action) {
+      if (!expectedActions.contains(action)) {
+        throw Exception("Received unexpected action: $action");
+      } else {
+        expectedActions.remove(action);
+      }
+      send(action);
+    });
+
+    if (id != null) {
+      _effectSubscriptions[id] = subscription;
+    }
+  }
+
+  Future<void> receive(Action action) async {
+    expectedActions.add(action);
+    await Future.delayed(Duration.zero);
+  }
+}

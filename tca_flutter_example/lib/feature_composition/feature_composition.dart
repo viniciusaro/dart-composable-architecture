@@ -27,6 +27,23 @@ sealed class AppAction<
   Favorites extends FavoritesAction //
 > {}
 
+final appReducer = combine([
+      pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
+      pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
+    ])
+    .onChange(
+      of: (state) => state.counter.favorites,
+      update: (state, favorites) {
+        return state.copyWith(favorites: state.favorites.copyWith(favorites: favorites));
+      },
+    )
+    .onChange(
+      of: (state) => state.favorites.favorites,
+      update: (state, favorites) {
+        return state.copyWith(counter: state.counter.copyWith(favorites: favorites));
+      },
+    );
+
 @KeyPathable()
 final class CounterState extends Equatable {
   final int count;
@@ -89,9 +106,7 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       return Effect.none();
     case CounterActionRemoveFromFavoritesButtonTapped():
       state.mutate((s) {
-        return s
-          ..favorites.remove(state.value.count)
-          ..copyWith(favorites: s.favorites);
+        return s.copyWith(favorites: s.favorites.where((e) => e != state.value.count).toSet());
       });
       return Effect.none();
   }
@@ -238,23 +253,6 @@ class AppWidget extends StatelessWidget {
 }
 
 void main() {
-  final appReducer = combine([
-        pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
-        pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
-      ])
-      .onChange(
-        of: (state) => state.counter.favorites,
-        update: (state, favorites) {
-          return state.copyWith(favorites: state.favorites.copyWith(favorites: favorites));
-        },
-      )
-      .onChange(
-        of: (state) => state.favorites.favorites,
-        update: (state, favorites) {
-          return state.copyWith(counter: state.counter.copyWith(favorites: favorites));
-        },
-      );
-
   runApp(
     MaterialApp(
       home: Scaffold(

@@ -40,6 +40,13 @@ final class AppActionCounter<
     extends AppAction<A, B, C> {
   final A counter;
   AppActionCounter(this.counter) : super();
+
+  @override
+  int get hashCode => counter.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionCounter && other.counter == counter;
 }
 
 final class AppActionMessageBroker<
@@ -50,6 +57,13 @@ final class AppActionMessageBroker<
     extends AppAction<A, B, C> {
   final B messageBroker;
   AppActionMessageBroker(this.messageBroker) : super();
+
+  @override
+  int get hashCode => messageBroker.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionMessageBroker && other.messageBroker == messageBroker;
 }
 
 final class AppActionOnInitState<
@@ -59,6 +73,12 @@ final class AppActionOnInitState<
 >
     extends AppAction<A, B, C> {
   AppActionOnInitState() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is AppActionOnInitState;
 }
 
 extension AppActionPath on AppAction {
@@ -118,11 +138,23 @@ extension CounterActionEnum on CounterAction {
 final class CounterActionDecrementButtonTapped<A, B>
     extends CounterAction<A, B> {
   CounterActionDecrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionDecrementButtonTapped;
 }
 
 final class CounterActionIncrementButtonTapped<A, B>
     extends CounterAction<A, B> {
   CounterActionIncrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionIncrementButtonTapped;
 }
 
 extension CounterActionPath on CounterAction {
@@ -168,11 +200,25 @@ extension MessageBrokerActionEnum on MessageBrokerAction {
 final class MessageBrokerActionDecrementExternal<A, B>
     extends MessageBrokerAction<A, B> {
   MessageBrokerActionDecrementExternal() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is MessageBrokerActionDecrementExternal;
 }
 
 final class MessageBrokerActionIncrementExternal<A, B>
     extends MessageBrokerAction<A, B> {
   MessageBrokerActionIncrementExternal() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is MessageBrokerActionIncrementExternal;
 }
 
 extension MessageBrokerActionPath on MessageBrokerAction {
