@@ -49,7 +49,8 @@ final class CounterState extends Equatable {
 sealed class CounterAction<
   AddToFavoritesButtonTapped,
   IncrementButtonTapped,
-  DecrementButtonTapped //
+  DecrementButtonTapped,
+  RemoveFromFavoritesButtonTapped //
 > {}
 
 @KeyPathable()
@@ -85,6 +86,13 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       return Effect.none();
     case CounterActionDecrementButtonTapped():
       state.mutate((s) => s.copyWith(count: s.count - 1));
+      return Effect.none();
+    case CounterActionRemoveFromFavoritesButtonTapped():
+      state.mutate((s) {
+        return s
+          ..favorites.remove(state.value.count)
+          ..copyWith(favorites: s.favorites);
+      });
       return Effect.none();
   }
 }
@@ -132,10 +140,21 @@ class CounterWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                ElevatedButton(
-                  onPressed: () => viewStore.send(CounterActionEnum.addToFavoritesButtonTapped()),
-                  child: Text("Add to favorites"),
-                ),
+                viewStore.state.favorites.contains(viewStore.state.count)
+                    ? ElevatedButton(
+                      onPressed:
+                          () => viewStore.send(
+                            CounterActionEnum.removeFromFavoritesButtonTapped(), //
+                          ),
+                      child: Text("Remove from favorites"),
+                    )
+                    : ElevatedButton(
+                      onPressed:
+                          () => viewStore.send(
+                            CounterActionEnum.addToFavoritesButtonTapped(), //
+                          ),
+                      child: Text("Add to favorites"),
+                    ),
               ],
             ),
           );

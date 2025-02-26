@@ -49,14 +49,15 @@ extension FavoritesStatePath on FavoritesState {
 // **************************************************************************
 
 extension AppActionEnum on AppAction {
-  static AppAction counter(CounterAction<dynamic, dynamic, dynamic> p) =>
-      AppActionCounter(p);
+  static AppAction counter(
+    CounterAction<dynamic, dynamic, dynamic, dynamic> p,
+  ) => AppActionCounter(p);
   static AppAction favorites(FavoritesAction<RemoveNumber> p) =>
       AppActionFavorites(p);
 }
 
 final class AppActionCounter<
-  A extends CounterAction<dynamic, dynamic, dynamic>,
+  A extends CounterAction<dynamic, dynamic, dynamic, dynamic>,
   B extends FavoritesAction<RemoveNumber>
 >
     extends AppAction<A, B> {
@@ -65,7 +66,7 @@ final class AppActionCounter<
 }
 
 final class AppActionFavorites<
-  A extends CounterAction<dynamic, dynamic, dynamic>,
+  A extends CounterAction<dynamic, dynamic, dynamic, dynamic>,
   B extends FavoritesAction<RemoveNumber>
 >
     extends AppAction<A, B> {
@@ -74,21 +75,23 @@ final class AppActionFavorites<
 }
 
 extension AppActionPath on AppAction {
-  static final counter =
-      WritableKeyPath<AppAction, CounterAction<dynamic, dynamic, dynamic>?>(
-        get: (action) {
-          if (action is AppActionCounter) {
-            return action.counter;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = AppActionEnum.counter(propAction);
-          }
-          return rootAction!;
-        },
-      );
+  static final counter = WritableKeyPath<
+    AppAction,
+    CounterAction<dynamic, dynamic, dynamic, dynamic>?
+  >(
+    get: (action) {
+      if (action is AppActionCounter) {
+        return action.counter;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = AppActionEnum.counter(propAction);
+      }
+      return rootAction!;
+    },
+  );
   static final favorites =
       WritableKeyPath<AppAction, FavoritesAction<RemoveNumber>?>(
         get: (action) {
@@ -113,21 +116,28 @@ extension CounterActionEnum on CounterAction {
       CounterActionIncrementButtonTapped();
   static CounterAction decrementButtonTapped() =>
       CounterActionDecrementButtonTapped();
+  static CounterAction removeFromFavoritesButtonTapped() =>
+      CounterActionRemoveFromFavoritesButtonTapped();
 }
 
-final class CounterActionAddToFavoritesButtonTapped<A, B, C>
-    extends CounterAction<A, B, C> {
+final class CounterActionAddToFavoritesButtonTapped<A, B, C, D>
+    extends CounterAction<A, B, C, D> {
   CounterActionAddToFavoritesButtonTapped() : super();
 }
 
-final class CounterActionIncrementButtonTapped<A, B, C>
-    extends CounterAction<A, B, C> {
+final class CounterActionIncrementButtonTapped<A, B, C, D>
+    extends CounterAction<A, B, C, D> {
   CounterActionIncrementButtonTapped() : super();
 }
 
-final class CounterActionDecrementButtonTapped<A, B, C>
-    extends CounterAction<A, B, C> {
+final class CounterActionDecrementButtonTapped<A, B, C, D>
+    extends CounterAction<A, B, C, D> {
   CounterActionDecrementButtonTapped() : super();
+}
+
+final class CounterActionRemoveFromFavoritesButtonTapped<A, B, C, D>
+    extends CounterAction<A, B, C, D> {
+  CounterActionRemoveFromFavoritesButtonTapped() : super();
 }
 
 extension CounterActionPath on CounterAction {
@@ -176,6 +186,23 @@ extension CounterActionPath on CounterAction {
           return rootAction!;
         },
       );
+  static final removeFromFavoritesButtonTapped = WritableKeyPath<
+    CounterAction,
+    CounterActionRemoveFromFavoritesButtonTapped?
+  >(
+    get: (action) {
+      if (action is CounterActionRemoveFromFavoritesButtonTapped) {
+        return action;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = CounterActionEnum.removeFromFavoritesButtonTapped();
+      }
+      return rootAction!;
+    },
+  );
 }
 
 extension FavoritesActionEnum on FavoritesAction {
