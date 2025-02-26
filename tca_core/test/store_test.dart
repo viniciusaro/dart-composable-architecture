@@ -13,7 +13,7 @@ void main() {
 
   group('store', () {
     group('send', () {
-      test('send, updates state', () {
+      test('updates state', () {
         final store = Store(initialState: AppState(), reducer: counterReducer);
 
         store.send(AppAction.actionA);
@@ -23,7 +23,7 @@ void main() {
         expect(store.state.count, 0);
       });
 
-      test('send, throws error if mutation is detected inside effect', () async {
+      test('throws error if mutation is detected inside effect', () async {
         Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
           switch (action) {
             case AppAction.actionA:
@@ -62,7 +62,21 @@ void main() {
         expect(store.state.count, 0);
       });
 
-      test('send feeds effect action back into the system', () async {
+      test('throws error if mutation is detected outside store system', () {
+        Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
+          return Effect.none();
+        }
+
+        final store = Store(initialState: AppState(), reducer: reducer);
+        store.state.count += 1;
+
+        expect(
+          () => store.send(AppAction.actionA),
+          throwsA(EffectfullStateMutation()),
+        );
+      });
+
+      test('feeds effect action back into the system', () async {
         Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
           switch (action) {
             case AppAction.actionA:

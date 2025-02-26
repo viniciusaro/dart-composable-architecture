@@ -15,9 +15,17 @@ extension AppStatePath on AppState {
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
-  static final props = KeyPath<AppState, List<Object?>>(
-    get: (obj) => obj.props,
-  );
+}
+
+extension AppStateProps on AppState {
+  List<dynamic> get props => [counter, favorites];
+
+  AppState copyWith({CounterState? counter, FavoritesState? favorites}) {
+    return AppState(
+      counter: counter ?? this.counter,
+      favorites: favorites ?? this.favorites,
+    );
+  }
 }
 
 extension CounterStatePath on CounterState {
@@ -29,9 +37,17 @@ extension CounterStatePath on CounterState {
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
-  static final props = KeyPath<CounterState, List<Object?>>(
-    get: (obj) => obj.props,
-  );
+}
+
+extension CounterStateProps on CounterState {
+  List<dynamic> get props => [count, favorites];
+
+  CounterState copyWith({int? count, Set<int>? favorites}) {
+    return CounterState(
+      count: count ?? this.count,
+      favorites: favorites ?? this.favorites,
+    );
+  }
 }
 
 extension FavoritesStatePath on FavoritesState {
@@ -39,9 +55,14 @@ extension FavoritesStatePath on FavoritesState {
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
-  static final props = KeyPath<FavoritesState, List<Object?>>(
-    get: (obj) => obj.props,
-  );
+}
+
+extension FavoritesStateProps on FavoritesState {
+  List<dynamic> get props => [favorites];
+
+  FavoritesState copyWith({Set<int>? favorites}) {
+    return FavoritesState(favorites: favorites ?? this.favorites);
+  }
 }
 
 // **************************************************************************

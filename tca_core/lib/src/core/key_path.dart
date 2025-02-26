@@ -23,13 +23,18 @@ final class KeyPath<Root, Prop> {
   }
 }
 
-final class KeyPathable {
-  const KeyPathable();
+mixin KeyPathable {
+  List<dynamic> get props => [];
+
+  @override
+  int get hashCode => ListEquality().hash(props);
+
+  @override
+  bool operator ==(Object other) =>
+      other is KeyPathable && ListEquality().equals(other.props, props);
 }
 
-final class CaseKeyPathable {
-  const CaseKeyPathable();
-}
+mixin CaseKeyPathable {}
 
 KeyPath<Root, Prop> path0<Root, Prop>(
   KeyPath<Root, Prop> first,

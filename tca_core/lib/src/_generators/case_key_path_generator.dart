@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'package:build/build.dart';
 import 'package:composable_architecture/composable_architecture.dart';
-import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/element.dart';
 
-class CaseKeyPathGenerator extends GeneratorForAnnotation<CaseKeyPathable> {
+import 'generator_for_mixin.dart';
+
+class CaseKeyPathGenerator extends GeneratorForMixin<CaseKeyPathable> {
   @override
-  FutureOr<String> generateForAnnotatedElement(
-    Element element,
-    ConstantReader annotation,
-    BuildStep buildStep,
+  FutureOr<String> generateForMixinElement(
+    ClassElement clazz,
   ) async {
-    final clazz = element as ClassElement;
     String code = "";
     code += await buildDeclarationsForClass(clazz);
     code += await buildTypesForClass(clazz);

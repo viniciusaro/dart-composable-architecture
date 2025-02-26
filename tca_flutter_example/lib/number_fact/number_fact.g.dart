@@ -21,6 +21,18 @@ extension FeatureStatePath on FeatureState {
   );
 }
 
+extension FeatureStateProps on FeatureState {
+  List<dynamic> get props => [count, isLoading, numberFact];
+
+  FeatureState copyWith({int? count, bool? isLoading, String? numberFact}) {
+    return FeatureState(
+      count: count ?? this.count,
+      isLoading: isLoading ?? this.isLoading,
+      numberFact: numberFact ?? this.numberFact,
+    );
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

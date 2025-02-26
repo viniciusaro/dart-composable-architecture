@@ -1,25 +1,26 @@
 import 'dart:async';
-import 'package:build/build.dart';
 import 'package:composable_architecture/composable_architecture.dart';
-import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/element.dart';
 
-class KeyPathGenerator extends GeneratorForAnnotation<KeyPathable> {
+import 'generator_for_mixin.dart';
+
+class KeyPathGenerator extends GeneratorForMixin<KeyPathable> {
   @override
-  FutureOr<String> generateForAnnotatedElement(
-    Element element,
-    ConstantReader annotation,
-    BuildStep buildStep,
+  FutureOr<String> generateForMixinElement(
+    ClassElement clazz,
   ) {
-    final clazz = element as ClassElement;
+    String code = '';
+    code += generateKeyPaths(clazz);
+    code += generateDataClassEquality(clazz);
+    return code;
+  }
+
+  String generateKeyPaths(ClassElement clazz) {
     final fields = clazz.fields;
-    final methods = clazz.methods;
-    // final getterMethods = methods.where((m) => m.isGetter);
     final rootType = clazz.name;
-    final hasCopyWith = methods.where((m) => m.name == "copyWith").firstOrNull != null;
 
     String code = '''
-extension ${element.name}Path on ${element.name} {
+extension ${clazz.name}Path on ${clazz.name} {
 ''';
 
     for (final field in fields) {
@@ -35,18 +36,11 @@ extension ${element.name}Path on ${element.name} {
       }
 
       if (field.isFinal) {
-        if (hasCopyWith) {
-          code += """
+        code += """
 static final $prop = WritableKeyPath<$rootType, $propType>(
     get: (obj) => obj.$prop,
     set: (obj, $prop) => obj!.copyWith($prop: $propAssignment),
   );""";
-        } else {
-          code += """
-  static final $prop = KeyPath<$rootType, $propType>(
-    get: (obj) => obj.$prop,
-  );""";
-        }
       } else {
         if (!isGetterOnly(field)) {
           code += """
@@ -63,11 +57,55 @@ static final $prop = WritableKeyPath<$rootType, $propType>(
       }
     }
 
-    code += "\n}";
+    code += "\n}\n\n";
+    return code;
+  }
+
+  String generateDataClassEquality(ClassElement clazz) {
+    String code = "";
+    final hasHashcode = clazz.methods.where((m) => m.name == "hashCode").firstOrNull != null;
+    final hasCopyWith = clazz.methods.where((m) => m.name == "copyWith").firstOrNull != null;
+    if (hasHashcode) {
+      return code;
+    }
+
+    String copyWith() {
+      String copyWithParams = clazz.fields.fold("",
+          (acc, field) => "$acc${field.getTypeDisplayStringWithoutOptional()}? ${field.name}, ");
+
+      String copyWithAssignments = clazz.fields
+          .fold("", (acc, field) => "$acc${field.name}: ${field.name} ?? this.${field.name},");
+
+      return """
+\n\n${clazz.name} copyWith({$copyWithParams}) {
+    return ${clazz.name}($copyWithAssignments);
+  }
+""";
+    }
+
+    String props =
+        clazz.fields.fold("List<dynamic> get props => [", (acc, field) => "$acc${field.name},");
+    props += "]";
+
+    String copyWithCode = hasCopyWith ? "" : copyWith();
+
+    code = '''
+extension ${clazz.name}Props on ${clazz.name} {
+  $props;$copyWithCode
+}
+''';
+
     return code;
   }
 }
 
 bool isGetterOnly(FieldElement field) {
   return field.getter != null && field.setter == null;
+}
+
+extension on FieldElement {
+  String getTypeDisplayStringWithoutOptional() {
+    final name = type.getDisplayString();
+    return name.contains("?") ? name.replaceAll("?", "") : name;
+  }
 }

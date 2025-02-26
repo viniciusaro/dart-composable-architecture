@@ -5,6 +5,7 @@ typedef Reducer<State, Action> = Effect<Action> Function(Inout<State>, Action);
 final class Inout<T> {
   T _value;
   T get value => _value;
+
   bool _isMutationAllowed = false;
   Inout({required T value}) : _value = value;
 
@@ -18,7 +19,7 @@ final class Inout<T> {
   }
 }
 
-extension ReducerChangeEquatable<State extends Equatable, Action> on Reducer<State, Action> {
+extension ReducerChangeEquatable<State, Action> on Reducer<State, Action> {
   Reducer<State, Action> onChange<LocalState>({
     required LocalState Function(State) of,
     required State Function(State, LocalState) update,

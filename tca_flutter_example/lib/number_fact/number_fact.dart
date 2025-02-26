@@ -4,20 +4,20 @@ import 'package:http/http.dart' as http;
 
 part 'number_fact.g.dart';
 
-@KeyPathable()
-final class FeatureState {
-  int count = 0;
-  bool isLoading = false;
+final class FeatureState with KeyPathable {
+  int count;
+  bool isLoading;
   String? numberFact;
+  FeatureState({this.count = 0, this.isLoading = false, this.numberFact});
 }
 
-@CaseKeyPathable()
 sealed class FeatureAction<
   DecrementButtonTapped,
   IncrementButtonTapped,
   NumberFactButtonTapped,
   NumberFactResponse extends NumberFactResponseValue //
-> {}
+>
+    with CaseKeyPathable {}
 
 final class NumberFactResponseValue {
   final String value;
@@ -78,10 +78,7 @@ class FeatureWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureActionEnum.incrementButtonTapped()),
-                    child: Text("+"),
-                  ),
+                  ElevatedButton(onPressed: () => viewStore.state.count += 1, child: Text("+")),
                   ElevatedButton(
                     onPressed: () => viewStore.send(FeatureActionEnum.decrementButtonTapped()),
                     child: Text("-"),

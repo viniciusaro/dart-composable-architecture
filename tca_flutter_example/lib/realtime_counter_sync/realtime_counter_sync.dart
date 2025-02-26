@@ -7,9 +7,10 @@ import 'clients/message_broker_client/message_broker_client.dart';
 
 part 'realtime_counter_sync.g.dart';
 
-@KeyPathable()
-final class AppState {
-  CounterState counter = CounterState();
+final class AppState with KeyPathable {
+  CounterState counter;
+
+  AppState({CounterState? counter}) : counter = counter ?? CounterState();
 
   @override
   String toString() {
@@ -17,12 +18,12 @@ final class AppState {
   }
 }
 
-@CaseKeyPathable()
 sealed class AppAction<
   Counter extends CounterAction,
   MessageBroker extends MessageBrokerAction,
   OnInitState //
-> {}
+>
+    with CaseKeyPathable {}
 
 final appReducer = combine([
   pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
@@ -53,9 +54,10 @@ class AppWidget extends StatelessWidget {
   }
 }
 
-@KeyPathable()
-final class CounterState {
-  int count = 0;
+final class CounterState with KeyPathable {
+  int count;
+
+  CounterState({this.count = 0});
 
   @override
   String toString() {
@@ -63,11 +65,11 @@ final class CounterState {
   }
 }
 
-@CaseKeyPathable()
 sealed class CounterAction<
   DecrementButtonTapped,
   IncrementButtonTapped //
-> {}
+>
+    with CaseKeyPathable {}
 
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
@@ -121,11 +123,11 @@ class CounterWidget extends StatelessWidget {
   }
 }
 
-@CaseKeyPathable()
 sealed class MessageBrokerAction<
   DecrementExternal,
   IncrementExternal //
-> {}
+>
+    with CaseKeyPathable {}
 
 Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) {
   switch (action) {

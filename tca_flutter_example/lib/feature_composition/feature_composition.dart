@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 
 part 'feature_composition.g.dart';
 
-@KeyPathable()
-final class AppState extends Equatable {
+final class AppState with KeyPathable {
   final CounterState counter;
   final FavoritesState favorites;
 
@@ -12,63 +11,37 @@ final class AppState extends Equatable {
     this.counter = const CounterState(),
     this.favorites = const FavoritesState(), //
   });
-
-  AppState copyWith({CounterState? counter, FavoritesState? favorites}) {
-    return AppState(counter: counter ?? this.counter, favorites: favorites ?? this.favorites);
-  }
-
-  @override
-  List<Object?> get props => [counter, favorites];
 }
 
-@CaseKeyPathable()
 sealed class AppAction<
   Counter extends CounterAction,
   Favorites extends FavoritesAction //
-> {}
+>
+    with CaseKeyPathable {}
 
-@KeyPathable()
-final class CounterState extends Equatable {
+final class CounterState with KeyPathable {
   final int count;
   final Set<int> favorites;
 
   const CounterState({this.count = 0, this.favorites = const {}});
-
-  CounterState copyWith({int? count, Set<int>? favorites}) {
-    return CounterState(
-      count: count ?? this.count,
-      favorites: favorites ?? this.favorites, //
-    );
-  }
-
-  @override
-  List<Object?> get props => [count, favorites];
 }
 
-@CaseKeyPathable()
 sealed class CounterAction<
   AddToFavoritesButtonTapped,
   IncrementButtonTapped,
   DecrementButtonTapped //
-> {}
+>
+    with CaseKeyPathable {}
 
-@KeyPathable()
-final class FavoritesState extends Equatable {
+final class FavoritesState with KeyPathable {
   final Set<int> favorites;
   const FavoritesState({this.favorites = const {}});
-
-  FavoritesState copyWith({Set<int>? favorites}) {
-    return FavoritesState(favorites: favorites ?? this.favorites);
-  }
-
-  @override
-  List<Object?> get props => [favorites];
 }
 
-@CaseKeyPathable()
 sealed class FavoritesAction<
   Remove extends RemoveNumber //
-> {}
+>
+    with CaseKeyPathable {}
 
 final class RemoveNumber {
   final int number;

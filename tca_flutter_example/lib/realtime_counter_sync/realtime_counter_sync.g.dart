@@ -13,11 +13,27 @@ extension AppStatePath on AppState {
   );
 }
 
+extension AppStateProps on AppState {
+  List<dynamic> get props => [counter];
+
+  AppState copyWith({CounterState? counter}) {
+    return AppState(counter: counter ?? this.counter);
+  }
+}
+
 extension CounterStatePath on CounterState {
   static final count = WritableKeyPath<CounterState, int>(
     get: (obj) => obj.count,
     set: (obj, count) => obj!..count = count,
   );
+}
+
+extension CounterStateProps on CounterState {
+  List<dynamic> get props => [count];
+
+  CounterState copyWith({int? count}) {
+    return CounterState(count: count ?? this.count);
+  }
 }
 
 // **************************************************************************
