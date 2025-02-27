@@ -8,13 +8,16 @@ import 'clients/message_broker_client/message_broker_client.dart';
 part 'realtime_counter_sync.g.dart';
 
 @KeyPathable()
-final class AppState {
+final class AppState extends Equatable {
   CounterState counter = CounterState();
 
   @override
   String toString() {
     return "AppState(counter: $counter)";
   }
+
+  @override
+  List<Object?> get props => [counter];
 }
 
 @CaseKeyPathable()
@@ -54,13 +57,16 @@ class AppWidget extends StatelessWidget {
 }
 
 @KeyPathable()
-final class CounterState {
+final class CounterState extends Equatable {
   int count = 0;
 
   @override
   String toString() {
     return "CounterState($count)";
   }
+
+  @override
+  List<Object?> get props => [count];
 }
 
 @CaseKeyPathable()

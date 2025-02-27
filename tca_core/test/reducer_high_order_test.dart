@@ -4,9 +4,12 @@ import 'package:test/test.dart';
 part 'reducer_high_order_test.g.dart';
 
 @KeyPathable()
-class RootState {
+class RootState extends Equatable {
   CounterState counter = CounterState();
   FavoritesState favorites = FavoritesState();
+
+  @override
+  List<Object?> get props => [counter, favorites];
 }
 
 @CaseKeyPathable()
@@ -16,8 +19,11 @@ sealed class RootAction<
     > {}
 
 @KeyPathable()
-final class CounterState {
+final class CounterState extends Equatable {
   int count = 0;
+
+  @override
+  List<Object?> get props => [count];
 }
 
 @CaseKeyPathable()
@@ -27,8 +33,11 @@ sealed class CounterAction<
     > {}
 
 @KeyPathable()
-class FavoritesState {
+class FavoritesState extends Equatable {
   List<int> favorites = [];
+
+  @override
+  List<Object?> get props => [favorites];
 }
 
 @CaseKeyPathable()

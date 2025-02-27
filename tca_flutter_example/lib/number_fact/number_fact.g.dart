@@ -19,6 +19,9 @@ extension NumberFactStatePath on NumberFactState {
     get: (obj) => obj.numberFact,
     set: (obj, numberFact) => obj!..numberFact = numberFact,
   );
+  static final props = KeyPath<NumberFactState, List<Object?>>(
+    get: (obj) => obj.props,
+  );
 }
 
 // **************************************************************************

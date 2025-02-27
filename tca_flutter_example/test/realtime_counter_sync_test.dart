@@ -7,8 +7,10 @@ void main() {
   test("increment button tapped", () {
     messageBrokerClient = unimplementedMessageBrokerClient..listen = () => Stream.empty();
     final store = TestStore(initialState: AppState(), reducer: appReducer);
-    store.send(AppActionEnum.counter(CounterActionEnum.incrementButtonTapped()));
-    expect(store.state.counter.count, 1);
+    store.send(
+      AppActionEnum.counter(CounterActionEnum.incrementButtonTapped()),
+      (state) => state..counter.count = 1,
+    );
   });
 
   test("increment button tapped yields external message", () async {
@@ -20,8 +22,10 @@ void main() {
               );
 
     final store = TestStore(initialState: AppState(), reducer: appReducer);
-    store.send(AppActionOnInitState());
-    await store.receive(AppActionEnum.messageBroker(MessageBrokerActionEnum.incrementExternal()));
-    expect(store.state.counter.count, 1);
+    store.send(AppActionOnInitState(), (state) => state);
+    await store.receive(
+      AppActionEnum.messageBroker(MessageBrokerActionEnum.incrementExternal()),
+      (state) => state..counter.count = 1,
+    );
   });
 }

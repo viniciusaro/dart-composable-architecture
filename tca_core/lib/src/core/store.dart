@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:equatable/equatable.dart';
 
@@ -77,27 +78,42 @@ final class TestStore<State, Action> {
   final Inout<State> _state;
   State get state => _state._value;
   final Reducer<State, Action> _reducer;
-  final List<Action> expectedActions = [];
+  final List<Action> _expectedActions = [];
+  final List<State Function(State)> _expectedStateUpdates = [];
 
   TestStore({required State initialState, required Reducer<State, Action> reducer})
       : _reducer = reducer,
         _state = Inout(value: initialState);
 
-  void send(Action action) {
+  Future<void> send(Action action, State Function(State) updates) async {
     _state._isMutationAllowed = true;
+
+    final (afterUpdatesHashCode, afterUpdatesDescripton) = await Isolate.run(() {
+      final updated = updates(_state.value);
+      return (updated.hashCode, updated.toString());
+    });
+
     final effect = _reducer(_state, action);
+    if (_state.value.hashCode != afterUpdatesHashCode) {
+      throw Exception("Detected unexpected changes. Expected $afterUpdatesDescripton, got: $state");
+    }
     _state._isMutationAllowed = false;
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];
 
     final subscription = stream.listen((action) {
-      if (!expectedActions.contains(action)) {
+      if (_expectedActions.isEmpty) {
+        throw Exception("Received unexpected action: $action");
+      }
+      final expectedAction = _expectedActions.removeAt(0);
+      final expectedUpdates = _expectedStateUpdates.removeAt(0);
+      if (expectedAction != action) {
         throw Exception("Received unexpected action: $action");
       } else {
-        expectedActions.remove(action);
+        _expectedActions.remove(action);
       }
-      send(action);
+      send(action, expectedUpdates);
     });
 
     if (id != null) {
@@ -105,8 +121,9 @@ final class TestStore<State, Action> {
     }
   }
 
-  Future<void> receive(Action action) async {
-    expectedActions.add(action);
-    await Future.delayed(Duration.zero);
+  Future<void> receive(Action action, State Function(State) updates) async {
+    _expectedActions.add(action);
+    _expectedStateUpdates.add(updates);
+    await Future.delayed(Duration(milliseconds: 1));
   }
 }

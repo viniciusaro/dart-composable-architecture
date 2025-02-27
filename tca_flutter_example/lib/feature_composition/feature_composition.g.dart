@@ -9,11 +9,11 @@ part of 'feature_composition.dart';
 extension AppStatePath on AppState {
   static final counter = WritableKeyPath<AppState, CounterState>(
     get: (obj) => obj.counter,
-    set: (obj, counter) => obj!.copyWith(counter: counter),
+    set: (obj, counter) => obj!..counter = counter,
   );
   static final favorites = WritableKeyPath<AppState, FavoritesState>(
     get: (obj) => obj.favorites,
-    set: (obj, favorites) => obj!.copyWith(favorites: favorites),
+    set: (obj, favorites) => obj!..favorites = favorites,
   );
   static final props = KeyPath<AppState, List<Object?>>(
     get: (obj) => obj.props,
@@ -23,11 +23,11 @@ extension AppStatePath on AppState {
 extension CounterStatePath on CounterState {
   static final count = WritableKeyPath<CounterState, int>(
     get: (obj) => obj.count,
-    set: (obj, count) => obj!.copyWith(count: count),
+    set: (obj, count) => obj!..count = count,
   );
   static final favorites = WritableKeyPath<CounterState, Set<int>>(
     get: (obj) => obj.favorites,
-    set: (obj, favorites) => obj!.copyWith(favorites: favorites),
+    set: (obj, favorites) => obj!..favorites = favorites,
   );
   static final props = KeyPath<CounterState, List<Object?>>(
     get: (obj) => obj.props,
@@ -37,7 +37,7 @@ extension CounterStatePath on CounterState {
 extension FavoritesStatePath on FavoritesState {
   static final favorites = WritableKeyPath<FavoritesState, Set<int>>(
     get: (obj) => obj.favorites,
-    set: (obj, favorites) => obj!.copyWith(favorites: favorites),
+    set: (obj, favorites) => obj!..favorites = favorites,
   );
   static final props = KeyPath<FavoritesState, List<Object?>>(
     get: (obj) => obj.props,
@@ -52,13 +52,12 @@ extension AppActionEnum on AppAction {
   static AppAction counter(
     CounterAction<dynamic, dynamic, dynamic, dynamic> p,
   ) => AppActionCounter(p);
-  static AppAction favorites(FavoritesAction<RemoveNumber> p) =>
-      AppActionFavorites(p);
+  static AppAction favorites(FavoritesAction<int> p) => AppActionFavorites(p);
 }
 
 final class AppActionCounter<
   A extends CounterAction<dynamic, dynamic, dynamic, dynamic>,
-  B extends FavoritesAction<RemoveNumber>
+  B extends FavoritesAction<int>
 >
     extends AppAction<A, B> {
   final A counter;
@@ -74,7 +73,7 @@ final class AppActionCounter<
 
 final class AppActionFavorites<
   A extends CounterAction<dynamic, dynamic, dynamic, dynamic>,
-  B extends FavoritesAction<RemoveNumber>
+  B extends FavoritesAction<int>
 >
     extends AppAction<A, B> {
   final B favorites;
@@ -106,21 +105,20 @@ extension AppActionPath on AppAction {
       return rootAction!;
     },
   );
-  static final favorites =
-      WritableKeyPath<AppAction, FavoritesAction<RemoveNumber>?>(
-        get: (action) {
-          if (action is AppActionFavorites) {
-            return action.favorites;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = AppActionEnum.favorites(propAction);
-          }
-          return rootAction!;
-        },
-      );
+  static final favorites = WritableKeyPath<AppAction, FavoritesAction<int>?>(
+    get: (action) {
+      if (action is AppActionFavorites) {
+        return action.favorites;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = AppActionEnum.favorites(propAction);
+      }
+      return rootAction!;
+    },
+  );
 }
 
 extension CounterActionEnum on CounterAction {
@@ -246,11 +244,10 @@ extension CounterActionPath on CounterAction {
 }
 
 extension FavoritesActionEnum on FavoritesAction {
-  static FavoritesAction remove(RemoveNumber p) => FavoritesActionRemove(p);
+  static FavoritesAction remove(int p) => FavoritesActionRemove(p);
 }
 
-final class FavoritesActionRemove<A extends RemoveNumber>
-    extends FavoritesAction<A> {
+final class FavoritesActionRemove<A extends int> extends FavoritesAction<A> {
   final A remove;
   FavoritesActionRemove(this.remove) : super();
 
@@ -263,7 +260,7 @@ final class FavoritesActionRemove<A extends RemoveNumber>
 }
 
 extension FavoritesActionPath on FavoritesAction {
-  static final remove = WritableKeyPath<FavoritesAction, RemoveNumber?>(
+  static final remove = WritableKeyPath<FavoritesAction, int?>(
     get: (action) {
       if (action is FavoritesActionRemove) {
         return action.remove;

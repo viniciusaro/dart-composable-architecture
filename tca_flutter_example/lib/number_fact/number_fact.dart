@@ -8,10 +8,13 @@ part 'number_fact.g.dart';
 var numberFactClient = liveNumberFactClient;
 
 @KeyPathable()
-final class NumberFactState {
+final class NumberFactState extends Equatable {
   int count = 0;
   bool isLoading = false;
   String? numberFact;
+
+  @override
+  List<Object?> get props => [count, isLoading, numberFact];
 }
 
 @CaseKeyPathable()

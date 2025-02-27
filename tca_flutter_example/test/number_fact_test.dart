@@ -6,21 +6,33 @@ import 'package:tca_flutter_example/number_fact/number_fact_client.dart';
 void main() {
   test('decrement button tapped', () {
     final store = TestStore(initialState: NumberFactState(), reducer: numberFactReducer);
-    store.send(NumberFactActionEnum.decrementButtonTapped());
-    expect(store.state.count, -1);
+    store.send(
+      NumberFactActionEnum.decrementButtonTapped(),
+      (state) => state..count = -1, //
+    );
   });
 
   test('increment button tapped', () {
     final store = TestStore(initialState: NumberFactState(), reducer: numberFactReducer);
-    store.send(NumberFactActionEnum.incrementButtonTapped());
-    expect(store.state.count, 1);
+    store.send(
+      NumberFactActionEnum.incrementButtonTapped(),
+      (state) => state..count = 1, //
+    );
   });
 
   test('number fact button tapped', () async {
     numberFactClient = NumberFactClient(factFor: (n) async => "$n is a good number");
     final store = TestStore(initialState: NumberFactState(), reducer: numberFactReducer);
-    store.send(NumberFactActionEnum.numberFactButtonTapped());
-    await store.receive(NumberFactActionEnum.numberFactResponse("0 is a good number"));
-    expect(store.state.numberFact, "0 is a good number");
+
+    await store.send(
+      NumberFactActionEnum.numberFactButtonTapped(),
+      (state) => state..isLoading = true,
+    );
+
+    await store.receive(NumberFactActionEnum.numberFactResponse("0 is a good number"), (state) {
+      return state
+        ..isLoading = false
+        ..numberFact = "0 is a good number";
+    });
   });
 }

@@ -5,17 +5,8 @@ part 'feature_composition.g.dart';
 
 @KeyPathable()
 final class AppState extends Equatable {
-  final CounterState counter;
-  final FavoritesState favorites;
-
-  const AppState({
-    this.counter = const CounterState(),
-    this.favorites = const FavoritesState(), //
-  });
-
-  AppState copyWith({CounterState? counter, FavoritesState? favorites}) {
-    return AppState(counter: counter ?? this.counter, favorites: favorites ?? this.favorites);
-  }
+  CounterState counter = CounterState();
+  FavoritesState favorites = FavoritesState();
 
   @override
   List<Object?> get props => [counter, favorites];
@@ -33,30 +24,17 @@ final appReducer = combine([
     ])
     .onChange(
       of: (state) => state.counter.favorites,
-      update: (state, favorites) {
-        return state.copyWith(favorites: state.favorites.copyWith(favorites: favorites));
-      },
+      update: (state, favorites) => state..favorites.favorites = favorites,
     )
     .onChange(
       of: (state) => state.favorites.favorites,
-      update: (state, favorites) {
-        return state.copyWith(counter: state.counter.copyWith(favorites: favorites));
-      },
+      update: (state, favorites) => state..counter.favorites = favorites,
     );
 
 @KeyPathable()
 final class CounterState extends Equatable {
-  final int count;
-  final Set<int> favorites;
-
-  const CounterState({this.count = 0, this.favorites = const {}});
-
-  CounterState copyWith({int? count, Set<int>? favorites}) {
-    return CounterState(
-      count: count ?? this.count,
-      favorites: favorites ?? this.favorites, //
-    );
-  }
+  int count = 0;
+  Set<int> favorites = {};
 
   @override
   List<Object?> get props => [count, favorites];
@@ -72,12 +50,7 @@ sealed class CounterAction<
 
 @KeyPathable()
 final class FavoritesState extends Equatable {
-  final Set<int> favorites;
-  const FavoritesState({this.favorites = const {}});
-
-  FavoritesState copyWith({Set<int>? favorites}) {
-    return FavoritesState(favorites: favorites ?? this.favorites);
-  }
+  Set<int> favorites = {};
 
   @override
   List<Object?> get props => [favorites];
@@ -85,29 +58,22 @@ final class FavoritesState extends Equatable {
 
 @CaseKeyPathable()
 sealed class FavoritesAction<
-  Remove extends RemoveNumber //
+  Remove extends int //
 > {}
-
-final class RemoveNumber {
-  final int number;
-  RemoveNumber(this.number);
-}
 
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterActionAddToFavoritesButtonTapped():
-      state.mutate((s) => s.copyWith(favorites: {...s.favorites, s.count}));
+      state.mutate((s) => s..favorites = {...s.favorites, s.count});
       return Effect.none();
     case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
+      state.mutate((s) => s..count += 1);
       return Effect.none();
     case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
+      state.mutate((s) => s..count -= 1);
       return Effect.none();
     case CounterActionRemoveFromFavoritesButtonTapped():
-      state.mutate((s) {
-        return s.copyWith(favorites: s.favorites.where((e) => e != state.value.count).toSet());
-      });
+      state.mutate((s) => s..favorites = s.favorites.where((e) => e != state.value.count).toSet());
       return Effect.none();
   }
 }
@@ -115,10 +81,7 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
 Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
   switch (action) {
     case FavoritesActionRemove():
-      state.mutate((s) {
-        final favorites = s.favorites.where((e) => e != action.remove.number);
-        return s.copyWith(favorites: Set.from(favorites));
-      });
+      state.mutate((s) => s..favorites = s.favorites.where((e) => e != action.remove).toSet());
       return Effect.none();
   }
 }
@@ -200,7 +163,7 @@ class FavoritesWidget extends StatelessWidget {
                 key: Key(item.toString()),
                 child: ListTile(title: Text("$item")),
                 onDismissed: (direction) {
-                  viewStore.send(FavoritesActionEnum.remove(RemoveNumber(item)));
+                  viewStore.send(FavoritesActionEnum.remove(item));
                 },
               );
             },
