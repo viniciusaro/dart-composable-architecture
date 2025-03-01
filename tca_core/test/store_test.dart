@@ -1,13 +1,32 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:test/test.dart';
 
 import '_helper.dart';
 
+final class Int {
+  int value;
+  Int(this.value);
+
+  @override
+  int get hashCode => value.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) {
+    return other is Int && other.value == value;
+  }
+
+  @override
+  String toString() {
+    return "Int($value)";
+  }
+}
+
 void main() {
-  Effect<Unit> incrementReducer(Inout<int> state, Unit action) {
-    state.mutate((count) => count + 1);
+  Effect<Unit> incrementReducer(Inout<Int> state, Unit action) {
+    state.mutate((count) => count..value += 1);
     return Effect.none<Unit>();
   }
 
@@ -93,14 +112,14 @@ void main() {
     });
 
     group('view', () {
-      test('syncs state updates between viewed and original', () {
+      test('syncs state updates between viewed and original', () async {
         final store = Store(
-          initialState: 0,
+          initialState: Int(0),
           reducer: incrementReducer,
         );
 
         store.send(unit);
-        expect(store.state, 1);
+        expect(store.state, Int(1));
 
         final viewdStore = store.view(
           state: KeyPath.identity(),
@@ -108,21 +127,21 @@ void main() {
         );
 
         viewdStore.send(unit);
-        expect(store.state, 2);
-        expect(viewdStore.state, 2);
+        expect(store.state, Int(2));
+        expect(viewdStore.state, Int(2));
 
         store.send(unit);
-        expect(store.state, 3);
-        expect(viewdStore.state, 3);
+        expect(store.state, Int(3));
+        expect(viewdStore.state, Int(3));
       });
 
-      test('emits every state change on viewed store stream', () {
-        List<int> storeStateEmissions = [];
-        List<int> viewStoreAStateEmissions = [];
-        List<int> viewStoreBStateEmissions = [];
+      test('emits every state change on viewed store stream', () async {
+        List<Int> storeStateEmissions = [];
+        List<Int> viewStoreAStateEmissions = [];
+        List<Int> viewStoreBStateEmissions = [];
 
         final store = Store(
-          initialState: 0,
+          initialState: Int(0),
           reducer: incrementReducer,
         );
 
@@ -149,20 +168,26 @@ void main() {
         });
 
         store.send(unit);
-        expect(storeStateEmissions, [1]);
-        expect(viewStoreAStateEmissions, [1]);
-        expect(viewStoreBStateEmissions, [1]);
+        expect(storeStateEmissions, [Int(1)]);
+        expect(viewStoreAStateEmissions, [Int(1)]);
+        expect(viewStoreBStateEmissions, [Int(1)]);
 
         viewdStoreA.send(unit);
-        expect(storeStateEmissions, [1, 2]);
-        expect(viewStoreAStateEmissions, [1, 2]);
-        expect(viewStoreBStateEmissions, [1, 2]);
+        expect(storeStateEmissions, [Int(2), Int(2)]);
+        expect(viewStoreAStateEmissions, [Int(2), Int(2)]);
+        expect(viewStoreBStateEmissions, [Int(2), Int(2)]);
 
         viewdStoreB.send(unit);
-        expect(storeStateEmissions, [1, 2, 3]);
-        expect(viewStoreAStateEmissions, [1, 2, 3]);
-        expect(viewStoreBStateEmissions, [1, 2, 3]);
+        expect(storeStateEmissions, [Int(3), Int(3), Int(3)]);
+        expect(viewStoreAStateEmissions, [Int(3), Int(3), Int(3)]);
+        expect(viewStoreBStateEmissions, [Int(3), Int(3), Int(3)]);
       });
     });
-  });
+  }, timeout: Timeout(Duration(minutes: 100)));
+}
+
+extension ObjectX<T> on T {
+  Future<T> isolatedCopy() {
+    return Isolate.run(() => this);
+  }
 }
