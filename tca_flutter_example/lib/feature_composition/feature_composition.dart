@@ -24,11 +24,11 @@ final appReducer = combine([
     ])
     .onChange(
       of: (state) => state.counter.favorites,
-      update: (state, favorites) => state..favorites.favorites = favorites,
+      update: (state, favorites) => state.favorites.favorites = Set.from(favorites),
     )
     .onChange(
       of: (state) => state.favorites.favorites,
-      update: (state, favorites) => state..counter.favorites = favorites,
+      update: (state, favorites) => state.counter.favorites = Set.from(favorites),
     );
 
 @KeyPathable()
@@ -61,27 +61,27 @@ sealed class FavoritesAction<
   Remove extends int //
 > {}
 
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
+Effect<CounterAction> counterReducer(CounterState state, CounterAction action) {
   switch (action) {
     case CounterActionAddToFavoritesButtonTapped():
-      state.mutate((s) => s..favorites = {...s.favorites, s.count});
+      state.favorites.add(state.count);
       return Effect.none();
     case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+      state.count += 1;
       return Effect.none();
     case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+      state.count -= 1;
       return Effect.none();
     case CounterActionRemoveFromFavoritesButtonTapped():
-      state.mutate((s) => s..favorites = s.favorites.where((e) => e != state.value.count).toSet());
+      state.favorites.remove(state.count);
       return Effect.none();
   }
 }
 
-Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
+Effect<FavoritesAction> favoritesReducer(FavoritesState state, FavoritesAction action) {
   switch (action) {
     case FavoritesActionRemove():
-      state.mutate((s) => s..favorites = s.favorites.where((e) => e != action.remove).toSet());
+      state.favorites.remove(action.remove);
       return Effect.none();
   }
 }

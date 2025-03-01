@@ -75,13 +75,13 @@ sealed class CounterAction<
   IncrementButtonTapped //
 > {}
 
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
+Effect<CounterAction> counterReducer(CounterState state, CounterAction action) {
   switch (action) {
     case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+      state.count -= 1;
       return Effect.none();
     case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+      state.count += 1;
       return Effect.none();
   }
 }
@@ -133,7 +133,7 @@ sealed class MessageBrokerAction<
   IncrementExternal //
 > {}
 
-Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) {
+Effect<AppAction> messageBrokerReducer(AppState state, AppAction action) {
   switch (action) {
     case AppActionCounter():
       switch (action.counter) {
@@ -145,10 +145,10 @@ Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) 
     case AppActionMessageBroker():
       switch (action.messageBroker) {
         case MessageBrokerActionDecrementExternal():
-          state.mutate((s) => s..counter.count -= 1);
+          state.counter.count -= 1;
           return Effect.none();
         case MessageBrokerActionIncrementExternal():
-          state.mutate((s) => s..counter.count += 1);
+          state.counter.count += 1;
           return Effect.none();
       }
 

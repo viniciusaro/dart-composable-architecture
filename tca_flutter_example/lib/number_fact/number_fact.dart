@@ -25,29 +25,26 @@ sealed class NumberFactAction<
   NumberFactResponse extends String //
 > {}
 
-Effect<NumberFactAction> numberFactReducer(Inout<NumberFactState> state, NumberFactAction action) {
+Effect<NumberFactAction> numberFactReducer(NumberFactState state, NumberFactAction action) {
   switch (action) {
     case NumberFactActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+      state.count -= 1;
       return Effect.none();
 
     case NumberFactActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+      state.count += 1;
       return Effect.none();
 
     case NumberFactActionNumberFactButtonTapped():
-      state.mutate((s) => s..isLoading = true);
+      state.isLoading = true;
       return Effect.future(() async {
-        final response = await numberFactClient.factFor(state.value.count);
+        final response = await numberFactClient.factFor(state.count);
         return NumberFactActionEnum.numberFactResponse(response);
       });
 
     case NumberFactActionNumberFactResponse():
-      state.mutate((s) {
-        return s
-          ..isLoading = false
-          ..numberFact = action.numberFactResponse;
-      });
+      state.isLoading = false;
+      state.numberFact = action.numberFactResponse;
       return Effect.none();
   }
 }

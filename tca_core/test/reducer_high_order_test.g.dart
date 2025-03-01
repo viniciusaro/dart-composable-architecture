@@ -36,30 +36,25 @@ extension FavoritesStatePath on FavoritesState {
 // **************************************************************************
 
 extension RootActionEnum on RootAction {
-  static RootAction counter(CounterAction<dynamic, dynamic> p) =>
-      RootActionCounter(p);
-  static RootAction favorites(
-          FavoritesAction<FavoritesAdd, FavoritesRemoveAt> p) =>
+  static RootAction counter(CounterAction<dynamic, dynamic> p) => RootActionCounter(p);
+  static RootAction favorites(FavoritesAction<FavoritesAdd, FavoritesRemoveAt> p) =>
       RootActionFavorites(p);
 }
 
 final class RootActionCounter<A extends CounterAction<dynamic, dynamic>,
-        B extends FavoritesAction<FavoritesAdd, FavoritesRemoveAt>>
-    extends RootAction<A, B> {
+    B extends FavoritesAction<FavoritesAdd, FavoritesRemoveAt>> extends RootAction<A, B> {
   final A counter;
   RootActionCounter(this.counter) : super();
 }
 
 final class RootActionFavorites<A extends CounterAction<dynamic, dynamic>,
-        B extends FavoritesAction<FavoritesAdd, FavoritesRemoveAt>>
-    extends RootAction<A, B> {
+    B extends FavoritesAction<FavoritesAdd, FavoritesRemoveAt>> extends RootAction<A, B> {
   final B favorites;
   RootActionFavorites(this.favorites) : super();
 }
 
 extension RootActionPath on RootAction {
-  static final counter =
-      WritableKeyPath<RootAction, CounterAction<dynamic, dynamic>?>(
+  static final counter = WritableKeyPath<RootAction, CounterAction<dynamic, dynamic>?>(
     get: (action) {
       if (action is RootActionCounter) {
         return action.counter;
@@ -73,8 +68,8 @@ extension RootActionPath on RootAction {
       return rootAction!;
     },
   );
-  static final favorites = WritableKeyPath<RootAction,
-      FavoritesAction<FavoritesAdd, FavoritesRemoveAt>?>(
+  static final favorites =
+      WritableKeyPath<RootAction, FavoritesAction<FavoritesAdd, FavoritesRemoveAt>?>(
     get: (action) {
       if (action is RootActionFavorites) {
         return action.favorites;
@@ -104,8 +99,7 @@ final class CounterActionDecrement<A, B> extends CounterAction<A, B> {
 }
 
 extension CounterActionPath on CounterAction {
-  static final increment =
-      WritableKeyPath<CounterAction, CounterActionIncrement?>(
+  static final increment = WritableKeyPath<CounterAction, CounterActionIncrement?>(
     get: (action) {
       if (action is CounterActionIncrement) {
         return action;
@@ -119,8 +113,7 @@ extension CounterActionPath on CounterAction {
       return rootAction!;
     },
   );
-  static final decrement =
-      WritableKeyPath<CounterAction, CounterActionDecrement?>(
+  static final decrement = WritableKeyPath<CounterAction, CounterActionDecrement?>(
     get: (action) {
       if (action is CounterActionDecrement) {
         return action;
@@ -138,18 +131,17 @@ extension CounterActionPath on CounterAction {
 
 extension FavoritesActionEnum on FavoritesAction {
   static FavoritesAction add(FavoritesAdd p) => FavoritesActionAdd(p);
-  static FavoritesAction removeAt(FavoritesRemoveAt p) =>
-      FavoritesActionRemoveAt(p);
+  static FavoritesAction removeAt(FavoritesRemoveAt p) => FavoritesActionRemoveAt(p);
 }
 
-final class FavoritesActionAdd<A extends FavoritesAdd,
-    B extends FavoritesRemoveAt> extends FavoritesAction<A, B> {
+final class FavoritesActionAdd<A extends FavoritesAdd, B extends FavoritesRemoveAt>
+    extends FavoritesAction<A, B> {
   final A add;
   FavoritesActionAdd(this.add) : super();
 }
 
-final class FavoritesActionRemoveAt<A extends FavoritesAdd,
-    B extends FavoritesRemoveAt> extends FavoritesAction<A, B> {
+final class FavoritesActionRemoveAt<A extends FavoritesAdd, B extends FavoritesRemoveAt>
+    extends FavoritesAction<A, B> {
   final B removeAt;
   FavoritesActionRemoveAt(this.removeAt) : super();
 }

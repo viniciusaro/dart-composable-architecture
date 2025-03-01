@@ -25,8 +25,8 @@ final class Int {
 }
 
 void main() {
-  Effect<Unit> incrementReducer(Inout<Int> state, Unit action) {
-    state.mutate((count) => count..value += 1);
+  Effect<Unit> incrementReducer(Int state, Unit action) {
+    state.value += 1;
     return Effect.none<Unit>();
   }
 
@@ -42,50 +42,11 @@ void main() {
         expect(store.state.count, 0);
       });
 
-      test('send, throws error if mutation is detected inside effect', () async {
-        Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
-          switch (action) {
-            case AppAction.actionA:
-              return Effect(() {
-                state.mutate((s) => s.copyWith(count: s.count + 1));
-                return Stream.empty();
-              });
-
-            case AppAction.actionB:
-              return Effect(() async* {
-                state.mutate((s) => s.copyWith(count: s.count + 1));
-              });
-          }
-        }
-
-        final store = Store(
-          initialState: AppState(),
-          reducer: reducer,
-        );
-
-        expect(
-          () => store.send(AppAction.actionA),
-          throwsA(EffectfullStateMutation()),
-        );
-
-        expect(store.state.count, 0);
-
-        Object asyncError = -1;
-        runZonedGuarded(
-          () => store.send(AppAction.actionB),
-          (e, s) => asyncError = e,
-        );
-
-        await Future.delayed(Duration.zero);
-        expect(asyncError, EffectfullStateMutation());
-        expect(store.state.count, 0);
-      });
-
       test('send feeds effect action back into the system', () async {
-        Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
+        Effect<AppAction> reducer(AppState state, AppAction action) {
           switch (action) {
             case AppAction.actionA:
-              state.mutate((s) => s.copyWith(count: s.count + 1));
+              state.count += 1;
               return Effect.stream(
                 () => Future.delayed(
                   Duration(milliseconds: 10),
@@ -93,7 +54,7 @@ void main() {
                 ).asStream(),
               );
             case AppAction.actionB:
-              state.mutate((s) => s.copyWith(count: s.count - 1));
+              state.count -= 1;
               return Effect.none();
           }
         }

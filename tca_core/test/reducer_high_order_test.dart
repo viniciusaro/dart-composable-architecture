@@ -57,35 +57,35 @@ class FavoritesRemoveAt {
 }
 
 Effect<CounterAction> counterReducer(
-  Inout<CounterState> state,
+  CounterState state,
   CounterAction action,
 ) {
   switch (action) {
     case CounterActionIncrement():
-      state.mutate((s) => s..count += 1);
+      state.count += 1;
       return Effect.none();
     case CounterActionDecrement():
-      state.mutate((s) => s..count -= 1);
+      state.count -= 1;
       return Effect.none();
   }
 }
 
 Effect<FavoritesAction> favoritesReducer(
-  Inout<FavoritesState> state,
+  FavoritesState state,
   FavoritesAction action,
 ) {
   switch (action) {
     case FavoritesActionAdd():
-      state.mutate((s) => s..favorites.add(action.add.favorite));
+      state.favorites.add(action.add.favorite);
       return Effect.none();
     case FavoritesActionRemoveAt():
-      state.mutate((s) => s..favorites.removeAt(action.removeAt.index));
+      state.favorites.removeAt(action.removeAt.index);
       return Effect.none();
   }
 }
 
 Effect<FavoritesAction> favoritesAnalyticsReducer(
-  Inout<FavoritesState> state,
+  FavoritesState state,
   FavoritesAction action,
 ) {
   switch (action) {

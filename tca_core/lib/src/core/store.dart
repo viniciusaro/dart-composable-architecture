@@ -18,14 +18,13 @@ final class StateUpdate<State> {
 
 final class Store<State, Action> {
   final Reducer<State, Action> _reducer;
-  final Inout<State> _state;
-  State get state => _state._value;
+  State state;
   final syncStream = SyncStream<StateUpdate<State>>();
 
   Store({
     required State initialState,
     required Reducer<State, Action> reducer,
-  })  : _state = Inout(value: initialState),
+  })  : state = initialState,
         _reducer = reducer;
 
   void send(Action action) {
@@ -33,11 +32,8 @@ final class Store<State, Action> {
   }
 
   void _send(Action action, {bool fromChild = false}) {
-    _state._isMutationAllowed = true;
-    final effect = _reducer(_state, action);
-    _state._isMutationAllowed = false;
-    syncStream.add(StateUpdate(_state._value, fromChild));
-
+    final effect = _reducer(state, action);
+    syncStream.add(StateUpdate(state, fromChild));
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];
 
@@ -56,15 +52,13 @@ final class Store<State, Action> {
       initialState: state.get(this.state),
       reducer: (localState, localAction) {
         final globalAction = action.set(null, localAction);
-        if (globalAction != null) {
-          _send(globalAction, fromChild: true);
-        }
+        _send(globalAction, fromChild: true);
         return Effect.none();
       },
     );
 
     syncStream.listen((update) {
-      store._state._value = state.get(update.state);
+      store.state = state.get(update.state);
       if (!update.fromChild) {
         store.syncStream.add(StateUpdate(state.get(update.state), false));
       }
@@ -75,29 +69,27 @@ final class Store<State, Action> {
 }
 
 final class TestStore<State, Action> {
-  final Inout<State> _state;
-  State get state => _state._value;
+  State state;
   final Reducer<State, Action> _reducer;
   final List<Action> _expectedActions = [];
   final List<State Function(State)> _expectedStateUpdates = [];
 
   TestStore({required State initialState, required Reducer<State, Action> reducer})
       : _reducer = reducer,
-        _state = Inout(value: initialState);
+        state = initialState;
 
   Future<void> send(Action action, State Function(State) updates) async {
-    _state._isMutationAllowed = true;
+    final isolatedState = await Isolate.run(() => state);
 
-    final (afterUpdatesHashCode, afterUpdatesDescripton) = await Isolate.run(() {
-      final updated = updates(_state.value);
-      return (updated.hashCode, updated.toString());
-    });
+    final (afterUpdatesHashCode, afterUpdatesDescripton) = () {
+      final updated = updates(isolatedState);
+      return (updated.hashCodeConsideringContents, updated.toString());
+    }();
 
-    final effect = _reducer(_state, action);
-    if (_state.value.hashCode != afterUpdatesHashCode) {
+    final effect = _reducer(state, action);
+    if (state.hashCodeConsideringContents != afterUpdatesHashCode) {
       throw Exception("Detected unexpected changes. Expected $afterUpdatesDescripton, got: $state");
     }
-    _state._isMutationAllowed = false;
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];
@@ -125,5 +117,12 @@ final class TestStore<State, Action> {
     _expectedActions.add(action);
     _expectedStateUpdates.add(updates);
     await Future.delayed(Duration(milliseconds: 1));
+  }
+}
+
+extension ObjectX<T> on T {
+  int get hashCodeConsideringContents {
+    final self = this;
+    return self is Iterable ? Object.hashAll(self) : self.hashCode;
   }
 }

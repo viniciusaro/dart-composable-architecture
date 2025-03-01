@@ -52,4 +52,25 @@ void main() {
       });
     });
   });
+
+  group("favorite", () {
+    test("remove from favorites favorites button tapped", () async {
+      final store = TestStore(initialState: AppState(), reducer: appReducer);
+      AppAction action;
+
+      action = AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped());
+      await store.send(action, (state) {
+        return state
+          ..counter.favorites = {0}
+          ..favorites.favorites = {0};
+      });
+
+      action = AppActionEnum.favorites(FavoritesActionEnum.remove(0));
+      await store.send(action, (state) {
+        return state
+          ..counter.favorites = {}
+          ..favorites.favorites = {};
+      });
+    });
+  });
 }
