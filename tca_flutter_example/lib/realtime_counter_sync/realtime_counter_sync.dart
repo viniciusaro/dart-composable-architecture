@@ -8,13 +8,22 @@ import 'clients/message_broker_client/message_broker_client.dart';
 part 'realtime_counter_sync.g.dart';
 
 @KeyPathable()
-final class AppState {
-  CounterState counter = CounterState();
+final class AppState extends Equatable {
+  final CounterState counter;
+
+  const AppState({this.counter = const CounterState()});
+
+  AppState copyWith({CounterState? counter}) {
+    return AppState(counter: counter ?? this.counter);
+  }
 
   @override
   String toString() {
     return "AppState(counter: $counter)";
   }
+
+  @override
+  List<Object?> get props => [counter];
 }
 
 @CaseKeyPathable()
@@ -54,13 +63,22 @@ class AppWidget extends StatelessWidget {
 }
 
 @KeyPathable()
-final class CounterState {
-  int count = 0;
+final class CounterState extends Equatable {
+  final int count;
+
+  const CounterState({this.count = 0});
+
+  CounterState copyWith({int? count}) {
+    return CounterState(count: count ?? this.count);
+  }
 
   @override
   String toString() {
     return "CounterState($count)";
   }
+
+  @override
+  List<Object?> get props => [count];
 }
 
 @CaseKeyPathable()
@@ -72,10 +90,10 @@ sealed class CounterAction<
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+      state.mutate((s) => s.copyWith(count: s.count - 1));
       return Effect.none();
     case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+      state.mutate((s) => s.copyWith(count: s.count + 1));
       return Effect.none();
   }
 }
@@ -139,10 +157,10 @@ Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) 
     case AppActionMessageBroker():
       switch (action.messageBroker) {
         case MessageBrokerActionDecrementExternal():
-          state.mutate((s) => s..counter.count -= 1);
+          state.mutate((s) => s.copyWith(counter: s.counter.copyWith(count: s.counter.count - 1)));
           return Effect.none();
         case MessageBrokerActionIncrementExternal():
-          state.mutate((s) => s..counter.count += 1);
+          state.mutate((s) => s.copyWith(counter: s.counter.copyWith(count: s.counter.count + 1)));
           return Effect.none();
       }
 

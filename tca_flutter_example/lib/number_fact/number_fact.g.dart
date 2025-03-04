@@ -6,18 +6,18 @@ part of 'number_fact.dart';
 // KeyPathGenerator
 // **************************************************************************
 
-extension FeatureStatePath on FeatureState {
-  static final count = WritableKeyPath<FeatureState, int>(
+extension NumberFactStatePath on NumberFactState {
+  static final count = WritableKeyPath<NumberFactState, int>(
     get: (obj) => obj.count,
-    set: (obj, count) => obj!..count = count,
+    set: (obj, count) => obj!.copyWith(count: count),
   );
-  static final isLoading = WritableKeyPath<FeatureState, bool>(
+  static final isLoading = WritableKeyPath<NumberFactState, bool>(
     get: (obj) => obj.isLoading,
-    set: (obj, isLoading) => obj!..isLoading = isLoading,
+    set: (obj, isLoading) => obj!.copyWith(isLoading: isLoading),
   );
-  static final numberFact = WritableKeyPath<FeatureState, String?>(
+  static final numberFact = WritableKeyPath<NumberFactState, String?>(
     get: (obj) => obj.numberFact,
-    set: (obj, numberFact) => obj!..numberFact = numberFact,
+    set: (obj, numberFact) => obj!.copyWith(numberFact: numberFact),
   );
 }
 
@@ -25,117 +25,137 @@ extension FeatureStatePath on FeatureState {
 // CaseKeyPathGenerator
 // **************************************************************************
 
-extension FeatureActionEnum on FeatureAction {
-  static FeatureAction decrementButtonTapped() =>
-      FeatureActionDecrementButtonTapped();
-  static FeatureAction incrementButtonTapped() =>
-      FeatureActionIncrementButtonTapped();
-  static FeatureAction numberFactButtonTapped() =>
-      FeatureActionNumberFactButtonTapped();
-  static FeatureAction numberFactResponse(NumberFactResponseValue p) =>
-      FeatureActionNumberFactResponse(p);
+extension NumberFactActionEnum on NumberFactAction {
+  static NumberFactAction decrementButtonTapped() => NumberFactActionDecrementButtonTapped();
+  static NumberFactAction incrementButtonTapped() => NumberFactActionIncrementButtonTapped();
+  static NumberFactAction numberFactButtonTapped() => NumberFactActionNumberFactButtonTapped();
+  static NumberFactAction numberFactResponse(String p) => NumberFactActionNumberFactResponse(p);
 }
 
-final class FeatureActionDecrementButtonTapped<
-  A,
-  B,
-  C,
-  D extends NumberFactResponseValue
->
-    extends FeatureAction<A, B, C, D> {
-  FeatureActionDecrementButtonTapped() : super();
+final class NumberFactActionDecrementButtonTapped<A, B, C, D extends String>
+    extends NumberFactAction<A, B, C, D> {
+  NumberFactActionDecrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is NumberFactActionDecrementButtonTapped;
+
+  @override
+  String toString() {
+    return "NumberFactActionDecrementButtonTapped<<A, B, C, D extends String>>";
+  }
 }
 
-final class FeatureActionIncrementButtonTapped<
-  A,
-  B,
-  C,
-  D extends NumberFactResponseValue
->
-    extends FeatureAction<A, B, C, D> {
-  FeatureActionIncrementButtonTapped() : super();
+final class NumberFactActionIncrementButtonTapped<A, B, C, D extends String>
+    extends NumberFactAction<A, B, C, D> {
+  NumberFactActionIncrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is NumberFactActionIncrementButtonTapped;
+
+  @override
+  String toString() {
+    return "NumberFactActionIncrementButtonTapped<<A, B, C, D extends String>>";
+  }
 }
 
-final class FeatureActionNumberFactButtonTapped<
-  A,
-  B,
-  C,
-  D extends NumberFactResponseValue
->
-    extends FeatureAction<A, B, C, D> {
-  FeatureActionNumberFactButtonTapped() : super();
+final class NumberFactActionNumberFactButtonTapped<A, B, C, D extends String>
+    extends NumberFactAction<A, B, C, D> {
+  NumberFactActionNumberFactButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is NumberFactActionNumberFactButtonTapped;
+
+  @override
+  String toString() {
+    return "NumberFactActionNumberFactButtonTapped<<A, B, C, D extends String>>";
+  }
 }
 
-final class FeatureActionNumberFactResponse<
-  A,
-  B,
-  C,
-  D extends NumberFactResponseValue
->
-    extends FeatureAction<A, B, C, D> {
+final class NumberFactActionNumberFactResponse<A, B, C, D extends String>
+    extends NumberFactAction<A, B, C, D> {
   final D numberFactResponse;
-  FeatureActionNumberFactResponse(this.numberFactResponse) : super();
+  NumberFactActionNumberFactResponse(this.numberFactResponse) : super();
+
+  @override
+  int get hashCode => numberFactResponse.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is NumberFactActionNumberFactResponse && other.numberFactResponse == numberFactResponse;
+
+  @override
+  String toString() {
+    return "NumberFactActionNumberFactResponse<<A, B, C, D extends String>>(numberFactResponse: $numberFactResponse)";
+  }
 }
 
-extension FeatureActionPath on FeatureAction {
+extension NumberFactActionPath on NumberFactAction {
   static final decrementButtonTapped =
-      WritableKeyPath<FeatureAction, FeatureActionDecrementButtonTapped?>(
+      WritableKeyPath<NumberFactAction, NumberFactActionDecrementButtonTapped?>(
         get: (action) {
-          if (action is FeatureActionDecrementButtonTapped) {
+          if (action is NumberFactActionDecrementButtonTapped) {
             return action;
           }
           return null;
         },
         set: (rootAction, propAction) {
           if (propAction != null) {
-            rootAction = FeatureActionEnum.decrementButtonTapped();
+            rootAction = NumberFactActionEnum.decrementButtonTapped();
           }
           return rootAction!;
         },
       );
   static final incrementButtonTapped =
-      WritableKeyPath<FeatureAction, FeatureActionIncrementButtonTapped?>(
+      WritableKeyPath<NumberFactAction, NumberFactActionIncrementButtonTapped?>(
         get: (action) {
-          if (action is FeatureActionIncrementButtonTapped) {
+          if (action is NumberFactActionIncrementButtonTapped) {
             return action;
           }
           return null;
         },
         set: (rootAction, propAction) {
           if (propAction != null) {
-            rootAction = FeatureActionEnum.incrementButtonTapped();
+            rootAction = NumberFactActionEnum.incrementButtonTapped();
           }
           return rootAction!;
         },
       );
   static final numberFactButtonTapped =
-      WritableKeyPath<FeatureAction, FeatureActionNumberFactButtonTapped?>(
+      WritableKeyPath<NumberFactAction, NumberFactActionNumberFactButtonTapped?>(
         get: (action) {
-          if (action is FeatureActionNumberFactButtonTapped) {
+          if (action is NumberFactActionNumberFactButtonTapped) {
             return action;
           }
           return null;
         },
         set: (rootAction, propAction) {
           if (propAction != null) {
-            rootAction = FeatureActionEnum.numberFactButtonTapped();
+            rootAction = NumberFactActionEnum.numberFactButtonTapped();
           }
           return rootAction!;
         },
       );
-  static final numberFactResponse =
-      WritableKeyPath<FeatureAction, NumberFactResponseValue?>(
-        get: (action) {
-          if (action is FeatureActionNumberFactResponse) {
-            return action.numberFactResponse;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = FeatureActionEnum.numberFactResponse(propAction);
-          }
-          return rootAction!;
-        },
-      );
+  static final numberFactResponse = WritableKeyPath<NumberFactAction, String?>(
+    get: (action) {
+      if (action is NumberFactActionNumberFactResponse) {
+        return action.numberFactResponse;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = NumberFactActionEnum.numberFactResponse(propAction);
+      }
+      return rootAction!;
+    },
+  );
 }

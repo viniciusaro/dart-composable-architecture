@@ -3,7 +3,7 @@ part of 'store.dart';
 final class EffectfullStateMutation extends Equatable implements Exception {
   @override
   String toString() {
-    return "EffectfullStateMutation: State mutation detected while running effect";
+    return "EffectfullStateMutation: State mutation detected outside reducer";
   }
 
   @override

@@ -5,12 +5,21 @@ typedef Reducer<State, Action> = Effect<Action> Function(Inout<State>, Action);
 final class Inout<T> {
   T _value;
   T get value => _value;
+
   bool _isMutationAllowed = false;
-  Inout({required T value}) : _value = value;
+  int _latestValueHashCode;
+  Inout({required T value})
+      : _value = value,
+        _latestValueHashCode = value.hashCode;
 
   T mutate(T Function(T) mutation) {
+    if (_latestValueHashCode != _value.hashCode) {
+      throw EffectfullStateMutation();
+    }
+
     if (_isMutationAllowed) {
       _value = mutation(_value);
+      _latestValueHashCode = _value.hashCode;
       return _value;
     } else {
       throw EffectfullStateMutation();
@@ -21,14 +30,14 @@ final class Inout<T> {
 extension ReducerChangeEquatable<State extends Equatable, Action> on Reducer<State, Action> {
   Reducer<State, Action> onChange<LocalState>({
     required LocalState Function(State) of,
-    required State Function(State, LocalState) update,
+    required void Function(Inout<State>, LocalState) update,
   }) {
     return (state, action) {
-      final previousValue = of(state.value);
+      final previousValue = of(state._value);
       final effect = this(state, action);
-      final updatedValue = of(state.value);
+      final updatedValue = of(state._value);
       if (previousValue != updatedValue) {
-        state.mutate((s) => update(state.value, updatedValue));
+        update(state, updatedValue);
       }
       return effect;
     };
@@ -81,6 +90,7 @@ Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalStat
     final localEffect = other(localState, localAction);
     localState._isMutationAllowed = false;
     globalState._value = state.set(globalState._value, localState._value);
+    globalState._latestValueHashCode = globalState._value.hashCode;
 
     return localEffect.map((localAction) {
       action.set(globalAction, localAction);

@@ -9,14 +9,20 @@ part of 'realtime_counter_sync.dart';
 extension AppStatePath on AppState {
   static final counter = WritableKeyPath<AppState, CounterState>(
     get: (obj) => obj.counter,
-    set: (obj, counter) => obj!..counter = counter,
+    set: (obj, counter) => obj!.copyWith(counter: counter),
+  );
+  static final props = KeyPath<AppState, List<Object?>>(
+    get: (obj) => obj.props,
   );
 }
 
 extension CounterStatePath on CounterState {
   static final count = WritableKeyPath<CounterState, int>(
     get: (obj) => obj.count,
-    set: (obj, count) => obj!..count = count,
+    set: (obj, count) => obj!.copyWith(count: count),
+  );
+  static final props = KeyPath<CounterState, List<Object?>>(
+    get: (obj) => obj.props,
   );
 }
 
@@ -40,6 +46,18 @@ final class AppActionCounter<
     extends AppAction<A, B, C> {
   final A counter;
   AppActionCounter(this.counter) : super();
+
+  @override
+  int get hashCode => counter.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionCounter && other.counter == counter;
+
+  @override
+  String toString() {
+    return "AppActionCounter<<A extends CounterAction<dynamic, dynamic>, B extends MessageBrokerAction<dynamic, dynamic>, C>>(counter: $counter)";
+  }
 }
 
 final class AppActionMessageBroker<
@@ -50,6 +68,18 @@ final class AppActionMessageBroker<
     extends AppAction<A, B, C> {
   final B messageBroker;
   AppActionMessageBroker(this.messageBroker) : super();
+
+  @override
+  int get hashCode => messageBroker.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionMessageBroker && other.messageBroker == messageBroker;
+
+  @override
+  String toString() {
+    return "AppActionMessageBroker<<A extends CounterAction<dynamic, dynamic>, B extends MessageBrokerAction<dynamic, dynamic>, C>>(messageBroker: $messageBroker)";
+  }
 }
 
 final class AppActionOnInitState<
@@ -59,6 +89,17 @@ final class AppActionOnInitState<
 >
     extends AppAction<A, B, C> {
   AppActionOnInitState() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is AppActionOnInitState;
+
+  @override
+  String toString() {
+    return "AppActionOnInitState<<A extends CounterAction<dynamic, dynamic>, B extends MessageBrokerAction<dynamic, dynamic>, C>>";
+  }
 }
 
 extension AppActionPath on AppAction {
@@ -118,11 +159,33 @@ extension CounterActionEnum on CounterAction {
 final class CounterActionDecrementButtonTapped<A, B>
     extends CounterAction<A, B> {
   CounterActionDecrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionDecrementButtonTapped;
+
+  @override
+  String toString() {
+    return "CounterActionDecrementButtonTapped<<A, B>>";
+  }
 }
 
 final class CounterActionIncrementButtonTapped<A, B>
     extends CounterAction<A, B> {
   CounterActionIncrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionIncrementButtonTapped;
+
+  @override
+  String toString() {
+    return "CounterActionIncrementButtonTapped<<A, B>>";
+  }
 }
 
 extension CounterActionPath on CounterAction {
@@ -168,11 +231,35 @@ extension MessageBrokerActionEnum on MessageBrokerAction {
 final class MessageBrokerActionDecrementExternal<A, B>
     extends MessageBrokerAction<A, B> {
   MessageBrokerActionDecrementExternal() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is MessageBrokerActionDecrementExternal;
+
+  @override
+  String toString() {
+    return "MessageBrokerActionDecrementExternal<<A, B>>";
+  }
 }
 
 final class MessageBrokerActionIncrementExternal<A, B>
     extends MessageBrokerAction<A, B> {
   MessageBrokerActionIncrementExternal() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is MessageBrokerActionIncrementExternal;
+
+  @override
+  String toString() {
+    return "MessageBrokerActionIncrementExternal<<A, B>>";
+  }
 }
 
 extension MessageBrokerActionPath on MessageBrokerAction {
