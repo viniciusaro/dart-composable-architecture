@@ -6,6 +6,8 @@ The two separate features that will be built are:
 - `Counter`: allows the user to count up to a number and add/remove it from the favorites.
 - `Favorites`: allows the user to see all favorites in a list and remove them with a swipe gesture.
 
+https://github.com/user-attachments/assets/073e4014-bd97-4fbc-a02d-dc33d9bf668f
+
 ## States
 We start by defining our features domain, more specifically with the state that holds all data needed for the features to work:
 
