@@ -1,15 +1,15 @@
 # Example - Feature Composition
 
-This example shows how the Composable Architecture allows composing features in a organized, decoupled and testable way.
+This example demonstrates how the Composable Architecture enables composing features in an organized, decoupled, and testable way.
 
 The two separate features that will be built are:
-- `Counter`: allows the user to count up to a number and add/remove it from the favorites.
-- `Favorites`: allows the user to see all favorites in a list and remove them with a swipe gesture.
+- `Counter`: Allows the user to count up to a number and add/remove it from favorites.
+- `Favorites`: Displays a list of favorite numbers and allows removal via a swipe gesture.
 
 https://github.com/user-attachments/assets/073e4014-bd97-4fbc-a02d-dc33d9bf668f
 
 ## States
-We start by defining our features domain, more specifically with the state that holds all data needed for the features to work:
+We begin by defining our feature domains, specifically the state that holds all the necessary data for each feature:
 
 ```dart
 @freezed
@@ -32,9 +32,9 @@ abstract class FavoritesState with _$FavoritesState {
 }
 ```
 
-Notice that both features need a list of favorites to work, since both need to interact with the favorites list. However, they are defined as separate, independent properties on each feature domain.
+Both features require access to a list of favorites since they interact with it. However, they each define their own independent properties for favorites within their respective domains.
 
-At least, we need a glue state that will hold on to both features state. In this example we will use a `TabBar` to help us switch between `Counter` and `Favorites` feature, the AppState represents this feature in our hierarchy.
+Finally, we need a shared state to encapsulate both feature states. In this example, we use a TabBar to switch between the Counter and Favorites features, and AppState serves as the root state in our domain hierarchy:
 
 ```dart
 
@@ -49,7 +49,7 @@ abstract class AppState with _$AppState {
 ```
 
 ## Actions
-Once we have our data defined, we can define actions that will model the user interactions we want.
+With our data defined, we can now define actions to model user interactions:
 
 ```dart
 @CaseKeyPathable()
@@ -76,11 +76,11 @@ sealed class AppAction<
 > {}
 ```
 
-The `CaseKeyPathable` annotation allows the library to generate child classes for the sealed classes we defined. Those will represent actions that will be processed by the reducers.
+The CaseKeyPathable annotation enables the library to generate child classes for our sealed classes. These subclasses represent actions that will be processed by reducers.
 
 ## Reducers
 
-Reducer are responsible for mutating the state and returning Effects, where async computation can be executed. In our example, we don't compute any Effects, so we always return `Effect.none()`, while each action is mapped into it's appropriate state mutation. Since we are using sealed classes to model our actions, we can switch over all the possible subclasses, making sure we are taking every action in consideration.
+Reducers are responsible for mutating the state and returning Effects, which can handle asynchronous computations. In this example, we do not perform any asynchronous computations, so we always return Effect.none(). Each action is mapped to its respective state mutation. Since we use sealed classes to model actions, we can switch over all possible subclasses, ensuring all actions are properly handled.
 
 ```dart
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
@@ -113,7 +113,8 @@ Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesA
 }
 ```
 
-For the `appReducer` we use special operators that come with the library to allow composing our feature reducers in a global `appReducer` with no need of duplicate code.
+For the appReducer, we use special operators from the library to compose our feature reducers into a global reducer without duplicating code:
+
 
 ```dart
 final appReducer = combine([
@@ -124,7 +125,9 @@ final appReducer = combine([
 
 ### Synchronizing feature state
 
-Since we do have complete separate states for our features, we need a way to synchronize them when dealing with shared state. In this case, we need to make sure that changes to the `Counter` feature **favorites** are visible to the `Favorites` feature **favorites** and the other way around. To make this happen we make use of another reducer operator called `onChange`:
+Since our features maintain completely separate states, we need a way to synchronize them when dealing with shared data. In this case, we must ensure that changes to the favorites in the Counter feature are reflected in the Favorites feature and vice versa.
+
+To achieve this, we use another reducer operator called onChange:
 
 ```dart
 final appReducer = combine([
@@ -145,4 +148,4 @@ final appReducer = combine([
     );
 ```
 
-This is the final shape of our `appReducer`.
+This is the final structure of our appReducer.
