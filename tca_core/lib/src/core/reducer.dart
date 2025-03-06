@@ -27,7 +27,7 @@ final class Inout<T> {
   }
 }
 
-extension ReducerChangeEquatable<State extends Equatable, Action> on Reducer<State, Action> {
+extension ReducerChangeEquatable<State, Action> on Reducer<State, Action> {
   Reducer<State, Action> onChange<LocalState>({
     required LocalState Function(State) of,
     required void Function(Inout<State>, LocalState) update,

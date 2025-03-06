@@ -26,10 +26,14 @@ extension NumberFactStatePath on NumberFactState {
 // **************************************************************************
 
 extension NumberFactActionEnum on NumberFactAction {
-  static NumberFactAction decrementButtonTapped() => NumberFactActionDecrementButtonTapped();
-  static NumberFactAction incrementButtonTapped() => NumberFactActionIncrementButtonTapped();
-  static NumberFactAction numberFactButtonTapped() => NumberFactActionNumberFactButtonTapped();
-  static NumberFactAction numberFactResponse(String p) => NumberFactActionNumberFactResponse(p);
+  static NumberFactAction decrementButtonTapped() =>
+      NumberFactActionDecrementButtonTapped();
+  static NumberFactAction incrementButtonTapped() =>
+      NumberFactActionIncrementButtonTapped();
+  static NumberFactAction numberFactButtonTapped() =>
+      NumberFactActionNumberFactButtonTapped();
+  static NumberFactAction numberFactResponse(String p) =>
+      NumberFactActionNumberFactResponse(p);
 }
 
 final class NumberFactActionDecrementButtonTapped<A, B, C, D extends String>
@@ -40,7 +44,8 @@ final class NumberFactActionDecrementButtonTapped<A, B, C, D extends String>
   int get hashCode => runtimeType.hashCode ^ 31;
 
   @override
-  bool operator ==(Object other) => other is NumberFactActionDecrementButtonTapped;
+  bool operator ==(Object other) =>
+      other is NumberFactActionDecrementButtonTapped;
 
   @override
   String toString() {
@@ -56,7 +61,8 @@ final class NumberFactActionIncrementButtonTapped<A, B, C, D extends String>
   int get hashCode => runtimeType.hashCode ^ 31;
 
   @override
-  bool operator ==(Object other) => other is NumberFactActionIncrementButtonTapped;
+  bool operator ==(Object other) =>
+      other is NumberFactActionIncrementButtonTapped;
 
   @override
   String toString() {
@@ -72,7 +78,8 @@ final class NumberFactActionNumberFactButtonTapped<A, B, C, D extends String>
   int get hashCode => runtimeType.hashCode ^ 31;
 
   @override
-  bool operator ==(Object other) => other is NumberFactActionNumberFactButtonTapped;
+  bool operator ==(Object other) =>
+      other is NumberFactActionNumberFactButtonTapped;
 
   @override
   String toString() {
@@ -90,7 +97,8 @@ final class NumberFactActionNumberFactResponse<A, B, C, D extends String>
 
   @override
   bool operator ==(Object other) =>
-      other is NumberFactActionNumberFactResponse && other.numberFactResponse == numberFactResponse;
+      other is NumberFactActionNumberFactResponse &&
+      other.numberFactResponse == numberFactResponse;
 
   @override
   String toString() {
@@ -129,21 +137,23 @@ extension NumberFactActionPath on NumberFactAction {
           return rootAction!;
         },
       );
-  static final numberFactButtonTapped =
-      WritableKeyPath<NumberFactAction, NumberFactActionNumberFactButtonTapped?>(
-        get: (action) {
-          if (action is NumberFactActionNumberFactButtonTapped) {
-            return action;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = NumberFactActionEnum.numberFactButtonTapped();
-          }
-          return rootAction!;
-        },
-      );
+  static final numberFactButtonTapped = WritableKeyPath<
+    NumberFactAction,
+    NumberFactActionNumberFactButtonTapped?
+  >(
+    get: (action) {
+      if (action is NumberFactActionNumberFactButtonTapped) {
+        return action;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = NumberFactActionEnum.numberFactButtonTapped();
+      }
+      return rootAction!;
+    },
+  );
   static final numberFactResponse = WritableKeyPath<NumberFactAction, String?>(
     get: (action) {
       if (action is NumberFactActionNumberFactResponse) {

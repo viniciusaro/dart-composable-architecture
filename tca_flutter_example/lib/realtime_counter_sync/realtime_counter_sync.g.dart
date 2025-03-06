@@ -11,18 +11,12 @@ extension AppStatePath on AppState {
     get: (obj) => obj.counter,
     set: (obj, counter) => obj!.copyWith(counter: counter),
   );
-  static final props = KeyPath<AppState, List<Object?>>(
-    get: (obj) => obj.props,
-  );
 }
 
 extension CounterStatePath on CounterState {
   static final count = WritableKeyPath<CounterState, int>(
     get: (obj) => obj.count,
     set: (obj, count) => obj!.copyWith(count: count),
-  );
-  static final props = KeyPath<CounterState, List<Object?>>(
-    get: (obj) => obj.props,
   );
 }
 

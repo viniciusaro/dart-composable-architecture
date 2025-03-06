@@ -1,6 +1,6 @@
 library;
 
-export 'package:equatable/equatable.dart';
+export 'package:freezed_annotation/freezed_annotation.dart';
 
 export 'src/core/store.dart';
 export 'src/helpers/sync_stream.dart';

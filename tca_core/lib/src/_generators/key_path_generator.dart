@@ -12,11 +12,9 @@ class KeyPathGenerator extends GeneratorForAnnotation<KeyPathable> {
     BuildStep buildStep,
   ) {
     final clazz = element as ClassElement;
-    final fields = clazz.fields;
-    final methods = clazz.methods;
-    // final getterMethods = methods.where((m) => m.isGetter);
+    final factory = clazz.constructors.first;
+    final fields = factory.parameters;
     final rootType = clazz.name;
-    final hasCopyWith = methods.where((m) => m.name == "copyWith").firstOrNull != null;
 
     String code = '''
 extension ${element.name}Path on ${element.name} {
@@ -34,33 +32,11 @@ extension ${element.name}Path on ${element.name} {
         propAssignment = "Set.from($prop)";
       }
 
-      if (field.isFinal) {
-        if (hasCopyWith) {
-          code += """
+      code += """
 static final $prop = WritableKeyPath<$rootType, $propType>(
     get: (obj) => obj.$prop,
     set: (obj, $prop) => obj!.copyWith($prop: $propAssignment),
   );""";
-        } else {
-          code += """
-  static final $prop = KeyPath<$rootType, $propType>(
-    get: (obj) => obj.$prop,
-  );""";
-        }
-      } else {
-        if (!isGetterOnly(field)) {
-          code += """
-  static final $prop = WritableKeyPath<$rootType, $propType>(
-    get: (obj) => obj.$prop,
-    set: (obj, $prop) => obj!..$prop = $propAssignment,
-  );""";
-        } else {
-          code += """
-  static final $prop = KeyPath<$rootType, $propType>(
-    get: (obj) => obj.$prop,
-  );""";
-        }
-      }
     }
 
     code += "\n}";
@@ -68,6 +44,6 @@ static final $prop = WritableKeyPath<$rootType, $propType>(
   }
 }
 
-bool isGetterOnly(FieldElement field) {
-  return field.getter != null && field.setter == null;
+bool isGetterOnly(ParameterElement field) {
+  return false;
 }
