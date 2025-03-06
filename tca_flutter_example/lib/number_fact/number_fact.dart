@@ -1,67 +1,71 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+
+import 'number_fact_client.dart';
 
 part 'number_fact.g.dart';
 
+var numberFactClient = liveNumberFactClient;
+
 @KeyPathable()
-final class FeatureState {
-  int count = 0;
-  bool isLoading = false;
-  String? numberFact;
+final class NumberFactState extends Equatable {
+  final int count;
+  final bool isLoading;
+  final String? numberFact;
+
+  const NumberFactState({this.count = 0, this.isLoading = false, this.numberFact});
+
+  NumberFactState copyWith({int? count, bool? isLoading, String? numberFact}) {
+    return NumberFactState(
+      count: count ?? this.count,
+      isLoading: isLoading ?? this.isLoading,
+      numberFact: numberFact ?? this.numberFact,
+    );
+  }
+
+  @override
+  List<Object?> get props => [count, isLoading, numberFact];
 }
 
 @CaseKeyPathable()
-sealed class FeatureAction<
+sealed class NumberFactAction<
   DecrementButtonTapped,
   IncrementButtonTapped,
   NumberFactButtonTapped,
-  NumberFactResponse extends NumberFactResponseValue //
+  NumberFactResponse extends String //
 > {}
 
-final class NumberFactResponseValue {
-  final String value;
-  NumberFactResponseValue(this.value);
-}
-
-Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction action) {
+Effect<NumberFactAction> numberFactReducer(Inout<NumberFactState> state, NumberFactAction action) {
   switch (action) {
-    case FeatureActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+    case NumberFactActionDecrementButtonTapped():
+      state.mutate((s) => s.copyWith(count: s.count - 1));
       return Effect.none();
 
-    case FeatureActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+    case NumberFactActionIncrementButtonTapped():
+      state.mutate((s) => s.copyWith(count: s.count + 1));
       return Effect.none();
 
-    case FeatureActionNumberFactButtonTapped():
-      state.mutate((s) => s..isLoading = true);
+    case NumberFactActionNumberFactButtonTapped():
+      state.mutate((s) => s.copyWith(isLoading: true));
       return Effect.future(() async {
-        final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
-        final response = await http.get(uri);
-        return FeatureActionEnum.numberFactResponse(NumberFactResponseValue(response.body));
+        final response = await numberFactClient.factFor(state.value.count);
+        return NumberFactActionEnum.numberFactResponse(response);
       });
 
-    case FeatureActionNumberFactResponse():
-      state.mutate((s) {
-        return s
-          ..isLoading = false
-          ..numberFact = action.numberFactResponse.value;
-      });
+    case NumberFactActionNumberFactResponse():
+      state.mutate((s) => s.copyWith(isLoading: false, numberFact: action.numberFactResponse));
       return Effect.none();
   }
 }
 
-final class FeatureReducer<State, Action> {}
+class NumberFactWidget extends StatelessWidget {
+  final Store<NumberFactState, NumberFactAction> store;
 
-class FeatureWidget extends StatelessWidget {
-  final Store<FeatureState, FeatureAction> store;
-
-  const FeatureWidget({super.key, required this.store});
+  const NumberFactWidget({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore<FeatureState, FeatureAction>(
+    return WithViewStore<NumberFactState, NumberFactAction>(
       store,
       body: (viewStore) {
         return Center(
@@ -72,18 +76,18 @@ class FeatureWidget extends StatelessWidget {
             children: [
               Text("Count: ${viewStore.state.count}"),
               ElevatedButton(
-                onPressed: () => viewStore.send(FeatureActionEnum.numberFactButtonTapped()),
+                onPressed: () => viewStore.send(NumberFactActionEnum.numberFactButtonTapped()),
                 child: Text("Number Fact"),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureActionEnum.incrementButtonTapped()),
+                    onPressed: () => viewStore.send(NumberFactActionEnum.incrementButtonTapped()),
                     child: Text("+"),
                   ),
                   ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureActionEnum.decrementButtonTapped()),
+                    onPressed: () => viewStore.send(NumberFactActionEnum.decrementButtonTapped()),
                     child: Text("-"),
                   ),
                 ],
@@ -111,7 +115,12 @@ void main() {
     MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: FeatureWidget(store: Store(initialState: FeatureState(), reducer: featureReducer)),
+        body: NumberFactWidget(
+          store: Store(
+            initialState: NumberFactState(),
+            reducer: numberFactReducer, //
+          ),
+        ),
       ),
     ),
   );

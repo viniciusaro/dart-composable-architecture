@@ -52,26 +52,49 @@ extension AppActionEnum on AppAction {
   static AppAction counter(
     CounterAction<dynamic, dynamic, dynamic, dynamic> p,
   ) => AppActionCounter(p);
-  static AppAction favorites(FavoritesAction<RemoveNumber> p) =>
-      AppActionFavorites(p);
+  static AppAction favorites(FavoritesAction<int> p) => AppActionFavorites(p);
 }
 
 final class AppActionCounter<
   A extends CounterAction<dynamic, dynamic, dynamic, dynamic>,
-  B extends FavoritesAction<RemoveNumber>
+  B extends FavoritesAction<int>
 >
     extends AppAction<A, B> {
   final A counter;
   AppActionCounter(this.counter) : super();
+
+  @override
+  int get hashCode => counter.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionCounter && other.counter == counter;
+
+  @override
+  String toString() {
+    return "AppActionCounter<<A extends CounterAction<dynamic, dynamic, dynamic, dynamic>, B extends FavoritesAction<int>>>(counter: $counter)";
+  }
 }
 
 final class AppActionFavorites<
   A extends CounterAction<dynamic, dynamic, dynamic, dynamic>,
-  B extends FavoritesAction<RemoveNumber>
+  B extends FavoritesAction<int>
 >
     extends AppAction<A, B> {
   final B favorites;
   AppActionFavorites(this.favorites) : super();
+
+  @override
+  int get hashCode => favorites.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionFavorites && other.favorites == favorites;
+
+  @override
+  String toString() {
+    return "AppActionFavorites<<A extends CounterAction<dynamic, dynamic, dynamic, dynamic>, B extends FavoritesAction<int>>>(favorites: $favorites)";
+  }
 }
 
 extension AppActionPath on AppAction {
@@ -92,21 +115,20 @@ extension AppActionPath on AppAction {
       return rootAction!;
     },
   );
-  static final favorites =
-      WritableKeyPath<AppAction, FavoritesAction<RemoveNumber>?>(
-        get: (action) {
-          if (action is AppActionFavorites) {
-            return action.favorites;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = AppActionEnum.favorites(propAction);
-          }
-          return rootAction!;
-        },
-      );
+  static final favorites = WritableKeyPath<AppAction, FavoritesAction<int>?>(
+    get: (action) {
+      if (action is AppActionFavorites) {
+        return action.favorites;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = AppActionEnum.favorites(propAction);
+      }
+      return rootAction!;
+    },
+  );
 }
 
 extension CounterActionEnum on CounterAction {
@@ -123,21 +145,67 @@ extension CounterActionEnum on CounterAction {
 final class CounterActionAddToFavoritesButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionAddToFavoritesButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CounterActionAddToFavoritesButtonTapped;
+
+  @override
+  String toString() {
+    return "CounterActionAddToFavoritesButtonTapped<<A, B, C, D>>";
+  }
 }
 
 final class CounterActionIncrementButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionIncrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionIncrementButtonTapped;
+
+  @override
+  String toString() {
+    return "CounterActionIncrementButtonTapped<<A, B, C, D>>";
+  }
 }
 
 final class CounterActionDecrementButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionDecrementButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionDecrementButtonTapped;
+
+  @override
+  String toString() {
+    return "CounterActionDecrementButtonTapped<<A, B, C, D>>";
+  }
 }
 
 final class CounterActionRemoveFromFavoritesButtonTapped<A, B, C, D>
     extends CounterAction<A, B, C, D> {
   CounterActionRemoveFromFavoritesButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CounterActionRemoveFromFavoritesButtonTapped;
+
+  @override
+  String toString() {
+    return "CounterActionRemoveFromFavoritesButtonTapped<<A, B, C, D>>";
+  }
 }
 
 extension CounterActionPath on CounterAction {
@@ -206,17 +274,28 @@ extension CounterActionPath on CounterAction {
 }
 
 extension FavoritesActionEnum on FavoritesAction {
-  static FavoritesAction remove(RemoveNumber p) => FavoritesActionRemove(p);
+  static FavoritesAction remove(int p) => FavoritesActionRemove(p);
 }
 
-final class FavoritesActionRemove<A extends RemoveNumber>
-    extends FavoritesAction<A> {
+final class FavoritesActionRemove<A extends int> extends FavoritesAction<A> {
   final A remove;
   FavoritesActionRemove(this.remove) : super();
+
+  @override
+  int get hashCode => remove.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is FavoritesActionRemove && other.remove == remove;
+
+  @override
+  String toString() {
+    return "FavoritesActionRemove<<A extends int>>(remove: $remove)";
+  }
 }
 
 extension FavoritesActionPath on FavoritesAction {
-  static final remove = WritableKeyPath<FavoritesAction, RemoveNumber?>(
+  static final remove = WritableKeyPath<FavoritesAction, int?>(
     get: (action) {
       if (action is FavoritesActionRemove) {
         return action.remove;

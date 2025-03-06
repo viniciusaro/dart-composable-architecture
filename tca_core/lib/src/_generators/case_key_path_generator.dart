@@ -74,11 +74,33 @@ extension ${clazz.name}Enum on ${clazz.name} {
       if (genericTypeName == "void") {
         code += '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
   $newClassName(): super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is $newClassName;
+
+  @override
+  String toString() {
+    return "$newClassName<$genericsString>";
+  }
 }\n\n''';
       } else {
         code += '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
   final $genericLetter $prop;
   $newClassName(this.$prop): super();
+
+  @override
+  int get hashCode => $prop.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is $newClassName && other.$prop == $prop;
+
+  @override
+  String toString() {
+    return "$newClassName<$genericsString>($prop: \$$prop)";
+  }
 }\n\n''';
       }
     }

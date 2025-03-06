@@ -7,7 +7,7 @@ part 'message.dart';
 part 'stream.dart';
 part 'udp_multicast_service.dart';
 
-final messageBrokerClient = udpMulticastMessageBrokerClient;
+var messageBrokerClient = udpMulticastMessageBrokerClient;
 
 final class MessageBrokerClient {
   Stream<Message> Function() listen;
@@ -34,6 +34,16 @@ final udpMulticastMessageBrokerClient = MessageBrokerClient(
       ).toMulticastMessage(),
     );
   },
+);
+
+final unimplementedMessageBrokerClient = MessageBrokerClient(
+  listen: () => throw Exception("unimplemented"),
+  publish: (_) => throw Exception("unimplemented"),
+);
+
+final emptyMessageBrokerClient = MessageBrokerClient(
+  listen: () => Stream.empty(),
+  publish: (_) async => {},
 );
 
 extension MessageFromUdpMulticast on Message {

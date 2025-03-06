@@ -27,6 +27,23 @@ sealed class AppAction<
   Favorites extends FavoritesAction //
 > {}
 
+final appReducer = combine([
+      pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
+      pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
+    ])
+    .onChange(
+      of: (state) => state.counter.favorites,
+      update: (state, favorites) {
+        state.mutate((s) => s.copyWith(favorites: s.favorites.copyWith(favorites: favorites)));
+      },
+    )
+    .onChange(
+      of: (state) => state.favorites.favorites,
+      update: (state, favorites) {
+        state.mutate((s) => s.copyWith(counter: s.counter.copyWith(favorites: favorites)));
+      },
+    );
+
 @KeyPathable()
 final class CounterState extends Equatable {
   final int count;
@@ -53,6 +70,23 @@ sealed class CounterAction<
   RemoveFromFavoritesButtonTapped //
 > {}
 
+Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
+  switch (action) {
+    case CounterActionAddToFavoritesButtonTapped():
+      state.mutate((s) => s.copyWith(favorites: {...s.favorites, s.count}));
+      return Effect.none();
+    case CounterActionIncrementButtonTapped():
+      state.mutate((s) => s.copyWith(count: s.count + 1));
+      return Effect.none();
+    case CounterActionDecrementButtonTapped():
+      state.mutate((s) => s.copyWith(count: s.count - 1));
+      return Effect.none();
+    case CounterActionRemoveFromFavoritesButtonTapped():
+      state.mutate((s) => s.copyWith(favorites: s.favorites.where((c) => c != s.count).toSet()));
+      return Effect.none();
+  }
+}
+
 @KeyPathable()
 final class FavoritesState extends Equatable {
   final Set<int> favorites;
@@ -68,40 +102,14 @@ final class FavoritesState extends Equatable {
 
 @CaseKeyPathable()
 sealed class FavoritesAction<
-  Remove extends RemoveNumber //
+  Remove extends int //
 > {}
-
-final class RemoveNumber {
-  final int number;
-  RemoveNumber(this.number);
-}
-
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
-  switch (action) {
-    case CounterActionAddToFavoritesButtonTapped():
-      state.mutate((s) => s.copyWith(favorites: {...s.favorites, s.count}));
-      return Effect.none();
-    case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
-      return Effect.none();
-    case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
-      return Effect.none();
-    case CounterActionRemoveFromFavoritesButtonTapped():
-      state.mutate((s) {
-        return s
-          ..favorites.remove(state.value.count)
-          ..copyWith(favorites: s.favorites);
-      });
-      return Effect.none();
-  }
-}
 
 Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
   switch (action) {
     case FavoritesActionRemove():
       state.mutate((s) {
-        final favorites = s.favorites.where((e) => e != action.remove.number);
+        final favorites = s.favorites.where((e) => e != action.remove);
         return s.copyWith(favorites: Set.from(favorites));
       });
       return Effect.none();
@@ -185,7 +193,7 @@ class FavoritesWidget extends StatelessWidget {
                 key: Key(item.toString()),
                 child: ListTile(title: Text("$item")),
                 onDismissed: (direction) {
-                  viewStore.send(FavoritesActionEnum.remove(RemoveNumber(item)));
+                  viewStore.send(FavoritesActionEnum.remove(item));
                 },
               );
             },
@@ -238,23 +246,6 @@ class AppWidget extends StatelessWidget {
 }
 
 void main() {
-  final appReducer = combine([
-        pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
-        pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
-      ])
-      .onChange(
-        of: (state) => state.counter.favorites,
-        update: (state, favorites) {
-          return state.copyWith(favorites: state.favorites.copyWith(favorites: favorites));
-        },
-      )
-      .onChange(
-        of: (state) => state.favorites.favorites,
-        update: (state, favorites) {
-          return state.copyWith(counter: state.counter.copyWith(favorites: favorites));
-        },
-      );
-
   runApp(
     MaterialApp(
       home: Scaffold(
