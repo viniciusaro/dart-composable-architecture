@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/27af38b1-189b-4f59-8710-f41026ca20fa
 This repo comes with _lots_ of examples to demonstrate how to solve common and complex problems with 
 the Composable Architecture. Check out [this](./tca_flutter_example/lib) directory to see them all, including:
 
-* [Feature Composition](./tca_flutter_example/lib/feature_composition/feature_composition.dart)
+* [Feature Composition](./tca_flutter_example/lib/feature_composition)
 * [Number Fact](./tca_flutter_example/lib/number_fact/number_fact.dart)
 * [Realtime Counter Sync](./tca_flutter_example/lib/realtime_counter_sync/realtime_counter_sync.dart)
 
