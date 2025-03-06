@@ -30,52 +30,53 @@ As a basic example, consider a UI that shows a number along with "+" and "−" b
 To implement this feature we start by defining a new type for the feature's state, which consists of an integer for the current count, as well as an optional string that represents the fact being presented:
 
 ```dart
+@freezed
 @KeyPathable()
-final class FeatureState {
-  int count = 0;
-  String? numberFact;
+abstract class NumberFactState with _$NumberFactState {
+  factory NumberFactState({
+    @Default(0) int count,
+    @Default(false) bool isLoading,
+    String? numberFact,
+  }) = _NumberFactState;
 }
+
 ```
 
 We also need to define a type for the feature's actions. There are the obvious actions, such as tapping the decrement button, increment button, or fact button. But there are also some slightly non-obvious ones, such as the action that occurs when we receive a response from the fact API request:
 
 ```dart 
 @CaseKeyPathable()
-sealed class FeatureAction<
+sealed class NumberFactAction<
   DecrementButtonTapped,
   IncrementButtonTapped,
   NumberFactButtonTapped,
-  NumberFactResponse extends NumberFactResponseValue //
+  NumberFactResponse extends String //
 > {}
-
-final class NumberFactResponseValue {
-  final String value;
-  NumberFactResponseValue(this.value);
-}
 ```
 
 And then we implement the reducer function, which is responsible for composing the actual logic and behavior for the feature. In it we can describe how to change the current state to the next state, and what effects need to be executed. Some actions don't need to execute effects, and they can return `.none()` to represent that:
 
 ```dart
-Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction action) {
+Effect<NumberFactAction> numberFactReducer(Inout<NumberFactState> state, NumberFactAction action) {
   switch (action) {
-    case FeatureActionDecrementButtonTapped():
-      state.mutate((s) => s..count -= 1);
+    case NumberFactActionDecrementButtonTapped():
+      state.mutate((s) => s.copyWith(count: s.count - 1));
       return Effect.none();
 
-    case FeatureActionIncrementButtonTapped():
-      state.mutate((s) => s..count += 1);
+    case NumberFactActionIncrementButtonTapped():
+      state.mutate((s) => s.copyWith(count: s.count + 1));
       return Effect.none();
 
-    case FeatureActionNumberFactButtonTapped():
+    case NumberFactActionNumberFactButtonTapped():
+      state.mutate((s) => s.copyWith(isLoading: true));
       return Effect.future(() async {
         final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
         final response = await http.get(uri);
-        return FeatureAction.numberFactResponse(NumberFactResponseValue(response.body));
+        return NumberFactActionEnum.numberFactResponse(response.body);
       });
 
-    case FeatureActionNumberFactResponse():
-      state.mutate((s) => s..numberFact = action.numberFactResponse.value);
+    case NumberFactActionNumberFactResponse():
+      state.mutate((s) => s.copyWith(isLoading: false, numberFact: action.numberFactResponse));
       return Effect.none();
   }
 }
@@ -84,14 +85,14 @@ Effect<FeatureAction> featureReducer(Inout<FeatureState> state, FeatureAction ac
 And then finally we define the widget that displays the feature. It holds onto a `Store<FeatureState, FeatureAction>` and wraps it's body in a `WithViewStore<FeatureState, FeatureAction>` so that it can observe all changes to the state and re-render. We can send all user actions to the store so that state changes:
 
 ```dart
-class FeatureWidget extends StatelessWidget {
-  final Store<FeatureState, FeatureAction> store;
+class NumberFactWidget extends StatelessWidget {
+  final Store<NumberFactState, NumberFactAction> store;
 
-  const FeatureWidget({super.key, required this.store});
+  const NumberFactWidget({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore<FeatureState, FeatureAction>(
+    return WithViewStore<NumberFactState, NumberFactAction>(
       store,
       body: (viewStore) {
         return Center(
@@ -102,25 +103,30 @@ class FeatureWidget extends StatelessWidget {
             children: [
               Text("Count: ${viewStore.state.count}"),
               ElevatedButton(
-                onPressed: () => viewStore.send(FeatureAction.numberFactButtonTapped()),
+                onPressed: () => viewStore.send(NumberFactActionEnum.numberFactButtonTapped()),
                 child: Text("Number Fact"),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureAction.incrementButtonTapped()),
+                    onPressed: () => viewStore.send(NumberFactActionEnum.incrementButtonTapped()),
                     child: Text("+"),
                   ),
                   ElevatedButton(
-                    onPressed: () => viewStore.send(FeatureAction.decrementButtonTapped()),
+                    onPressed: () => viewStore.send(NumberFactActionEnum.decrementButtonTapped()),
                     child: Text("-"),
                   ),
                 ],
               ),
-              if (viewStore.state.numberFact != null)
+              if (viewStore.state.isLoading)
                 Padding(
-                  padding: EdgeInsets.all(18),
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: CircularProgressIndicator(),
+                )
+              else if (viewStore.state.numberFact != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18),
                   child: Text("Fact: ${viewStore.state.numberFact}", textAlign: TextAlign.center),
                 ),
             ],

@@ -3,28 +3,19 @@ import 'package:flutter/material.dart';
 
 import 'number_fact_client.dart';
 
+part 'number_fact.freezed.dart';
 part 'number_fact.g.dart';
 
 var numberFactClient = liveNumberFactClient;
 
+@freezed
 @KeyPathable()
-final class NumberFactState extends Equatable {
-  final int count;
-  final bool isLoading;
-  final String? numberFact;
-
-  const NumberFactState({this.count = 0, this.isLoading = false, this.numberFact});
-
-  NumberFactState copyWith({int? count, bool? isLoading, String? numberFact}) {
-    return NumberFactState(
-      count: count ?? this.count,
-      isLoading: isLoading ?? this.isLoading,
-      numberFact: numberFact ?? this.numberFact,
-    );
-  }
-
-  @override
-  List<Object?> get props => [count, isLoading, numberFact];
+abstract class NumberFactState with _$NumberFactState {
+  factory NumberFactState({
+    @Default(0) int count,
+    @Default(false) bool isLoading,
+    String? numberFact,
+  }) = _NumberFactState;
 }
 
 @CaseKeyPathable()

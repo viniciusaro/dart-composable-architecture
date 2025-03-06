@@ -1,24 +1,16 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
+part 'feature_composition.freezed.dart';
 part 'feature_composition.g.dart';
 
+@freezed
 @KeyPathable()
-final class AppState extends Equatable {
-  final CounterState counter;
-  final FavoritesState favorites;
-
-  const AppState({
-    this.counter = const CounterState(),
-    this.favorites = const FavoritesState(), //
-  });
-
-  AppState copyWith({CounterState? counter, FavoritesState? favorites}) {
-    return AppState(counter: counter ?? this.counter, favorites: favorites ?? this.favorites);
-  }
-
-  @override
-  List<Object?> get props => [counter, favorites];
+abstract class AppState with _$AppState {
+  const factory AppState({
+    @Default(CounterState()) CounterState counter,
+    @Default(FavoritesState()) FavoritesState favorites,
+  }) = _AppState;
 }
 
 @CaseKeyPathable()
@@ -44,22 +36,13 @@ final appReducer = combine([
       },
     );
 
+@freezed
 @KeyPathable()
-final class CounterState extends Equatable {
-  final int count;
-  final Set<int> favorites;
-
-  const CounterState({this.count = 0, this.favorites = const {}});
-
-  CounterState copyWith({int? count, Set<int>? favorites}) {
-    return CounterState(
-      count: count ?? this.count,
-      favorites: favorites ?? this.favorites, //
-    );
-  }
-
-  @override
-  List<Object?> get props => [count, favorites];
+abstract class CounterState with _$CounterState {
+  const factory CounterState({
+    @Default(0) int count,
+    @Default({}) Set<int> favorites, //
+  }) = _CounterState;
 }
 
 @CaseKeyPathable()
@@ -87,17 +70,12 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
   }
 }
 
+@freezed
 @KeyPathable()
-final class FavoritesState extends Equatable {
-  final Set<int> favorites;
-  const FavoritesState({this.favorites = const {}});
-
-  FavoritesState copyWith({Set<int>? favorites}) {
-    return FavoritesState(favorites: favorites ?? this.favorites);
-  }
-
-  @override
-  List<Object?> get props => [favorites];
+abstract class FavoritesState with _$FavoritesState {
+  const factory FavoritesState({
+    @Default({}) Set<int> favorites, //
+  }) = _FavoritesState;
 }
 
 @CaseKeyPathable()
@@ -108,10 +86,9 @@ sealed class FavoritesAction<
 Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
   switch (action) {
     case FavoritesActionRemove():
-      state.mutate((s) {
-        final favorites = s.favorites.where((e) => e != action.remove);
-        return s.copyWith(favorites: Set.from(favorites));
-      });
+      state.mutate(
+        (s) => s.copyWith(favorites: s.favorites.where((e) => e != action.remove).toSet()),
+      );
       return Effect.none();
   }
 }

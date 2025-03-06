@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:equatable/equatable.dart';
-
 import '../helpers/sync_stream.dart';
 
 part 'exceptions.dart';
@@ -73,7 +71,7 @@ final class Store<State, Action> {
   }
 }
 
-final class TestStore<State extends Equatable, Action> {
+final class TestStore<State, Action> {
   final Inout<State> _state;
   final Reducer<State, Action> _reducer;
   final List<Action> _expectedActions = [];
@@ -85,7 +83,18 @@ final class TestStore<State extends Equatable, Action> {
 
   void send(Action action, State expected) {
     _state._isMutationAllowed = true;
+    final stateHashBeforeReducer = _state.value.hashCode;
+    final stateRefBeforeReducer = _state.value;
     final effect = _reducer(_state, action);
+    final stateRefAfterReducer = _state.value;
+    final stateHashAfterReducer = _state.value.hashCode;
+
+    if (stateHashBeforeReducer != stateHashAfterReducer &&
+        identical(stateRefBeforeReducer, stateRefAfterReducer)) {
+      throw Exception(
+          "Mutation on same instance is not allowed. Reducers should make a copy of their state when mutation is needed");
+    }
+
     _state._isMutationAllowed = false;
 
     final updated = _state.value;

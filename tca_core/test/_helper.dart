@@ -8,7 +8,7 @@ final class Unit {
 }
 
 // ignore: must_be_immutable
-final class AppState extends Equatable {
+final class AppState {
   int count;
 
   AppState({this.count = 0});
@@ -18,7 +18,17 @@ final class AppState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [count];
+  String toString() {
+    return "AppState($count)";
+  }
+
+  @override
+  int get hashCode => count.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) {
+    return other is AppState && other.count == count;
+  }
 }
 
 enum AppAction {

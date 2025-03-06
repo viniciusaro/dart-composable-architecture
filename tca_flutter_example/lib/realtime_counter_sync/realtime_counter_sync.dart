@@ -5,25 +5,15 @@ import 'package:flutter/material.dart';
 
 import 'clients/message_broker_client/message_broker_client.dart';
 
+part 'realtime_counter_sync.freezed.dart';
 part 'realtime_counter_sync.g.dart';
 
+@freezed
 @KeyPathable()
-final class AppState extends Equatable {
-  final CounterState counter;
-
-  const AppState({this.counter = const CounterState()});
-
-  AppState copyWith({CounterState? counter}) {
-    return AppState(counter: counter ?? this.counter);
-  }
-
-  @override
-  String toString() {
-    return "AppState(counter: $counter)";
-  }
-
-  @override
-  List<Object?> get props => [counter];
+abstract class AppState with _$AppState {
+  factory AppState({
+    @Default(CounterState()) CounterState counter, //
+  }) = _AppState;
 }
 
 @CaseKeyPathable()
@@ -62,23 +52,12 @@ class AppWidget extends StatelessWidget {
   }
 }
 
+@freezed
 @KeyPathable()
-final class CounterState extends Equatable {
-  final int count;
-
-  const CounterState({this.count = 0});
-
-  CounterState copyWith({int? count}) {
-    return CounterState(count: count ?? this.count);
-  }
-
-  @override
-  String toString() {
-    return "CounterState($count)";
-  }
-
-  @override
-  List<Object?> get props => [count];
+abstract class CounterState with _$CounterState {
+  const factory CounterState({
+    @Default(0) int count, //
+  }) = _CounterState;
 }
 
 @CaseKeyPathable()

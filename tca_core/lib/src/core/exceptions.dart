@@ -1,11 +1,16 @@
 part of 'store.dart';
 
-final class EffectfullStateMutation extends Equatable implements Exception {
+final class EffectfullStateMutation implements Exception {
   @override
   String toString() {
     return "EffectfullStateMutation: State mutation detected outside reducer";
   }
 
   @override
-  List<Object?> get props => [];
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) {
+    return other is EffectfullStateMutation;
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
-final class CounterState extends Equatable {
+final class CounterState {
   final int count;
 
   CounterState({this.count = 0});
@@ -10,7 +10,12 @@ final class CounterState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [count];
+  int get hashCode => count.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) {
+    return other is CounterState && other.count == count;
+  }
 }
 
 enum CounterAction {

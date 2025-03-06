@@ -15,9 +15,6 @@ extension AppStatePath on AppState {
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
-  static final props = KeyPath<AppState, List<Object?>>(
-    get: (obj) => obj.props,
-  );
 }
 
 extension CounterStatePath on CounterState {
@@ -29,18 +26,12 @@ extension CounterStatePath on CounterState {
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
-  static final props = KeyPath<CounterState, List<Object?>>(
-    get: (obj) => obj.props,
-  );
 }
 
 extension FavoritesStatePath on FavoritesState {
   static final favorites = WritableKeyPath<FavoritesState, Set<int>>(
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
-  );
-  static final props = KeyPath<FavoritesState, List<Object?>>(
-    get: (obj) => obj.props,
   );
 }
 
