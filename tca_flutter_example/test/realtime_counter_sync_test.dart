@@ -1,6 +1,8 @@
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tca_flutter_example/realtime_counter_sync/clients/message_broker_client/message_broker_client.dart';
+import 'package:tca_flutter_example/realtime_counter_sync/counter.dart';
+import 'package:tca_flutter_example/realtime_counter_sync/message_broker.dart';
 import 'package:tca_flutter_example/realtime_counter_sync/realtime_counter_sync.dart';
 
 void main() {

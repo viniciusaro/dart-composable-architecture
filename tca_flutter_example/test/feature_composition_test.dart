@@ -1,5 +1,7 @@
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tca_flutter_example/feature_composition/counter.dart';
+import 'package:tca_flutter_example/feature_composition/favorites.dart';
 import 'package:tca_flutter_example/feature_composition/feature_composition.dart';
 
 void main() {
