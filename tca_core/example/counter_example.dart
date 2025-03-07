@@ -1,5 +1,7 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
+part 'counter_example_invalid.dart';
+
 final class CounterState {
   final int count;
 

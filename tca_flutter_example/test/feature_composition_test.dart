@@ -10,7 +10,10 @@ void main() {
       final store = TestStore(initialState: AppState(), reducer: appReducer);
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
-        AppState(counter: CounterState(favorites: {0}), favorites: FavoritesState(favorites: {0})),
+        (_) => AppState(
+          counter: CounterState(favorites: {0}),
+          favorites: FavoritesState(favorites: {0}),
+        ),
       );
     });
 
@@ -18,7 +21,7 @@ void main() {
       final store = TestStore(initialState: AppState(), reducer: appReducer);
       store.send(
         AppActionEnum.counter(CounterActionEnum.decrementButtonTapped()),
-        AppState(counter: CounterState(count: -1)),
+        (_) => AppState(counter: CounterState(count: -1)),
       );
     });
 
@@ -26,7 +29,7 @@ void main() {
       final store = TestStore(initialState: AppState(), reducer: appReducer);
       store.send(
         AppActionEnum.counter(CounterActionEnum.incrementButtonTapped()),
-        AppState(counter: CounterState(count: 1)),
+        (_) => AppState(counter: CounterState(count: 1)),
       );
     });
 
@@ -35,12 +38,18 @@ void main() {
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
-        AppState(counter: CounterState(favorites: {0}), favorites: FavoritesState(favorites: {0})),
+        (_) => AppState(
+          counter: CounterState(favorites: {0}),
+          favorites: FavoritesState(favorites: {0}),
+        ),
       );
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.removeFromFavoritesButtonTapped()),
-        AppState(counter: CounterState(favorites: {}), favorites: FavoritesState(favorites: {})),
+        (_) => AppState(
+          counter: CounterState(favorites: {}),
+          favorites: FavoritesState(favorites: {}),
+        ),
       );
     });
   });
@@ -51,12 +60,18 @@ void main() {
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
-        AppState(counter: CounterState(favorites: {0}), favorites: FavoritesState(favorites: {0})),
+        (_) => AppState(
+          counter: CounterState(favorites: {0}),
+          favorites: FavoritesState(favorites: {0}),
+        ),
       );
 
       store.send(
         AppActionEnum.favorites(FavoritesActionEnum.remove(0)),
-        AppState(counter: CounterState(favorites: {}), favorites: FavoritesState(favorites: {})),
+        (_) => AppState(
+          counter: CounterState(favorites: {}),
+          favorites: FavoritesState(favorites: {}),
+        ),
       );
     });
   });
