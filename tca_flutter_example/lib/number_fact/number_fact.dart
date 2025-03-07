@@ -107,10 +107,7 @@ void main() {
       home: Scaffold(
         backgroundColor: Colors.white,
         body: NumberFactWidget(
-          store: Store(
-            initialState: NumberFactState(),
-            reducer: numberFactReducer, //
-          ),
+          store: Store(initialState: NumberFactState(), reducer: numberFactReducer),
         ),
       ),
     ),
