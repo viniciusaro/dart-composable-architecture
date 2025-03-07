@@ -75,31 +75,29 @@ final class TestStore<State, Action> {
   final Inout<State> _state;
   final Reducer<State, Action> _reducer;
   final List<Action> _expectedActions = [];
-  final List<State> _expectedStateUpdates = [];
+  final List<State Function(State)> _expectedStateUpdates = [];
 
   TestStore({required State initialState, required Reducer<State, Action> reducer})
       : _state = Inout(value: initialState),
         _reducer = reducer;
 
-  void send(Action action, State expected) {
+  void send(Action action, State Function(State) expectedStateUpdate) {
     _state._isMutationAllowed = true;
-    final stateHashBeforeReducer = _state.value.hashCode;
+    _state._didCallMutate = false;
     final stateRefBeforeReducer = _state.value;
+    final expected = expectedStateUpdate(_state.value);
     final effect = _reducer(_state, action);
     final stateRefAfterReducer = _state.value;
-    final stateHashAfterReducer = _state.value.hashCode;
 
-    if (stateHashBeforeReducer != stateHashAfterReducer &&
-        identical(stateRefBeforeReducer, stateRefAfterReducer)) {
-      throw Exception(
-          "Mutation on same instance is not allowed. Reducers should make a copy of their state when mutation is needed");
+    if (_state._didCallMutate && identical(stateRefBeforeReducer, stateRefAfterReducer)) {
+      throw MutationOfSameInstance();
     }
 
     _state._isMutationAllowed = false;
 
     final updated = _state.value;
     if (expected.hashCodeConsideringContents != updated.hashCodeConsideringContents) {
-      throw Exception("Detected unexpected changes. Expected $expected, got: $updated");
+      throw UnexpectedChanges(expected: expected, updated: updated);
     }
 
     final stream = effect.builder();
@@ -107,12 +105,12 @@ final class TestStore<State, Action> {
 
     final subscription = stream.listen((action) {
       if (_expectedActions.isEmpty) {
-        throw Exception("Received unexpected action: $action");
+        throw UnexpectedAction(action: action);
       }
       final expectedAction = _expectedActions.removeAt(0);
       final expectedUpdates = _expectedStateUpdates.removeAt(0);
       if (expectedAction != action) {
-        throw Exception("Received unexpected action: $action");
+        throw UnexpectedAction(action: action);
       } else {
         _expectedActions.remove(action);
       }
@@ -124,10 +122,15 @@ final class TestStore<State, Action> {
     }
   }
 
-  Future<void> receive(Action action, State expectedUpdate) async {
+  void receive(Action action, State Function(State) expectedStateUpdate) {
     _expectedActions.add(action);
-    _expectedStateUpdates.add(expectedUpdate);
-    await Future.delayed(Duration(milliseconds: 1));
+    _expectedStateUpdates.add(expectedStateUpdate);
+  }
+
+  void verifyNoPendingActions() {
+    if (_expectedActions.isNotEmpty || _expectedStateUpdates.isNotEmpty) {
+      throw UnexpectedPendingActions(pendingActions: _expectedActions);
+    }
   }
 }
 

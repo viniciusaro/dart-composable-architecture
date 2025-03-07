@@ -11,7 +11,7 @@ void main() {
     final store = TestStore(initialState: AppState(), reducer: appReducer);
     store.send(
       AppActionEnum.counter(CounterActionEnum.incrementButtonTapped()),
-      AppState(counter: CounterState(count: 1)),
+      (_) => AppState(counter: CounterState(count: 1)),
     );
   });
 
@@ -24,10 +24,10 @@ void main() {
               );
 
     final store = TestStore(initialState: AppState(), reducer: appReducer);
-    store.send(AppActionOnInitState(), AppState());
-    await store.receive(
+    store.send(AppActionOnInitState(), (_) => AppState());
+    store.receive(
       AppActionEnum.messageBroker(MessageBrokerActionEnum.incrementExternal()),
-      AppState(counter: CounterState(count: 1)),
+      (_) => AppState(counter: CounterState(count: 1)),
     );
   });
 }

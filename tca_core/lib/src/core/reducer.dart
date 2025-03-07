@@ -7,12 +7,14 @@ final class Inout<T> {
   T get value => _value;
 
   bool _isMutationAllowed = false;
+  bool _didCallMutate = false;
   int _latestValueHashCode;
   Inout({required T value})
       : _value = value,
         _latestValueHashCode = value.hashCode;
 
   T mutate(T Function(T) mutation) {
+    _didCallMutate = true;
     if (_latestValueHashCode != _value.hashCode) {
       throw EffectfullStateMutation();
     }
@@ -87,6 +89,7 @@ Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalStat
     }
 
     localState._isMutationAllowed = true;
+    localState._didCallMutate = false;
     final localEffect = other(localState, localAction);
     localState._isMutationAllowed = false;
     globalState._value = state.set(globalState._value, localState._value);

@@ -8,7 +8,7 @@ void main() {
     final store = TestStore(initialState: NumberFactState(), reducer: numberFactReducer);
     store.send(
       NumberFactActionEnum.decrementButtonTapped(),
-      NumberFactState(count: -1), //
+      (_) => NumberFactState(count: -1), //
     );
   });
 
@@ -16,7 +16,7 @@ void main() {
     final store = TestStore(initialState: NumberFactState(), reducer: numberFactReducer);
     store.send(
       NumberFactActionEnum.incrementButtonTapped(),
-      NumberFactState(count: 1), //
+      (_) => NumberFactState(count: 1), //
     );
   });
 
@@ -26,12 +26,12 @@ void main() {
 
     store.send(
       NumberFactActionEnum.numberFactButtonTapped(),
-      NumberFactState(isLoading: true), //
+      (_) => NumberFactState(isLoading: true), //
     );
 
-    await store.receive(
+    store.receive(
       NumberFactActionEnum.numberFactResponse("0 is a good number"),
-      NumberFactState(isLoading: false, numberFact: "0 is a good number"),
+      (_) => NumberFactState(isLoading: false, numberFact: "0 is a good number"),
     );
   });
 }
