@@ -26,7 +26,7 @@ final class MessageBrokerActionDecrementExternal<A, B>
 
   @override
   String toString() {
-    return "MessageBrokerActionDecrementExternal<<A, B>>";
+    return "MessageBrokerActionDecrementExternal()";
   }
 }
 
@@ -43,7 +43,7 @@ final class MessageBrokerActionIncrementExternal<A, B>
 
   @override
   String toString() {
-    return "MessageBrokerActionIncrementExternal<<A, B>>";
+    return "MessageBrokerActionIncrementExternal()";
   }
 }
 

@@ -34,7 +34,7 @@ final class FavoritesActionRemove<A extends int> extends FavoritesAction<A> {
 
   @override
   String toString() {
-    return "FavoritesActionRemove<<A extends int>>(remove: $remove)";
+    return "FavoritesActionRemove.$remove";
   }
 }
 

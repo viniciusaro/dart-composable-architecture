@@ -45,7 +45,7 @@ final class CounterActionAddToFavoritesButtonTapped<A, B, C, D>
 
   @override
   String toString() {
-    return "CounterActionAddToFavoritesButtonTapped<<A, B, C, D>>";
+    return "CounterActionAddToFavoritesButtonTapped()";
   }
 }
 
@@ -61,7 +61,7 @@ final class CounterActionIncrementButtonTapped<A, B, C, D>
 
   @override
   String toString() {
-    return "CounterActionIncrementButtonTapped<<A, B, C, D>>";
+    return "CounterActionIncrementButtonTapped()";
   }
 }
 
@@ -77,7 +77,7 @@ final class CounterActionDecrementButtonTapped<A, B, C, D>
 
   @override
   String toString() {
-    return "CounterActionDecrementButtonTapped<<A, B, C, D>>";
+    return "CounterActionDecrementButtonTapped()";
   }
 }
 
@@ -94,7 +94,7 @@ final class CounterActionRemoveFromFavoritesButtonTapped<A, B, C, D>
 
   @override
   String toString() {
-    return "CounterActionRemoveFromFavoritesButtonTapped<<A, B, C, D>>";
+    return "CounterActionRemoveFromFavoritesButtonTapped()";
   }
 }
 

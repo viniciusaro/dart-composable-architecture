@@ -45,7 +45,7 @@ final class AppActionCounter<
 
   @override
   String toString() {
-    return "AppActionCounter<<A extends CounterAction<dynamic, dynamic, dynamic, dynamic>, B extends FavoritesAction<int>>>(counter: $counter)";
+    return "AppActionCounter.$counter";
   }
 }
 
@@ -66,7 +66,7 @@ final class AppActionFavorites<
 
   @override
   String toString() {
-    return "AppActionFavorites<<A extends CounterAction<dynamic, dynamic, dynamic, dynamic>, B extends FavoritesAction<int>>>(favorites: $favorites)";
+    return "AppActionFavorites.$favorites";
   }
 }
 
