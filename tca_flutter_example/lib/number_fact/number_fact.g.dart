@@ -49,7 +49,7 @@ final class NumberFactActionDecrementButtonTapped<A, B, C, D extends String>
 
   @override
   String toString() {
-    return "NumberFactActionDecrementButtonTapped<<A, B, C, D extends String>>";
+    return "NumberFactActionDecrementButtonTapped()";
   }
 }
 
@@ -66,7 +66,7 @@ final class NumberFactActionIncrementButtonTapped<A, B, C, D extends String>
 
   @override
   String toString() {
-    return "NumberFactActionIncrementButtonTapped<<A, B, C, D extends String>>";
+    return "NumberFactActionIncrementButtonTapped()";
   }
 }
 
@@ -83,7 +83,7 @@ final class NumberFactActionNumberFactButtonTapped<A, B, C, D extends String>
 
   @override
   String toString() {
-    return "NumberFactActionNumberFactButtonTapped<<A, B, C, D extends String>>";
+    return "NumberFactActionNumberFactButtonTapped()";
   }
 }
 
@@ -102,7 +102,7 @@ final class NumberFactActionNumberFactResponse<A, B, C, D extends String>
 
   @override
   String toString() {
-    return "NumberFactActionNumberFactResponse<<A, B, C, D extends String>>(numberFactResponse: $numberFactResponse)";
+    return "NumberFactActionNumberFactResponse.$numberFactResponse";
   }
 }
 

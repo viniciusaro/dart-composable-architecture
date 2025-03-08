@@ -43,7 +43,7 @@ final class AppActionCounter<
 
   @override
   String toString() {
-    return "AppActionCounter<<A extends CounterAction<dynamic, dynamic>, B extends MessageBrokerAction<dynamic, dynamic>, C>>(counter: $counter)";
+    return "AppActionCounter.$counter";
   }
 }
 
@@ -65,7 +65,7 @@ final class AppActionMessageBroker<
 
   @override
   String toString() {
-    return "AppActionMessageBroker<<A extends CounterAction<dynamic, dynamic>, B extends MessageBrokerAction<dynamic, dynamic>, C>>(messageBroker: $messageBroker)";
+    return "AppActionMessageBroker.$messageBroker";
   }
 }
 
@@ -85,7 +85,7 @@ final class AppActionOnInitState<
 
   @override
   String toString() {
-    return "AppActionOnInitState<<A extends CounterAction<dynamic, dynamic>, B extends MessageBrokerAction<dynamic, dynamic>, C>>";
+    return "AppActionOnInitState()";
   }
 }
 

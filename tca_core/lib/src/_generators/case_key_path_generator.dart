@@ -83,7 +83,7 @@ extension ${clazz.name}Enum on ${clazz.name} {
 
   @override
   String toString() {
-    return "$newClassName<$genericsString>";
+    return "$newClassName()";
   }
 }\n\n''';
       } else {
@@ -99,7 +99,7 @@ extension ${clazz.name}Enum on ${clazz.name} {
 
   @override
   String toString() {
-    return "$newClassName<$genericsString>($prop: \$$prop)";
+    return "$newClassName.\$$prop";
   }
 }\n\n''';
       }

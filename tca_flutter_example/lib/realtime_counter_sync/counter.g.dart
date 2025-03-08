@@ -36,7 +36,7 @@ final class CounterActionDecrementButtonTapped<A, B>
 
   @override
   String toString() {
-    return "CounterActionDecrementButtonTapped<<A, B>>";
+    return "CounterActionDecrementButtonTapped()";
   }
 }
 
@@ -52,7 +52,7 @@ final class CounterActionIncrementButtonTapped<A, B>
 
   @override
   String toString() {
-    return "CounterActionIncrementButtonTapped<<A, B>>";
+    return "CounterActionIncrementButtonTapped()";
   }
 }
 
