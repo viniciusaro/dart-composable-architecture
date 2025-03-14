@@ -45,6 +45,12 @@ final class Effect<Action> {
       return Stream.empty();
     });
   }
+
+  static Effect<Action> action<Action>(Action action) {
+    return Effect(() {
+      return Stream.value(action);
+    });
+  }
 }
 
 extension Effects on Effect {

@@ -137,15 +137,15 @@ void main() {
         );
 
         store.syncStream.listen((update) {
-          storeStateEmissions.add(update.state);
+          storeStateEmissions.add(update);
         });
 
         viewdStoreA.syncStream.listen((update) {
-          viewStoreAStateEmissions.add(update.state);
+          viewStoreAStateEmissions.add(update);
         });
 
         viewdStoreB.syncStream.listen((update) {
-          viewStoreBStateEmissions.add(update.state);
+          viewStoreBStateEmissions.add(update);
         });
 
         store.send(unit);
@@ -155,13 +155,13 @@ void main() {
 
         viewdStoreA.send(unit);
         expect(storeStateEmissions, [1, 2]);
-        expect(viewStoreAStateEmissions, [1, 2]);
-        expect(viewStoreBStateEmissions, [1, 2]);
+        expect(viewStoreAStateEmissions, [1, 2, 2]);
+        expect(viewStoreBStateEmissions, [1, 2, 2]);
 
         viewdStoreB.send(unit);
         expect(storeStateEmissions, [1, 2, 3]);
-        expect(viewStoreAStateEmissions, [1, 2, 3]);
-        expect(viewStoreBStateEmissions, [1, 2, 3]);
+        expect(viewStoreAStateEmissions, [1, 2, 2, 3, 3]);
+        expect(viewStoreBStateEmissions, [1, 2, 2, 3, 3, 3]);
       });
     });
   });

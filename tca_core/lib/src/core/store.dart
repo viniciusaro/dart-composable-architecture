@@ -7,6 +7,10 @@ part 'effect.dart';
 part 'key_path.dart';
 part 'reducer.dart';
 
+mixin InitializableState<T> {
+  T init();
+}
+
 final class StateUpdate<State> {
   final State state;
   final bool fromChild;
@@ -17,23 +21,25 @@ final class Store<State, Action> {
   final Inout<State> _state;
   State get state => _state._value;
   final Reducer<State, Action> _reducer;
-  final syncStream = SyncStream<StateUpdate<State>>();
+  final syncStream = SyncStream<State>();
 
   Store({
     required State initialState,
     required Reducer<State, Action> reducer,
-  })  : _state = Inout(value: initialState),
+  })  : _state = initialState is InitializableState
+            ? Inout(value: initialState.init())
+            : Inout(value: initialState),
         _reducer = reducer;
 
   void send(Action action) {
     _send(action);
   }
 
-  void _send(Action action, {bool fromChild = false}) {
+  void _send(Action action) {
     _state._isMutationAllowed = true;
     final effect = _reducer(_state, action);
     _state._isMutationAllowed = false;
-    syncStream.add(StateUpdate(_state._value, fromChild));
+    syncStream.add(_state._value);
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];
@@ -54,17 +60,15 @@ final class Store<State, Action> {
       reducer: (localState, localAction) {
         final globalAction = action.set(null, localAction);
         if (globalAction != null) {
-          _send(globalAction, fromChild: true);
+          _send(globalAction);
         }
         return Effect.none();
       },
     );
 
     syncStream.listen((update) {
-      store._state._value = state.get(update.state);
-      if (!update.fromChild) {
-        store.syncStream.add(StateUpdate(state.get(update.state), false));
-      }
+      store._state._value = state.get(update);
+      store.syncStream.add(state.get(update));
     });
 
     return store;

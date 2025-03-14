@@ -11,8 +11,8 @@ void main() {
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: {0}),
-          favorites: FavoritesState(favorites: {0}),
+          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {0}),
+          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {0}),
         ),
       );
     });
@@ -39,16 +39,16 @@ void main() {
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: {0}),
-          favorites: FavoritesState(favorites: {0}),
+          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {0}),
+          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {0}),
         ),
       );
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.removeFromFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: {}),
-          favorites: FavoritesState(favorites: {}),
+          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {}),
+          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {}),
         ),
       );
     });
@@ -61,16 +61,16 @@ void main() {
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: {0}),
-          favorites: FavoritesState(favorites: {0}),
+          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {0}),
+          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {0}),
         ),
       );
 
       store.send(
         AppActionEnum.favorites(FavoritesActionEnum.remove(0)),
         (_) => AppState(
-          counter: CounterState(favorites: {}),
-          favorites: FavoritesState(favorites: {}),
+          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {}),
+          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {}),
         ),
       );
     });

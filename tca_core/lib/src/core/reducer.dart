@@ -96,7 +96,7 @@ Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalStat
     globalState._latestValueHashCode = globalState._value.hashCode;
 
     return localEffect.map((localAction) {
-      action.set(globalAction, localAction);
+      globalAction = action.set(globalAction, localAction);
       return globalAction;
     });
   };

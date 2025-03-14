@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FavoritesState {
 
- Set<int> get favorites;
+ Shared<Set<int>> get favorites;
 /// Create a copy of FavoritesState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,12 +26,12 @@ $FavoritesStateCopyWith<FavoritesState> get copyWith => _$FavoritesStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FavoritesState&&const DeepCollectionEquality().equals(other.favorites, favorites));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FavoritesState&&(identical(other.favorites, favorites) || other.favorites == favorites));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(favorites));
+int get hashCode => Object.hash(runtimeType,favorites);
 
 @override
 String toString() {
@@ -46,7 +46,7 @@ abstract mixin class $FavoritesStateCopyWith<$Res>  {
   factory $FavoritesStateCopyWith(FavoritesState value, $Res Function(FavoritesState) _then) = _$FavoritesStateCopyWithImpl;
 @useResult
 $Res call({
- Set<int> favorites
+ Shared<Set<int>> favorites
 });
 
 
@@ -66,7 +66,7 @@ class _$FavoritesStateCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? favorites = null,}) {
   return _then(_self.copyWith(
 favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
-as Set<int>,
+as Shared<Set<int>>,
   ));
 }
 
@@ -77,16 +77,10 @@ as Set<int>,
 
 
 class _FavoritesState implements FavoritesState {
-  const _FavoritesState({final  Set<int> favorites = const {}}): _favorites = favorites;
+  const _FavoritesState({this.favorites = const Shared(InMemorySource({}))});
   
 
- final  Set<int> _favorites;
-@override@JsonKey() Set<int> get favorites {
-  if (_favorites is EqualUnmodifiableSetView) return _favorites;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableSetView(_favorites);
-}
-
+@override@JsonKey() final  Shared<Set<int>> favorites;
 
 /// Create a copy of FavoritesState
 /// with the given fields replaced by the non-null parameter values.
@@ -98,12 +92,12 @@ _$FavoritesStateCopyWith<_FavoritesState> get copyWith => __$FavoritesStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoritesState&&const DeepCollectionEquality().equals(other._favorites, _favorites));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoritesState&&(identical(other.favorites, favorites) || other.favorites == favorites));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_favorites));
+int get hashCode => Object.hash(runtimeType,favorites);
 
 @override
 String toString() {
@@ -118,7 +112,7 @@ abstract mixin class _$FavoritesStateCopyWith<$Res> implements $FavoritesStateCo
   factory _$FavoritesStateCopyWith(_FavoritesState value, $Res Function(_FavoritesState) _then) = __$FavoritesStateCopyWithImpl;
 @override @useResult
 $Res call({
- Set<int> favorites
+ Shared<Set<int>> favorites
 });
 
 
@@ -137,8 +131,8 @@ class __$FavoritesStateCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? favorites = null,}) {
   return _then(_FavoritesState(
-favorites: null == favorites ? _self._favorites : favorites // ignore: cast_nullable_to_non_nullable
-as Set<int>,
+favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
+as Shared<Set<int>>,
   ));
 }
 
