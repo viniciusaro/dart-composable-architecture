@@ -9,7 +9,7 @@ part 'counter.g.dart';
 abstract class CounterState with _$CounterState {
   const factory CounterState({
     @Default(0) int count,
-    @Default({}) Set<int> favorites, //
+    @Default(Shared(InMemorySource({}))) Shared<Set<int>> favorites, //
   }) = _CounterState;
 }
 
@@ -24,7 +24,9 @@ sealed class CounterAction<
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterActionAddToFavoritesButtonTapped():
-      state.mutate((s) => s.copyWith(favorites: {...s.favorites, s.count}));
+      state.mutate(
+        (s) => s.copyWith(favorites: s.favorites..value = {...s.favorites.value, s.count}),
+      );
       return Effect.none();
     case CounterActionIncrementButtonTapped():
       state.mutate((s) => s.copyWith(count: s.count + 1));
@@ -33,7 +35,11 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       state.mutate((s) => s.copyWith(count: s.count - 1));
       return Effect.none();
     case CounterActionRemoveFromFavoritesButtonTapped():
-      state.mutate((s) => s.copyWith(favorites: s.favorites.where((c) => c != s.count).toSet()));
+      state.mutate(
+        (s) => s.copyWith(
+          favorites: s.favorites..value = s.favorites.value.where((c) => c != s.count).toSet(),
+        ),
+      );
       return Effect.none();
   }
 }
@@ -70,7 +76,7 @@ class CounterWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                viewStore.state.favorites.contains(viewStore.state.count)
+                viewStore.state.favorites.value.contains(viewStore.state.count)
                     ? ElevatedButton(
                       onPressed:
                           () => viewStore.send(

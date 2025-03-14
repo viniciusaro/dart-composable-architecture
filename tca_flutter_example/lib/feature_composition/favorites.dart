@@ -8,7 +8,7 @@ part 'favorites.g.dart';
 @KeyPathable()
 abstract class FavoritesState with _$FavoritesState {
   const factory FavoritesState({
-    @Default({}) Set<int> favorites, //
+    @Default(Shared(InMemorySource({}))) Shared<Set<int>> favorites, //
   }) = _FavoritesState;
 }
 
@@ -21,7 +21,10 @@ Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesA
   switch (action) {
     case FavoritesActionRemove():
       state.mutate(
-        (s) => s.copyWith(favorites: s.favorites.where((e) => e != action.remove).toSet()),
+        (s) => s.copyWith(
+          favorites:
+              s.favorites..value = s.favorites.value.where((c) => c != action.remove).toSet(),
+        ),
       );
       return Effect.none();
   }
@@ -41,9 +44,9 @@ class FavoritesWidget extends StatelessWidget {
         body: (viewStore) {
           final items = viewStore.state.favorites;
           return ListView.builder(
-            itemCount: items.length,
+            itemCount: items.value.length,
             itemBuilder: (context, index) {
-              final item = items.toList()[index];
+              final item = items.value.toList()[index];
               return Dismissible(
                 key: Key(item.toString()),
                 child: ListTile(title: Text("$item")),

@@ -7,7 +7,7 @@ part of 'favorites.dart';
 // **************************************************************************
 
 extension FavoritesStatePath on FavoritesState {
-  static final favorites = WritableKeyPath<FavoritesState, Set<int>>(
+  static final favorites = WritableKeyPath<FavoritesState, Shared<Set<int>>>(
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );

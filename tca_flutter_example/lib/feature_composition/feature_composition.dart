@@ -23,21 +23,9 @@ sealed class AppAction<
 > {}
 
 final appReducer = combine([
-      pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
-      pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
-    ])
-    .onChange(
-      of: (state) => state.counter.favorites,
-      update: (state, favorites) {
-        state.mutate((s) => s.copyWith(favorites: s.favorites.copyWith(favorites: favorites)));
-      },
-    )
-    .onChange(
-      of: (state) => state.favorites.favorites,
-      update: (state, favorites) {
-        state.mutate((s) => s.copyWith(counter: s.counter.copyWith(favorites: favorites)));
-      },
-    );
+  pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
+  pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
+]);
 
 class AppWidget extends StatelessWidget {
   final Store<AppState, AppAction> store;

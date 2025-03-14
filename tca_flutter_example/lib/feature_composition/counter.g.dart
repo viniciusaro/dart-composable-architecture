@@ -11,7 +11,7 @@ extension CounterStatePath on CounterState {
     get: (obj) => obj.count,
     set: (obj, count) => obj!.copyWith(count: count),
   );
-  static final favorites = WritableKeyPath<CounterState, Set<int>>(
+  static final favorites = WritableKeyPath<CounterState, Shared<Set<int>>>(
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );

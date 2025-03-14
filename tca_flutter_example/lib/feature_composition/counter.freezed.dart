@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CounterState {
 
- int get count; Set<int> get favorites;
+ int get count; Shared<Set<int>> get favorites;
 /// Create a copy of CounterState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,12 +26,12 @@ $CounterStateCopyWith<CounterState> get copyWith => _$CounterStateCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CounterState&&(identical(other.count, count) || other.count == count)&&const DeepCollectionEquality().equals(other.favorites, favorites));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CounterState&&(identical(other.count, count) || other.count == count)&&(identical(other.favorites, favorites) || other.favorites == favorites));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,count,const DeepCollectionEquality().hash(favorites));
+int get hashCode => Object.hash(runtimeType,count,favorites);
 
 @override
 String toString() {
@@ -46,7 +46,7 @@ abstract mixin class $CounterStateCopyWith<$Res>  {
   factory $CounterStateCopyWith(CounterState value, $Res Function(CounterState) _then) = _$CounterStateCopyWithImpl;
 @useResult
 $Res call({
- int count, Set<int> favorites
+ int count, Shared<Set<int>> favorites
 });
 
 
@@ -67,7 +67,7 @@ class _$CounterStateCopyWithImpl<$Res>
   return _then(_self.copyWith(
 count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
 as int,favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
-as Set<int>,
+as Shared<Set<int>>,
   ));
 }
 
@@ -78,17 +78,11 @@ as Set<int>,
 
 
 class _CounterState implements CounterState {
-  const _CounterState({this.count = 0, final  Set<int> favorites = const {}}): _favorites = favorites;
+  const _CounterState({this.count = 0, this.favorites = const Shared(InMemorySource({}))});
   
 
 @override@JsonKey() final  int count;
- final  Set<int> _favorites;
-@override@JsonKey() Set<int> get favorites {
-  if (_favorites is EqualUnmodifiableSetView) return _favorites;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableSetView(_favorites);
-}
-
+@override@JsonKey() final  Shared<Set<int>> favorites;
 
 /// Create a copy of CounterState
 /// with the given fields replaced by the non-null parameter values.
@@ -100,12 +94,12 @@ _$CounterStateCopyWith<_CounterState> get copyWith => __$CounterStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CounterState&&(identical(other.count, count) || other.count == count)&&const DeepCollectionEquality().equals(other._favorites, _favorites));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CounterState&&(identical(other.count, count) || other.count == count)&&(identical(other.favorites, favorites) || other.favorites == favorites));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,count,const DeepCollectionEquality().hash(_favorites));
+int get hashCode => Object.hash(runtimeType,count,favorites);
 
 @override
 String toString() {
@@ -120,7 +114,7 @@ abstract mixin class _$CounterStateCopyWith<$Res> implements $CounterStateCopyWi
   factory _$CounterStateCopyWith(_CounterState value, $Res Function(_CounterState) _then) = __$CounterStateCopyWithImpl;
 @override @useResult
 $Res call({
- int count, Set<int> favorites
+ int count, Shared<Set<int>> favorites
 });
 
 
@@ -140,8 +134,8 @@ class __$CounterStateCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? count = null,Object? favorites = null,}) {
   return _then(_CounterState(
 count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
-as int,favorites: null == favorites ? _self._favorites : favorites // ignore: cast_nullable_to_non_nullable
-as Set<int>,
+as int,favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
+as Shared<Set<int>>,
   ));
 }
 
