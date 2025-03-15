@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../helpers/sync_stream.dart';
+import 'shared.dart';
 
 part 'exceptions.dart';
 part 'effect.dart';
@@ -31,17 +32,25 @@ final class Store<State, Action> {
   })  : _state = initialState is InitializableState
             ? Inout(value: initialState.init())
             : Inout(value: initialState),
-        _reducer = reducer;
+        _reducer = reducer {
+    syncStream.setInitialValue(_state.value);
+  }
 
   void send(Action action) {
     _send(action);
   }
 
   void _send(Action action) {
-    _state._isMutationAllowed = true;
-    final effect = _reducer(_state, action);
-    _state._isMutationAllowed = false;
-    syncStream.add(_state._value);
+    final effect = runZoned(
+      () {
+        _state._isMutationAllowed = true;
+        final effect = _reducer(_state, action);
+        _state._isMutationAllowed = false;
+        syncStream.add(_state._value);
+        return effect;
+      },
+      zoneValues: {#sharedZoneValues: SharedZoneValues()..didRunSharedSet = false},
+    );
 
     final stream = effect.builder();
     final id = _cancellableEffects[effect._cancellableId];

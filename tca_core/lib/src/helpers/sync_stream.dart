@@ -1,3 +1,5 @@
+import 'dart:async';
+
 final class SyncStreamSubscription<T> {
   int get id => hashCode;
   final void Function(int) _onCancel;
@@ -10,9 +12,17 @@ final class SyncStreamSubscription<T> {
 
 final class SyncStream<T> {
   final Map<int, void Function(T)> _listeners = {};
+  T? _latestValue;
 
   void add(T value) {
-    _notifyListeners(value);
+    if (value != _latestValue || Zone.current[#sharedZoneValues].didRunSharedSet == true) {
+      _latestValue = value;
+      _notifyListeners(value);
+    }
+  }
+
+  void setInitialValue(T value) {
+    _latestValue = value;
   }
 
   void _notifyListeners(T value) {
