@@ -7,13 +7,15 @@ part of 'collections.dart';
 // **************************************************************************
 
 extension SessionPath on Session {
-  static final user = KeyPath<Session, User>(
+  static final user = WritableKeyPath<Session, User>(
     get: (obj) => obj.user,
+    set: (obj, user) => obj!.copyWith(user: user),
   );
 }
 
 extension UserPath on User {
-  static final name = KeyPath<User, String>(
+  static final name = WritableKeyPath<User, String>(
     get: (obj) => obj.name,
+    set: (obj, name) => obj!.copyWith(name: name),
   );
 }

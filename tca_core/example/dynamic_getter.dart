@@ -16,6 +16,10 @@ class Store<T> {
 class State {
   final int id;
   State(this.id);
+
+  State copyWith({int? id}) {
+    return State(id ?? this.id);
+  }
 }
 
 void main() {

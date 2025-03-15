@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'reducer_high_order_test.dart';
+part of '_helper_root_state.dart';
 
 // **************************************************************************
 // KeyPathGenerator
@@ -9,25 +9,25 @@ part of 'reducer_high_order_test.dart';
 extension RootStatePath on RootState {
   static final counter = WritableKeyPath<RootState, CounterState>(
     get: (obj) => obj.counter,
-    set: (obj, counter) => obj!..counter = counter,
+    set: (obj, counter) => obj!.copyWith(counter: counter),
   );
   static final favorites = WritableKeyPath<RootState, FavoritesState>(
     get: (obj) => obj.favorites,
-    set: (obj, favorites) => obj!..favorites = favorites,
+    set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
 }
 
 extension CounterStatePath on CounterState {
   static final count = WritableKeyPath<CounterState, int>(
     get: (obj) => obj.count,
-    set: (obj, count) => obj!..count = count,
+    set: (obj, count) => obj!.copyWith(count: count),
   );
 }
 
 extension FavoritesStatePath on FavoritesState {
   static final favorites = WritableKeyPath<FavoritesState, List<int>>(
     get: (obj) => obj.favorites,
-    set: (obj, favorites) => obj!..favorites = favorites,
+    set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
 }
 
@@ -38,23 +38,44 @@ extension FavoritesStatePath on FavoritesState {
 extension RootActionEnum on RootAction {
   static RootAction counter(CounterAction<dynamic, dynamic> p) =>
       RootActionCounter(p);
-  static RootAction favorites(
-          FavoritesAction<FavoritesAdd, FavoritesRemoveAt> p) =>
+  static RootAction favorites(FavoritesAction<int, int> p) =>
       RootActionFavorites(p);
 }
 
 final class RootActionCounter<A extends CounterAction<dynamic, dynamic>,
-        B extends FavoritesAction<FavoritesAdd, FavoritesRemoveAt>>
-    extends RootAction<A, B> {
+    B extends FavoritesAction<int, int>> extends RootAction<A, B> {
   final A counter;
   RootActionCounter(this.counter) : super();
+
+  @override
+  int get hashCode => counter.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RootActionCounter && other.counter == counter;
+
+  @override
+  String toString() {
+    return "RootActionCounter.$counter";
+  }
 }
 
 final class RootActionFavorites<A extends CounterAction<dynamic, dynamic>,
-        B extends FavoritesAction<FavoritesAdd, FavoritesRemoveAt>>
-    extends RootAction<A, B> {
+    B extends FavoritesAction<int, int>> extends RootAction<A, B> {
   final B favorites;
   RootActionFavorites(this.favorites) : super();
+
+  @override
+  int get hashCode => favorites.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RootActionFavorites && other.favorites == favorites;
+
+  @override
+  String toString() {
+    return "RootActionFavorites.$favorites";
+  }
 }
 
 extension RootActionPath on RootAction {
@@ -73,8 +94,8 @@ extension RootActionPath on RootAction {
       return rootAction!;
     },
   );
-  static final favorites = WritableKeyPath<RootAction,
-      FavoritesAction<FavoritesAdd, FavoritesRemoveAt>?>(
+  static final favorites =
+      WritableKeyPath<RootAction, FavoritesAction<int, int>?>(
     get: (action) {
       if (action is RootActionFavorites) {
         return action.favorites;
@@ -97,10 +118,32 @@ extension CounterActionEnum on CounterAction {
 
 final class CounterActionIncrement<A, B> extends CounterAction<A, B> {
   CounterActionIncrement() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionIncrement;
+
+  @override
+  String toString() {
+    return "CounterActionIncrement()";
+  }
 }
 
 final class CounterActionDecrement<A, B> extends CounterAction<A, B> {
   CounterActionDecrement() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is CounterActionDecrement;
+
+  @override
+  String toString() {
+    return "CounterActionDecrement()";
+  }
 }
 
 extension CounterActionPath on CounterAction {
@@ -137,25 +180,48 @@ extension CounterActionPath on CounterAction {
 }
 
 extension FavoritesActionEnum on FavoritesAction {
-  static FavoritesAction add(FavoritesAdd p) => FavoritesActionAdd(p);
-  static FavoritesAction removeAt(FavoritesRemoveAt p) =>
-      FavoritesActionRemoveAt(p);
+  static FavoritesAction add(int p) => FavoritesActionAdd(p);
+  static FavoritesAction removeAt(int p) => FavoritesActionRemoveAt(p);
 }
 
-final class FavoritesActionAdd<A extends FavoritesAdd,
-    B extends FavoritesRemoveAt> extends FavoritesAction<A, B> {
+final class FavoritesActionAdd<A extends int, B extends int>
+    extends FavoritesAction<A, B> {
   final A add;
   FavoritesActionAdd(this.add) : super();
+
+  @override
+  int get hashCode => add.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is FavoritesActionAdd && other.add == add;
+
+  @override
+  String toString() {
+    return "FavoritesActionAdd.$add";
+  }
 }
 
-final class FavoritesActionRemoveAt<A extends FavoritesAdd,
-    B extends FavoritesRemoveAt> extends FavoritesAction<A, B> {
+final class FavoritesActionRemoveAt<A extends int, B extends int>
+    extends FavoritesAction<A, B> {
   final B removeAt;
   FavoritesActionRemoveAt(this.removeAt) : super();
+
+  @override
+  int get hashCode => removeAt.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is FavoritesActionRemoveAt && other.removeAt == removeAt;
+
+  @override
+  String toString() {
+    return "FavoritesActionRemoveAt.$removeAt";
+  }
 }
 
 extension FavoritesActionPath on FavoritesAction {
-  static final add = WritableKeyPath<FavoritesAction, FavoritesAdd?>(
+  static final add = WritableKeyPath<FavoritesAction, int?>(
     get: (action) {
       if (action is FavoritesActionAdd) {
         return action.add;
@@ -169,7 +235,7 @@ extension FavoritesActionPath on FavoritesAction {
       return rootAction!;
     },
   );
-  static final removeAt = WritableKeyPath<FavoritesAction, FavoritesRemoveAt?>(
+  static final removeAt = WritableKeyPath<FavoritesAction, int?>(
     get: (action) {
       if (action is FavoritesActionRemoveAt) {
         return action.removeAt;

@@ -7,7 +7,8 @@ part of 'dynamic_getter.dart';
 // **************************************************************************
 
 extension StatePath on State {
-  static final id = KeyPath<State, int>(
+  static final id = WritableKeyPath<State, int>(
     get: (obj) => obj.id,
+    set: (obj, id) => obj!.copyWith(id: id),
   );
 }
