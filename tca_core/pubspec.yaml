@@ -1,8 +1,7 @@
 name: composable_architecture
-description: A starting point for Dart libraries or applications.
+description: Port of The Composable Architecture for Dart
 version: 0.0.1
 repository: https://github.com/viniciusaro/dart-composable-architecture
-publish_to: none
 
 environment:
   sdk: ^3.0.0
