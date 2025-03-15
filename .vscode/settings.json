@@ -11,7 +11,8 @@
     "**/.fvm": true,
     "**/.dart_tool": true,
     "**/.idea": true,
-    "**/*.iml": true
+    "**/*.iml": true,
+    "**/*.freezed.dart": true,
   },
   "dart.flutterSdkPath": ".fvm/versions/3.29.0"
 }

@@ -49,7 +49,9 @@ final class Store<State, Action> {
         syncStream.add(_state._value);
         return effect;
       },
-      zoneValues: {#sharedZoneValues: SharedZoneValues()..didRunSharedSet = false},
+      zoneValues: {
+        #sharedZoneValues: SharedZoneValues()..didRunSharedSet = false,
+      },
     );
 
     final stream = effect.builder();
