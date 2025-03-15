@@ -9,11 +9,11 @@ Port of [The Composable Architecture](https://github.com/pointfreeco/swift-compo
 https://github.com/user-attachments/assets/27af38b1-189b-4f59-8710-f41026ca20fa
 
 This repo comes with _lots_ of examples to demonstrate how to solve common and complex problems with 
-the Composable Architecture. Check out [this](./tca_flutter_example/lib) directory to see them all, including:
+the Composable Architecture. Check out [this](https://github.com/viniciusaro/dart-composable-architecture/tree/main/tca_flutter_example/lib) directory to see them all, including:
 
-* [Feature Composition](./tca_flutter_example/lib/feature_composition)
-* [Number Fact](./tca_flutter_example/lib/number_fact/number_fact.dart)
-* [Realtime Counter Sync](./tca_flutter_example/lib/realtime_counter_sync/realtime_counter_sync.dart)
+* [Feature Composition](https://github.com/viniciusaro/dart-composable-architecture/tree/main/tca_flutter_example/lib/feature_composition)
+* [Number Fact](https://github.com/viniciusaro/dart-composable-architecture/blob/main/tca_flutter_example/lib/number_fact/number_fact.dart)
+* [Realtime Counter Sync](https://github.com/viniciusaro/dart-composable-architecture/blob/main/tca_flutter_example/lib/realtime_counter_sync/realtime_counter_sync.dart)
 
 ## Basic Usage
 
