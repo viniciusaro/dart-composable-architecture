@@ -6,10 +6,12 @@ part 'favorites.g.dart';
 
 @freezed
 @KeyPathable()
-abstract class FavoritesState with _$FavoritesState {
-  const factory FavoritesState({
-    @Default(Shared(InMemorySource({}))) Shared<Set<int>> favorites, //
-  }) = _FavoritesState;
+class FavoritesState with _$FavoritesState {
+  @override
+  final Shared<Set<int>> favorites;
+
+  FavoritesState({Shared<Set<int>>? favorites})
+    : favorites = favorites ?? Shared(InMemorySource({}));
 }
 
 @CaseKeyPathable()
@@ -22,8 +24,7 @@ Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesA
     case FavoritesActionRemove():
       state.mutate(
         (s) => s.copyWith(
-          favorites:
-              s.favorites..value = s.favorites.value.where((c) => c != action.remove).toSet(),
+          favorites: s.favorites.set((curr) => curr.where((c) => c != action.remove).toSet()),
         ),
       );
       return Effect.none();

@@ -5,14 +5,18 @@ import 'package:tca_flutter_example/feature_composition/favorites.dart';
 import 'package:tca_flutter_example/feature_composition/feature_composition.dart';
 
 void main() {
+  tearDown(() {
+    InMemorySource<Set<int>>({}).set({});
+  });
+
   group('counter', () {
     test("add to favorites button tapped", () {
       final store = TestStore(initialState: AppState(), reducer: appReducer);
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {0}),
-          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {0}),
+          counter: CounterState(favorites: Shared.constant({0})),
+          favorites: FavoritesState(favorites: Shared.constant({0})),
         ),
       );
     });
@@ -39,16 +43,16 @@ void main() {
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {0}),
-          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {0}),
+          counter: CounterState(favorites: Shared.constant({0})),
+          favorites: FavoritesState(favorites: Shared.constant({0})),
         ),
       );
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.removeFromFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {}),
-          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {}),
+          counter: CounterState(favorites: Shared.constant({})),
+          favorites: FavoritesState(favorites: Shared.constant({})),
         ),
       );
     });
@@ -61,16 +65,16 @@ void main() {
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
-          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {0}),
-          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {0}),
+          counter: CounterState(favorites: Shared.constant({0})),
+          favorites: FavoritesState(favorites: Shared.constant({0})),
         ),
       );
 
       store.send(
         AppActionEnum.favorites(FavoritesActionEnum.remove(0)),
         (_) => AppState(
-          counter: CounterState(favorites: Shared(InMemorySource({}))..value = {}),
-          favorites: FavoritesState(favorites: Shared(InMemorySource({}))..value = {}),
+          counter: CounterState(favorites: Shared.constant({})),
+          favorites: FavoritesState(favorites: Shared.constant({})),
         ),
       );
     });
