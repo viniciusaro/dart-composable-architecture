@@ -9,6 +9,10 @@ mixin SharedSource<T> {
   void set(T newValue);
 }
 
+final class SharedZoneValues {
+  bool didRunSharedSet = false;
+}
+
 final class Shared<T> {
   final SharedSource<T> _source;
 
@@ -25,6 +29,7 @@ final class Shared<T> {
   }
 
   Shared<T> set(T Function(T) update) {
+    Zone.current[#sharedZoneValues].didRunSharedSet = true;
     _source.set(update(_source.get()));
     return Shared<T>(_source);
   }
