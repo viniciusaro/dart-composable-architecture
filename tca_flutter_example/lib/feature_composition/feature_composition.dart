@@ -9,11 +9,18 @@ part 'feature_composition.g.dart';
 
 @freezed
 @KeyPathable()
-abstract class AppState with _$AppState {
-  const factory AppState({
-    @Default(CounterState()) CounterState counter,
-    @Default(FavoritesState()) FavoritesState favorites,
-  }) = _AppState;
+class AppState with _$AppState {
+  @override
+  final CounterState counter;
+
+  @override
+  final FavoritesState favorites;
+
+  AppState({
+    CounterState? counter,
+    FavoritesState? favorites, //
+  }) : counter = counter ?? CounterState(),
+       favorites = favorites ?? FavoritesState();
 }
 
 @CaseKeyPathable()

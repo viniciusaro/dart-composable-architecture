@@ -46,7 +46,7 @@ abstract mixin class $FavoritesStateCopyWith<$Res>  {
   factory $FavoritesStateCopyWith(FavoritesState value, $Res Function(FavoritesState) _then) = _$FavoritesStateCopyWithImpl;
 @useResult
 $Res call({
- Shared<Set<int>> favorites
+ Shared<Set<int>>? favorites
 });
 
 
@@ -63,80 +63,14 @@ class _$FavoritesStateCopyWithImpl<$Res>
 
 /// Create a copy of FavoritesState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? favorites = null,}) {
-  return _then(_self.copyWith(
-favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
-as Shared<Set<int>>,
+@pragma('vm:prefer-inline') @override $Res call({Object? favorites = freezed,}) {
+  return _then(FavoritesState(
+favorites: freezed == favorites ? _self.favorites! : favorites // ignore: cast_nullable_to_non_nullable
+as Shared<Set<int>>?,
   ));
 }
 
 }
 
-
-/// @nodoc
-
-
-class _FavoritesState implements FavoritesState {
-  const _FavoritesState({this.favorites = const Shared(InMemorySource({}))});
-  
-
-@override@JsonKey() final  Shared<Set<int>> favorites;
-
-/// Create a copy of FavoritesState
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$FavoritesStateCopyWith<_FavoritesState> get copyWith => __$FavoritesStateCopyWithImpl<_FavoritesState>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoritesState&&(identical(other.favorites, favorites) || other.favorites == favorites));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,favorites);
-
-@override
-String toString() {
-  return 'FavoritesState(favorites: $favorites)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$FavoritesStateCopyWith<$Res> implements $FavoritesStateCopyWith<$Res> {
-  factory _$FavoritesStateCopyWith(_FavoritesState value, $Res Function(_FavoritesState) _then) = __$FavoritesStateCopyWithImpl;
-@override @useResult
-$Res call({
- Shared<Set<int>> favorites
-});
-
-
-
-
-}
-/// @nodoc
-class __$FavoritesStateCopyWithImpl<$Res>
-    implements _$FavoritesStateCopyWith<$Res> {
-  __$FavoritesStateCopyWithImpl(this._self, this._then);
-
-  final _FavoritesState _self;
-  final $Res Function(_FavoritesState) _then;
-
-/// Create a copy of FavoritesState
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? favorites = null,}) {
-  return _then(_FavoritesState(
-favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
-as Shared<Set<int>>,
-  ));
-}
-
-
-}
 
 // dart format on

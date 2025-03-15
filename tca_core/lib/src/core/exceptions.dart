@@ -38,7 +38,14 @@ final class UnexpectedChanges implements Exception {
 
   @override
   String toString() {
-    return "UnexpectedChanges: Detected unexpected changes. Expected $expected, got: $updated";
+    final expectedString = expected;
+    final updatedString = updated;
+
+    return """UnexpectedChanges: Detected unexpected changes. 
+Expected:
+  $expectedString,
+Got: 
+  $updatedString""";
   }
 
   @override

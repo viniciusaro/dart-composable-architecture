@@ -12,13 +12,13 @@ class KeyPathGenerator extends GeneratorForAnnotation<KeyPathable> {
     BuildStep buildStep,
   ) {
     final clazz = element as ClassElement;
-    late ConstructorElement factory;
+    late List<VariableElement> fields;
     try {
-      factory = clazz.constructors.firstWhere((c) => c.isFactory);
+      final factory = clazz.constructors.firstWhere((c) => c.isFactory);
+      fields = factory.parameters;
     } catch (_) {
-      throw Exception("No factory constructor found for type ${clazz.name} at ${clazz.library}");
+      fields = clazz.fields;
     }
-    final fields = factory.parameters;
     final rootType = clazz.name;
 
     String code = '''

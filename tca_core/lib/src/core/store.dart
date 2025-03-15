@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../helpers/sync_stream.dart';
 
 part 'exceptions.dart';
@@ -89,18 +91,19 @@ final class TestStore<State, Action> {
     _state._isMutationAllowed = true;
     _state._didCallMutate = false;
     final stateRefBeforeReducer = _state.value;
-    final expected = expectedStateUpdate(_state.value);
+    final expected = runZoned(
+      () => expectedStateUpdate(_state.value),
+      zoneValues: {#expectedStateClosure: true},
+    );
     final effect = _reducer(_state, action);
-    final stateRefAfterReducer = _state.value;
+    final updated = _state.value;
+    _state._isMutationAllowed = false;
 
-    if (_state._didCallMutate && identical(stateRefBeforeReducer, stateRefAfterReducer)) {
+    if (_state._didCallMutate && identical(stateRefBeforeReducer, updated)) {
       throw MutationOfSameInstance();
     }
 
-    _state._isMutationAllowed = false;
-
-    final updated = _state.value;
-    if (expected.hashCodeConsideringContents != updated.hashCodeConsideringContents) {
+    if (!DeepCollectionEquality().equals(expected, updated)) {
       throw UnexpectedChanges(expected: expected, updated: updated);
     }
 
@@ -135,12 +138,5 @@ final class TestStore<State, Action> {
     if (_expectedActions.isNotEmpty || _expectedStateUpdates.isNotEmpty) {
       throw UnexpectedPendingActions(pendingActions: _expectedActions);
     }
-  }
-}
-
-extension ObjectX<T> on T {
-  int get hashCodeConsideringContents {
-    final self = this;
-    return self is Iterable ? Object.hashAll(self) : self.hashCode;
   }
 }

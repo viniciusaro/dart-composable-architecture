@@ -6,11 +6,16 @@ part 'counter.g.dart';
 
 @freezed
 @KeyPathable()
-abstract class CounterState with _$CounterState {
-  const factory CounterState({
-    @Default(0) int count,
-    @Default(Shared(InMemorySource({}))) Shared<Set<int>> favorites, //
-  }) = _CounterState;
+class CounterState with _$CounterState {
+  @override
+  final int count;
+
+  @override
+  final Shared<Set<int>> favorites;
+
+  CounterState({int? count, Shared<Set<int>>? favorites})
+    : count = count ?? 0,
+      favorites = favorites ?? Shared(InMemorySource({}));
 }
 
 @CaseKeyPathable()
@@ -24,9 +29,7 @@ sealed class CounterAction<
 Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterActionAddToFavoritesButtonTapped():
-      state.mutate(
-        (s) => s.copyWith(favorites: s.favorites..value = {...s.favorites.value, s.count}),
-      );
+      state.mutate((s) => s.copyWith(favorites: s.favorites.set((curr) => {...curr, s.count})));
       return Effect.none();
     case CounterActionIncrementButtonTapped():
       state.mutate((s) => s.copyWith(count: s.count + 1));
@@ -37,7 +40,7 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
     case CounterActionRemoveFromFavoritesButtonTapped():
       state.mutate(
         (s) => s.copyWith(
-          favorites: s.favorites..value = s.favorites.value.where((c) => c != s.count).toSet(),
+          favorites: s.favorites.set((curr) => curr.where((c) => c != s.count).toSet()),
         ),
       );
       return Effect.none();
