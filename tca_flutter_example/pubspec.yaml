@@ -31,9 +31,7 @@ dependencies:
   flutter:
     sdk: flutter  
   
-  composable_architecture:
-    path: ../tca_core
-
+  composable_architecture: 0.0.1
   composable_architecture_flutter:
     path: ../tca_flutter
 

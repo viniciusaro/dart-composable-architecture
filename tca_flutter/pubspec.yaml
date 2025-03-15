@@ -1,17 +1,19 @@
 name: composable_architecture_flutter
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
-publish_to: none
+repository: https://github.com/viniciusaro/dart-composable-architecture
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.0.0
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
+  composable_architecture: 0.0.1
+
+dependency_overrides:
   composable_architecture:
     path: ../tca_core
 
