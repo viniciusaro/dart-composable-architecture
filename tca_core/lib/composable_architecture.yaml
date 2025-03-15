@@ -1,5 +1,8 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  exclude:
+    - "**/*.freezed.dart"
+    
   errors:
     must_be_immutable: error
