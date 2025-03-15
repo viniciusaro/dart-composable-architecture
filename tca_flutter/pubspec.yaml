@@ -1,5 +1,5 @@
 name: composable_architecture_flutter
-description: "A new Flutter package project."
+description: Port of The Composable Architecture for Flutter
 version: 0.0.1
 repository: https://github.com/viniciusaro/dart-composable-architecture
 
