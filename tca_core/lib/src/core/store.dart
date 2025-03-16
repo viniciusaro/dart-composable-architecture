@@ -86,6 +86,39 @@ final class Store<State, Action> {
 
     return store;
   }
+
+  Store<LocalState, LocalAction>? viewOptional<LocalState, LocalAction>({
+    required WritableKeyPath<State, LocalState?> state,
+    required WritableKeyPath<Action, LocalAction?> action,
+  }) {
+    final initialState = state.get(this.state);
+    if (initialState == null) {
+      return null;
+    }
+
+    final store = Store<LocalState, LocalAction>(
+      initialState: initialState,
+      reducer: (localState, localAction) {
+        final globalAction = action.set(null, localAction);
+        if (globalAction != null) {
+          _send(globalAction);
+        }
+        return Effect.none();
+      },
+    );
+
+    syncStream.listen((update) {
+      final localUpdate = state.get(update);
+      if (localUpdate != null) {
+        store._state._value = localUpdate;
+        store.syncStream.add(localUpdate);
+      } else {
+        // ?
+      }
+    });
+
+    return store;
+  }
 }
 
 final class TestStore<State, Action> {
