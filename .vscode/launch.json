@@ -24,6 +24,13 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/realtime_counter_sync/realtime_counter_sync.dart",
+        },
+        {
+            "name": "Example - Optional State",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/optional_state/optional_state.dart",
         }
     ]
 }

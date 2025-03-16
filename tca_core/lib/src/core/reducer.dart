@@ -101,3 +101,30 @@ Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalStat
     });
   };
 }
+
+Reducer<GlobalState, GlobalAction> ifLet<GlobalState, GlobalAction, LocalState, LocalAction>(
+  Reducer<LocalState, LocalAction> other, {
+  required WritableKeyPath<GlobalState, LocalState?> state,
+  required WritableKeyPath<GlobalAction, LocalAction?> action,
+}) {
+  return (globalState, globalAction) {
+    final localStateRaw = state.get(globalState._value);
+    final localAction = action.get(globalAction);
+    if (localStateRaw == null || localAction == null) {
+      return Effect.none();
+    }
+
+    final localState = Inout(value: localStateRaw);
+    localState._isMutationAllowed = true;
+    localState._didCallMutate = false;
+    final localEffect = other(localState, localAction);
+    localState._isMutationAllowed = false;
+    globalState._value = state.set(globalState._value, localState._value);
+    globalState._latestValueHashCode = globalState._value.hashCode;
+
+    return localEffect.map((localAction) {
+      globalAction = action.set(globalAction, localAction);
+      return globalAction;
+    });
+  };
+}
