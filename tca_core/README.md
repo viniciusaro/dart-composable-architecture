@@ -4,6 +4,7 @@ Port of [The Composable Architecture](https://github.com/pointfreeco/swift-compo
 
 - [Examples](#examples)
 - [Basic Usage](#basic-usage)
+- [Setup](#setup)
 
 ## Examples
 https://github.com/user-attachments/assets/27af38b1-189b-4f59-8710-f41026ca20fa
@@ -141,3 +142,50 @@ class NumberFactWidget extends StatelessWidget {
 The final result is something like the following:
 
 ![Simulator Screen Recording - iPhone 16 Pro - 2025-01-31 at 11 07 36](https://github.com/user-attachments/assets/6d94c617-0318-48ba-806a-0b7d6ca50a93)
+
+
+# Setup
+
+This package relies on code generation to enhance the developer experience and improve coding ergonomics. It includes built-in generators that create KeyPaths for states and actions in types annotated with @KeyPathable and @CaseKeyPathable.
+
+However, the generated code has some basic requirements: types conforming to @KeyPathable must implement a copyWith method. Users can provide this method however they prefer, but the recommended approach is to use a generator—specifically, [@freezed](https://pub.dev/packages/freezed).
+
+To enable these additional generators, you must explicitly add them as dependencies in your `pubspec.yaml`:
+```yaml
+dependencies:
+  composable_architecture: ...
+  freezed: ...
+```
+
+Additionally, to run the generators, you need to include [build_runner](https://pub.dev/packages/build_runner) as a development dependency:
+
+```yaml
+dev_dependencies:
+  build_runner: ...
+```
+
+If you are using Flutter, you need to depend on `composable_architecture_flutter`. This is the case because even though `composable_architecture_flutter` explicitly depends on `composable_architecture`, build_runner needs the direct dependency on `composable_architecture` to get access to the generators.
+
+```yaml
+dependencies:
+  composable_architecture: ...
+  composable_architecture_flutter: ...
+  freezed: ...
+```
+
+The `freezed_annotation` package is already included and exported by `composable_architecture`, so you don’t need to add it manually.
+
+Finally, for the generators to work, you must add part directives in the file containing the type annotations, in addition to importing composable_architecture:
+
+```dart
+import 'package:composable_architecture/composable_architecture.dart';
+
+part 'your_file_name.freezed.dart';
+part 'your_file_name.g.dart';
+
+@freezed
+@KeyPathable()
+final class YourState with _$YourState {}
+```
+
+You can replace freezed with any other generator that provides a `copyWith` method, or even add the method yourself. In each case, update the part directives according to the documentation of the chosen tool.
