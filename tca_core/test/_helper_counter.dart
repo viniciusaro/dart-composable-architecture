@@ -1,7 +1,5 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
-part 'counter_example_invalid.dart';
-
 final class CounterState {
   final int count;
 
@@ -29,7 +27,8 @@ enum CounterAction {
 
 enum CounterTimerId { id }
 
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
+Effect<CounterAction> counterReducer(
+    Inout<CounterState> state, CounterAction action) {
   switch (action) {
     case CounterAction.increment:
       state.mutate((s) => s.copyWith(count: s.count + 1));
@@ -45,9 +44,28 @@ Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction ac
       ).cancellable(CounterTimerId.id);
     case CounterAction.incrementWithDelay:
       return Effect.stream(
-        () => Future.delayed(Duration(seconds: 1), () => CounterAction.increment).asStream(),
+        () =>
+            Future.delayed(Duration(seconds: 1), () => CounterAction.increment)
+                .asStream(),
       );
     case CounterAction.cancelIncrementRepeatedly:
       return Effect.cancel(CounterTimerId.id);
+  }
+}
+
+final class InvalidCounterState {
+  int count = 0;
+}
+
+Effect<CounterAction> invalidCounterReducer(
+  Inout<InvalidCounterState> state,
+  CounterAction action,
+) {
+  switch (action) {
+    case CounterAction.increment:
+      state.mutate((s) => s..count += 1);
+      return Effect.none();
+    default:
+      return Effect.none();
   }
 }

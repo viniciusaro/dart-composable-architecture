@@ -44,7 +44,9 @@ final sharedReducer = combine([
   (Inout<SharedState> state, SharedAction action) {
     switch (action) {
       case SharedActionNonSharedCounterIncrement():
-        state.mutate((s) => s.copyWith(nonSharedCounter: s.nonSharedCounter + 1));
+        state.mutate(
+          (s) => s.copyWith(nonSharedCounter: s.nonSharedCounter + 1),
+        );
         return Effect.none<SharedAction>();
       default:
         return Effect.none<SharedAction>();

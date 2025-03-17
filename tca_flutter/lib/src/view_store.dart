@@ -6,7 +6,12 @@ class WithViewStore<S, A> extends StatefulWidget {
   final Widget Function(Store<S, A> store) body;
   final void Function(Store<S, A> store)? onInitState;
 
-  const WithViewStore(this.store, {super.key, this.onInitState, required this.body});
+  const WithViewStore(
+    this.store, {
+    super.key,
+    this.onInitState,
+    required this.body,
+  });
 
   @override
   State<WithViewStore<S, A>> createState() => _WithViewStoreState<S, A>();

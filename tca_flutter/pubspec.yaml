@@ -1,5 +1,5 @@
 name: composable_architecture_flutter
-description: Port of The Composable Architecture for Flutter
+description: A collection of widgets that enable using The Composable Architecture with the Flutter framework. Built to be used with the composable_architecture package.
 version: 0.0.2
 repository: https://github.com/viniciusaro/dart-composable-architecture
 

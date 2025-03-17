@@ -44,7 +44,11 @@ final Reducer<AppState, AppAction> appReducer = combine([
       case AppActionLogin():
         switch (action.login) {
           case LoginActionOnSignInSucceeded():
-            state.mutate((s) => s.copyWith(destination: AppDestinationEnum.home(HomeState())));
+            state.mutate(
+              (s) => s.copyWith(
+                destination: AppDestinationEnum.home(HomeState()), //
+              ),
+            );
             return Effect.none();
           default:
             return Effect.none();
@@ -52,7 +56,11 @@ final Reducer<AppState, AppAction> appReducer = combine([
       case AppActionHome():
         switch (action.home) {
           case HomeActionOnSignOutButtonTapped():
-            state.mutate((s) => s.copyWith(destination: AppDestinationEnum.login(LoginState())));
+            state.mutate(
+              (s) => s.copyWith(
+                destination: AppDestinationEnum.login(LoginState()),
+              ),
+            );
             return Effect.none();
         }
     }
@@ -69,24 +77,20 @@ class AppWidget extends StatelessWidget {
     return WithViewStore(
       store,
       body: (viewStore) {
-        final loginStore = viewStore.viewOptional(
-          state: AppStatePath.destination.path(AppDestinationPath.login),
-          action: AppActionPath.login,
-        );
-
-        final homeStore = viewStore.viewOptional(
-          state: AppStatePath.destination.path(AppDestinationPath.home),
-          action: AppActionPath.home,
-        );
-
-        if (loginStore != null) {
-          return LoginWidget(store: loginStore);
+        switch (viewStore.state.destination) {
+          case AppDestinationLogin():
+            final store = viewStore.viewOptional(
+              state: AppStatePath.destination.path(AppDestinationPath.login),
+              action: AppActionPath.login,
+            );
+            return LoginWidget(store: store!);
+          case AppDestinationHome():
+            final store = viewStore.viewOptional(
+              state: AppStatePath.destination.path(AppDestinationPath.home),
+              action: AppActionPath.home,
+            );
+            return HomeWidget(store: store!);
         }
-        if (homeStore != null) {
-          return HomeWidget(store: homeStore);
-        }
-
-        throw Exception("Invalid state");
       },
     );
   }
@@ -97,7 +101,12 @@ void main() {
     MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: AppWidget(store: Store(initialState: AppState(), reducer: debug(appReducer))),
+        body: AppWidget(
+          store: Store(
+            initialState: AppState(),
+            reducer: debug(appReducer), //
+          ),
+        ),
       ),
     ),
   );

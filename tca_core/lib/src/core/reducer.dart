@@ -68,7 +68,9 @@ Reducer<State, Action> debug<State, Action>(
   };
 }
 
-Reducer<State, Action> combine<State, Action>(List<Reducer<State, Action>> reducers) {
+Reducer<State, Action> combine<State, Action>(
+  List<Reducer<State, Action>> reducers,
+) {
   return (state, action) {
     return Effect.merge(
       reducers.map((reducer) => reducer(state, action)).toList(),
@@ -76,7 +78,8 @@ Reducer<State, Action> combine<State, Action>(List<Reducer<State, Action>> reduc
   };
 }
 
-Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
+Reducer<GlobalState, GlobalAction>
+    pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
   Reducer<LocalState, LocalAction> other, {
   required WritableKeyPath<GlobalState, LocalState> state,
   required WritableKeyPath<GlobalAction, LocalAction?> action,
@@ -102,7 +105,8 @@ Reducer<GlobalState, GlobalAction> pullback<GlobalState, GlobalAction, LocalStat
   };
 }
 
-Reducer<GlobalState, GlobalAction> ifLet<GlobalState, GlobalAction, LocalState, LocalAction>(
+Reducer<GlobalState, GlobalAction>
+    ifLet<GlobalState, GlobalAction, LocalState, LocalAction>(
   Reducer<LocalState, LocalAction> other, {
   required WritableKeyPath<GlobalState, LocalState?> state,
   required WritableKeyPath<GlobalAction, LocalAction?> action,

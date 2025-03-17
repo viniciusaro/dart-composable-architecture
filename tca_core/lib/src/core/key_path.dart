@@ -95,7 +95,9 @@ final class WritableKeyPath<Root, Prop> implements KeyPath<Root, Prop> {
 }
 
 extension WritableKeyPathX<Root, Prop> on WritableKeyPath<Root, Prop> {
-  WritableKeyPath<Root, Deeper> path<Deeper>(WritableKeyPath<Prop, Deeper> deeper) {
+  WritableKeyPath<Root, Deeper> path<Deeper>(
+    WritableKeyPath<Prop, Deeper> deeper,
+  ) {
     return WritableKeyPath(get: (Root root) {
       final prop = get(root);
       return deeper.get(prop);
