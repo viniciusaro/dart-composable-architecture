@@ -37,7 +37,7 @@ dev_dependencies:
   build_runner: ...
 ```
 
-If you are using Flutter, you need to depend on `composable_architecture_flutter`. This is the case because even though `composable_architecture_flutter` explicitly depends on `composable_architecture`, build_runner needs the direct dependency on `composable_architecture` to get access to the generators.
+If you are using Flutter, you need to explicitly depend on both `composable_architecture` and `composable_architecture_flutter`. This is the case because even though `composable_architecture_flutter` depends on `composable_architecture`, build_runner needs the direct dependency on `composable_architecture` to get access to the generators.
 
 ```yaml
 dependencies:
