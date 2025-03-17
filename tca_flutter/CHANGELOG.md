@@ -9,3 +9,7 @@ Finally, this version introduces a preliminary v0 implementation of the Shared t
 ## 0.0.2
 
 Make store property public just to update autocomplete placeholder with "store" instead of "_store". If public visibility for the field becomes an issue we can change in the future.
+
+## 0.0.3
+
+Update code formatting and add example.md.

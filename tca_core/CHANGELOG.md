@@ -9,3 +9,7 @@ Finally, this version introduces a preliminary v0 implementation of the Shared t
 ## 0.0.2
 
 Adds support to optional state, allowing reducers to run and local stores to be viewed only when their associated state is available.
+
+## 0.0.3
+
+Update code formatting and add example.md.
