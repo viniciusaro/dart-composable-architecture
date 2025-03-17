@@ -8,4 +8,4 @@ This library enables the use of [The Composable Architecture](https://pub.dev/pa
 
 # Example
 
-An example can be seen [here](https://github.com/viniciusaro/dart-composable-architecture/tree/main/tca_core#basic-usage).
+An example can be seen [here](https://github.com/viniciusaro/dart-composable-architecture/blob/main/tca_flutter/example/example.md).
