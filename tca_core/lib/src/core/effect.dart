@@ -95,7 +95,8 @@ extension CombinableEffect<Action> on Effect<Action> {
         }
       }));
 
-      otherSubscription = CancellableSubscription(other.builder().listen((value) {
+      otherSubscription =
+          CancellableSubscription(other.builder().listen((value) {
         if (!controller.isClosed) {
           controller.add(value);
         } else {

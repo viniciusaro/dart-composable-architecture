@@ -25,7 +25,8 @@ void main() {
         expect(store.state.count, 0);
       });
 
-      test('send, throws error if mutation is detected inside effect', () async {
+      test('send, throws error if mutation is detected inside effect',
+          () async {
         Effect<AppAction> reducer(Inout<AppState> state, AppAction action) {
           switch (action) {
             case AppAction.actionA:
@@ -257,12 +258,16 @@ void main() {
         counterBStoreEmissionCount += 1;
       });
 
-      store.send(SharedActionEnum.counterA(SharedCounterActionEnum.increment()));
+      store.send(
+        SharedActionEnum.counterA(SharedCounterActionEnum.increment()),
+      );
       expect(storeEmissionCount, 1);
       expect(counterAStoreEmissionCount, 1);
       expect(counterBStoreEmissionCount, 1);
 
-      store.send(SharedActionEnum.counterB(SharedCounterActionEnum.increment()));
+      store.send(
+        SharedActionEnum.counterB(SharedCounterActionEnum.increment()),
+      );
       expect(storeEmissionCount, 2);
       expect(counterAStoreEmissionCount, 2);
       expect(counterBStoreEmissionCount, 2);

@@ -14,10 +14,16 @@ void main() {
         print: (self, parent, zone, line) => printedLines.add(line),
       );
 
-      runZoned(() {
-        final store = Store(initialState: AppState(), reducer: debug(counterReducer));
-        store.send(AppAction.actionA);
-      }, zoneSpecification: specification);
+      runZoned(
+        () {
+          final store = Store(
+            initialState: AppState(),
+            reducer: debug(counterReducer),
+          );
+          store.send(AppAction.actionA);
+        },
+        zoneSpecification: specification,
+      );
 
       expect(printedLines, [
         "--------",

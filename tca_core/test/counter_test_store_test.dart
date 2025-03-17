@@ -2,11 +2,15 @@ import 'package:composable_architecture/composable_architecture.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
-import '../example/counter_example.dart';
+import '_helper_counter.dart';
 
 void main() {
   test("increment", () {
-    final store = TestStore(initialState: CounterState(), reducer: counterReducer);
+    final store = TestStore(
+      initialState: CounterState(),
+      reducer: counterReducer,
+    );
+
     store.send(
       CounterAction.increment,
       (_) => CounterState(count: 1),
@@ -16,7 +20,10 @@ void main() {
   });
 
   test("increment repeatedly", () async {
-    final store = TestStore(initialState: CounterState(), reducer: counterReducer);
+    final store = TestStore(
+      initialState: CounterState(),
+      reducer: counterReducer,
+    );
 
     fakeAsync((async) {
       store.send(CounterAction.incrementRepeatedly, (s) => s);
@@ -38,7 +45,10 @@ void main() {
   }, timeout: Timeout(Duration(seconds: 10000)));
 
   test("increment with delay", () async {
-    final store = TestStore(initialState: CounterState(), reducer: counterReducer);
+    final store = TestStore(
+      initialState: CounterState(),
+      reducer: counterReducer,
+    );
 
     fakeAsync((async) {
       store.send(CounterAction.incrementWithDelay, (s) => s);
@@ -51,7 +61,10 @@ void main() {
   });
 
   test("cancall increment repeatedly", () async {
-    final store = TestStore(initialState: CounterState(), reducer: counterReducer);
+    final store = TestStore(
+      initialState: CounterState(),
+      reducer: counterReducer,
+    );
 
     fakeAsync((async) {
       store.send(CounterAction.incrementRepeatedly, (s) => s);
@@ -70,7 +83,11 @@ void main() {
   });
 
   test("invalid state mutation", () {
-    final store = TestStore(initialState: InvalidCounterState(), reducer: invalidCounterReducer);
+    final store = TestStore(
+      initialState: InvalidCounterState(),
+      reducer: invalidCounterReducer,
+    );
+
     expect(
       () => store.send(CounterAction.increment, (state) => state..count = 1),
       throwsA(MutationOfSameInstance()),

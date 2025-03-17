@@ -52,8 +52,16 @@ sealed class FavoritesAction<
     > {}
 
 final rootReducer = combine([
-  pullback(counterReducer, state: RootStatePath.counter, action: RootActionPath.counter),
-  pullback(favoritesReducer, state: RootStatePath.favorites, action: RootActionPath.favorites),
+  pullback(
+    counterReducer,
+    state: RootStatePath.counter,
+    action: RootActionPath.counter,
+  ),
+  pullback(
+    favoritesReducer,
+    state: RootStatePath.favorites,
+    action: RootActionPath.favorites,
+  ),
 ]);
 
 Effect<CounterAction> counterReducer(

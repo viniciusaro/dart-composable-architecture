@@ -61,8 +61,11 @@ extension ${clazz.name}Enum on ${clazz.name} {
       }
     }
 
-    final genericsString = genericsWithExtends.isEmpty ? "" : "<${genericsWithExtends.join(", ")}>";
-    final genericsOnlyString = genericsOnly.isEmpty ? "" : "<${genericsOnly.join(", ")}>";
+    final genericsString = genericsWithExtends.isEmpty
+        ? ""
+        : "<${genericsWithExtends.join(", ")}>";
+    final genericsOnlyString =
+        genericsOnly.isEmpty ? "" : "<${genericsOnly.join(", ")}>";
 
     for (final typeIndexed in clazz.typeParameters.indexed) {
       final typeName = typeIndexed.$2.name;
@@ -72,7 +75,8 @@ extension ${clazz.name}Enum on ${clazz.name} {
       final genericLetter = letters[typeIndexed.$1];
 
       if (genericTypeName == "void") {
-        code += '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
+        code +=
+            '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
   $newClassName(): super();
 
   @override
@@ -87,7 +91,8 @@ extension ${clazz.name}Enum on ${clazz.name} {
   }
 }\n\n''';
       } else {
-        code += '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
+        code +=
+            '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
   final $genericLetter $prop;
   $newClassName(this.$prop): super();
 
@@ -118,7 +123,9 @@ extension ${clazz.name}Path on ${clazz.name} {
       final genericTypeName = extendsOf(type);
       final prop = type.name.lowerCaseFirst(); // $1
       final propUpper = prop.capitalized();
-      final propType = genericTypeName == "void" ? "$rootType${type.name}" : genericTypeName; // $2
+      final propType = genericTypeName == "void"
+          ? "$rootType${type.name}"
+          : genericTypeName; // $2
 
       if (genericTypeName == "void") {
         code += """

@@ -127,8 +127,10 @@ final class TestStore<State, Action> {
   final List<Action> _expectedActions = [];
   final List<State Function(State)> _expectedStateUpdates = [];
 
-  TestStore({required State initialState, required Reducer<State, Action> reducer})
-      : _state = Inout(value: initialState),
+  TestStore({
+    required State initialState,
+    required Reducer<State, Action> reducer,
+  })  : _state = Inout(value: initialState),
         _reducer = reducer;
 
   void send(Action action, State Function(State) expectedStateUpdate) {

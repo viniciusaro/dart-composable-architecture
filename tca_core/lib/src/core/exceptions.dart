@@ -49,11 +49,14 @@ Got:
   }
 
   @override
-  int get hashCode => expected.hashCode ^ updated.hashCode ^ runtimeType.hashCode ^ 31;
+  int get hashCode =>
+      expected.hashCode ^ updated.hashCode ^ runtimeType.hashCode ^ 31;
 
   @override
   bool operator ==(Object other) {
-    return other is UnexpectedChanges && other.expected == expected && other.updated == updated;
+    return other is UnexpectedChanges &&
+        other.expected == expected &&
+        other.updated == updated;
   }
 }
 
@@ -91,6 +94,7 @@ final class UnexpectedPendingActions implements Exception {
 
   @override
   bool operator ==(Object other) {
-    return other is UnexpectedPendingActions && other.pendingActions == pendingActions;
+    return other is UnexpectedPendingActions &&
+        other.pendingActions == pendingActions;
   }
 }

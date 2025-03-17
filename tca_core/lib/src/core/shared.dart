@@ -39,7 +39,8 @@ final class Shared<T> {
 
   @override
   bool operator ==(Object other) {
-    return other is Shared<T> && DeepCollectionEquality().equals(other.value, value);
+    return other is Shared<T> &&
+        DeepCollectionEquality().equals(other.value, value);
   }
 
   @override
