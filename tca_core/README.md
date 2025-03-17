@@ -17,7 +17,7 @@ the Composable Architecture. Check out [this](https://github.com/viniciusaro/dar
 * [Optional State](https://github.com/viniciusaro/dart-composable-architecture/blob/main/tca_flutter_example/lib/optional_state/optional_state.dart)
 * [Realtime Counter Sync](https://github.com/viniciusaro/dart-composable-architecture/blob/main/tca_flutter_example/lib/realtime_counter_sync/realtime_counter_sync.dart)
 
-# Setup
+## Setup
 
 This package relies on code generation to enhance the developer experience and improve coding ergonomics. It includes built-in generators that create KeyPaths for states and actions in types annotated with @KeyPathable and @CaseKeyPathable.
 
