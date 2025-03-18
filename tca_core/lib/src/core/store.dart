@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../helpers/sync_stream.dart';
+import 'navigation.dart';
 import 'shared.dart';
 
 part 'exceptions.dart';
 part 'effect.dart';
 part 'key_path.dart';
 part 'reducer.dart';
+
+mixin Disposable {
+  void dispose();
+}
 
 mixin InitializableState<T> {
   T init();
@@ -20,19 +25,22 @@ final class StateUpdate<State> {
   const StateUpdate(this.state, this.fromChild);
 }
 
-final class Store<State, Action> {
+final class Store<State, Action> with Disposable {
   final Inout<State> _state;
   State get state => _state._value;
   final Reducer<State, Action> _reducer;
   final syncStream = SyncStream<State>();
+  final void Function()? _dispose;
 
   Store({
     required State initialState,
     required Reducer<State, Action> reducer,
+    void Function()? dispose,
   })  : _state = initialState is InitializableState
             ? Inout(value: initialState.init())
             : Inout(value: initialState),
-        _reducer = reducer {
+        _reducer = reducer,
+        _dispose = dispose {
     syncStream.setInitialValue(_state.value);
   }
 
@@ -64,6 +72,13 @@ final class Store<State, Action> {
     }
   }
 
+  @override
+  void dispose() {
+    _dispose?.call();
+  }
+}
+
+extension StoreView<State, Action> on Store<State, Action> {
   Store<LocalState, LocalAction> view<LocalState, LocalAction>({
     required WritableKeyPath<State, LocalState> state,
     required WritableKeyPath<Action, LocalAction?> action,
@@ -86,8 +101,11 @@ final class Store<State, Action> {
 
     return store;
   }
+}
 
-  Store<LocalState, LocalAction>? viewOptional<LocalState, LocalAction>({
+extension StorePresentable<State extends Presentable, Action>
+    on Store<State, Action> {
+  Store<LocalState, LocalAction>? view<LocalState, LocalAction>({
     required WritableKeyPath<State, LocalState?> state,
     required WritableKeyPath<Action, LocalAction?> action,
   }) {
@@ -104,6 +122,12 @@ final class Store<State, Action> {
           _send(globalAction);
         }
         return Effect.none();
+      },
+      dispose: () {
+        _state._isMutationAllowed = true;
+        _state.mutate((s) => state.set(s, null));
+        _state._isMutationAllowed = false;
+        syncStream.add(_state._value);
       },
     );
 

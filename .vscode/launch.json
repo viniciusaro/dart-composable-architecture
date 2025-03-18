@@ -5,13 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Example - Number Fact",
-            "cwd": "tca_flutter_example",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/number_fact/number_fact.dart",
-        },
-        {
             "name": "Example - Feature Composition",
             "cwd": "tca_flutter_example",
             "request": "launch",
@@ -19,11 +12,18 @@
             "program": "lib/feature_composition/feature_composition.dart",
         },
         {
-            "name": "Example - Realtime Sync",
+            "name": "Example - Navigation",
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/realtime_counter_sync/realtime_counter_sync.dart",
+            "program": "lib/navigation/navigation.dart",
+        },
+        {
+            "name": "Example - Number Fact",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/number_fact/number_fact.dart",
         },
         {
             "name": "Example - Optional State",
@@ -31,6 +31,13 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/optional_state/optional_state.dart",
+        },
+        {
+            "name": "Example - Realtime Sync",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/realtime_counter_sync/realtime_counter_sync.dart",
         }
     ]
 }

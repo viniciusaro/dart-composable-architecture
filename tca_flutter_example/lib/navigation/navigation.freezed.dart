@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'optional_state.dart';
+part of 'navigation.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppState {
 
- Presents<AppDestination> get destination;
+ List<Item> get items; Presents<AppDestination?> get destination;
 /// Create a copy of AppState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $AppStateCopyWith<AppState> get copyWith => _$AppStateCopyWithImpl<AppState>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppState&&(identical(other.destination, destination) || other.destination == destination));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppState&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.destination, destination) || other.destination == destination));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,destination);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),destination);
 
 @override
 String toString() {
-  return 'AppState(destination: $destination)';
+  return 'AppState(items: $items, destination: $destination)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $AppStateCopyWith<$Res>  {
   factory $AppStateCopyWith(AppState value, $Res Function(AppState) _then) = _$AppStateCopyWithImpl;
 @useResult
 $Res call({
- Presents<AppDestination<LoginState, HomeState>>? destination
+ List<Item> items, Presents<AppDestination<EditState>?> destination
 });
 
 
@@ -63,10 +63,11 @@ class _$AppStateCopyWithImpl<$Res>
 
 /// Create a copy of AppState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? destination = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? destination = null,}) {
   return _then(AppState(
-destination: freezed == destination ? _self.destination! : destination // ignore: cast_nullable_to_non_nullable
-as Presents<AppDestination<LoginState, HomeState>>?,
+items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<Item>,destination: null == destination ? _self.destination! : destination // ignore: cast_nullable_to_non_nullable
+as Presents<AppDestination<EditState>?>,
   ));
 }
 

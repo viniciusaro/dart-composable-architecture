@@ -7,11 +7,13 @@ part of 'optional_state.dart';
 // **************************************************************************
 
 extension AppStatePath on AppState {
-  static final destination =
-      WritableKeyPath<AppState, AppDestination<LoginState, HomeState>>(
-        get: (obj) => obj.destination,
-        set: (obj, destination) => obj!.copyWith(destination: destination),
-      );
+  static final destination = WritableKeyPath<
+    AppState,
+    Presents<AppDestination<LoginState, HomeState>>
+  >(
+    get: (obj) => obj.destination,
+    set: (obj, destination) => obj!.copyWith(destination: destination),
+  );
 }
 
 // **************************************************************************
