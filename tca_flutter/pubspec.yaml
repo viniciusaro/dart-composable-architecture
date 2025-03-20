@@ -1,6 +1,6 @@
 name: composable_architecture_flutter
 description: A collection of widgets that enable using The Composable Architecture with the Flutter framework. Built to be used with the composable_architecture package.
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/viniciusaro/dart-composable-architecture
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  composable_architecture: ^0.0.3
+  composable_architecture: ^0.0.4
 
 # dependency_overrides:
 #   composable_architecture:
