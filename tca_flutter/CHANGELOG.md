@@ -13,3 +13,7 @@ Make store property public just to update autocomplete placeholder with "store" 
 ## 0.0.3
 
 Update code formatting and add example.md.
+
+## 0.0.4
+
+Adds navigation support and exapmles with [NavigationDestination] widget and [Presents]/[Presentable] types in the core library.
