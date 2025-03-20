@@ -30,8 +30,16 @@ sealed class AppAction<
 > {}
 
 final appReducer = combine([
-  pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
-  pullback(favoritesReducer, state: AppStatePath.favorites, action: AppActionPath.favorites),
+  pullback(
+    counterReducer,
+    state: AppStatePath.counter,
+    action: AppActionPath.counter,
+  ),
+  pullback(
+    favoritesReducer,
+    state: AppStatePath.favorites,
+    action: AppActionPath.favorites,
+  ),
 ]);
 
 class AppWidget extends StatelessWidget {
@@ -80,7 +88,9 @@ void main() {
     MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: AppWidget(store: Store(initialState: AppState(), reducer: debug(appReducer))),
+        body: AppWidget(
+          store: Store(initialState: AppState(), reducer: debug(appReducer)),
+        ),
       ),
     ),
   );

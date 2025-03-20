@@ -94,7 +94,8 @@ final class WritableKeyPath<Root, Prop> implements KeyPath<Root, Prop> {
   WritableKeyPath({required this.get, required this.set});
 }
 
-extension WritableKeyPathX<Root, Prop> on WritableKeyPath<Root, Prop> {
+extension WritableKeyPathObject<Root, Prop extends Object>
+    on WritableKeyPath<Root, Prop> {
   WritableKeyPath<Root, Deeper> path<Deeper>(
     WritableKeyPath<Prop, Deeper> deeper,
   ) {
@@ -105,6 +106,44 @@ extension WritableKeyPathX<Root, Prop> on WritableKeyPath<Root, Prop> {
       final prop = root != null ? get(root) : null;
       final updatedProp = deeper.set(prop, deep);
       final updatedRoot = set(root, updatedProp);
+      return updatedRoot;
+    });
+  }
+}
+
+extension WritableKeyPathPresents<Root, Prop extends Object> //
+    on WritableKeyPath<Root, Presents<Prop>> {
+  WritableKeyPath<Root, Deeper> path<Deeper>(
+    WritableKeyPath<Prop, Deeper> deeper,
+  ) {
+    return WritableKeyPath(get: (Root root) {
+      final prop = get(root);
+      return deeper.get(prop.value);
+    }, set: (root, deep) {
+      final prop = root != null ? get(root) : Presents(null);
+      final updatedProp = deeper.set(prop.value, deep);
+      final updatedRoot = set(root, Presents(updatedProp));
+      return updatedRoot;
+    });
+  }
+}
+
+extension WritableKeyPathPresentsOptional<Root, Prop> //
+    on WritableKeyPath<Root, Presents<Prop?>> {
+  WritableKeyPath<Root, Deeper?> path<Deeper>(
+    WritableKeyPath<Prop, Deeper> deeper,
+  ) {
+    return WritableKeyPath(get: (Root root) {
+      final prop = get(root);
+      final value = prop.value;
+      if (value == null) {
+        return null;
+      }
+      return deeper.get(value);
+    }, set: (root, deep) {
+      final prop = root != null ? get(root) : Presents(null);
+      final updatedProp = deep != null ? deeper.set(prop.value, deep) : null;
+      final updatedRoot = set(root, Presents(updatedProp));
       return updatedRoot;
     });
   }

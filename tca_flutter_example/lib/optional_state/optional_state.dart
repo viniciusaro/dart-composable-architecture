@@ -15,11 +15,13 @@ sealed class AppDestination<
 
 @freezed
 @KeyPathable()
-final class AppState with _$AppState {
+final class AppState with _$AppState, Presentable {
   @override
-  final AppDestination destination;
-  AppState({AppDestination? destination})
-    : destination = destination ?? AppDestinationEnum.login(LoginState());
+  final Presents<AppDestination> destination;
+
+  AppState({Presents<AppDestination>? destination})
+    : destination =
+          destination ?? Presents(AppDestinationEnum.login(LoginState()));
 }
 
 @CaseKeyPathable()
@@ -46,7 +48,7 @@ final Reducer<AppState, AppAction> appReducer = combine([
           case LoginActionOnSignInSucceeded():
             state.mutate(
               (s) => s.copyWith(
-                destination: AppDestinationEnum.home(HomeState()), //
+                destination: Presents(AppDestinationEnum.home(HomeState())), //
               ),
             );
             return Effect.none();
@@ -58,7 +60,7 @@ final Reducer<AppState, AppAction> appReducer = combine([
           case HomeActionOnSignOutButtonTapped():
             state.mutate(
               (s) => s.copyWith(
-                destination: AppDestinationEnum.login(LoginState()),
+                destination: Presents(AppDestinationEnum.login(LoginState())),
               ),
             );
             return Effect.none();
@@ -77,15 +79,15 @@ class AppWidget extends StatelessWidget {
     return WithViewStore(
       store,
       body: (viewStore) {
-        switch (viewStore.state.destination) {
+        switch (viewStore.state.destination.value) {
           case AppDestinationLogin():
-            final store = viewStore.viewOptional(
+            final store = viewStore.view(
               state: AppStatePath.destination.path(AppDestinationPath.login),
               action: AppActionPath.login,
             );
             return LoginWidget(store: store!);
           case AppDestinationHome():
-            final store = viewStore.viewOptional(
+            final store = viewStore.view(
               state: AppStatePath.destination.path(AppDestinationPath.home),
               action: AppActionPath.home,
             );
