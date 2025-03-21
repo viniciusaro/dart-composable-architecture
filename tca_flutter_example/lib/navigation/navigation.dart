@@ -53,6 +53,8 @@ Effect<AppAction> appReducer(Inout<AppState> state, AppAction action) {
               destination: Presents(null),
             );
           });
+        case EditActionOnEditCancelled():
+          state.mutate((s) => s.copyWith(destination: Presents(null)));
       }
       return Effect.none();
   }
@@ -88,6 +90,9 @@ class AppWidget extends StatelessWidget {
           ),
           builder: (context, store) {
             return EditWiget(store: store);
+          },
+          onDispose: (store) {
+            store.send(EditActionEnum.onEditCancelled());
           },
           child: Scaffold(
             appBar: AppBar(title: Text("Navigation")),

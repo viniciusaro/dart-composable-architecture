@@ -219,78 +219,78 @@ void main() {
         expect(counterStoreEmissionCount, 2);
         expect(favoritesStoreEmissionCount, 2);
       });
-    });
 
-    test('emits when shared state changes', () {
-      int storeEmissionCount = 0;
-      int counterAStoreEmissionCount = 0;
-      int counterBStoreEmissionCount = 0;
+      test('emits when shared state changes', () {
+        int storeEmissionCount = 0;
+        int counterAStoreEmissionCount = 0;
+        int counterBStoreEmissionCount = 0;
 
-      final store = Store(
-        initialState: SharedState(),
-        reducer: sharedReducer,
-      );
+        final store = Store(
+          initialState: SharedState(),
+          reducer: sharedReducer,
+        );
 
-      final counterAStore = store.view(
-        state: SharedStatePath.counterA,
-        action: SharedActionPath.counterA,
-      );
+        final counterAStore = store.view(
+          state: SharedStatePath.counterA,
+          action: SharedActionPath.counterA,
+        );
 
-      final counterBStore = store.view(
-        state: SharedStatePath.counterB,
-        action: SharedActionPath.counterB,
-      );
+        final counterBStore = store.view(
+          state: SharedStatePath.counterB,
+          action: SharedActionPath.counterB,
+        );
 
-      final nonSharedCounterStore = store.view(
-        state: SharedStatePath.nonSharedCounter,
-        action: SharedActionPath.nonSharedCounterIncrement,
-      );
+        final nonSharedCounterStore = store.view(
+          state: SharedStatePath.nonSharedCounter,
+          action: SharedActionPath.nonSharedCounterIncrement,
+        );
 
-      store.syncStream.listen((_) {
-        storeEmissionCount += 1;
+        store.syncStream.listen((_) {
+          storeEmissionCount += 1;
+        });
+
+        counterAStore.syncStream.listen((_) {
+          counterAStoreEmissionCount += 1;
+        });
+
+        counterBStore.syncStream.listen((_) {
+          counterBStoreEmissionCount += 1;
+        });
+
+        store.send(
+          SharedActionEnum.counterA(SharedCounterActionEnum.increment()),
+        );
+        expect(storeEmissionCount, 1);
+        expect(counterAStoreEmissionCount, 1);
+        expect(counterBStoreEmissionCount, 1);
+
+        store.send(
+          SharedActionEnum.counterB(SharedCounterActionEnum.increment()),
+        );
+        expect(storeEmissionCount, 2);
+        expect(counterAStoreEmissionCount, 2);
+        expect(counterBStoreEmissionCount, 2);
+
+        store.send(SharedActionEnum.nonSharedCounterIncrement());
+        expect(storeEmissionCount, 3);
+        expect(counterAStoreEmissionCount, 2);
+        expect(counterBStoreEmissionCount, 2);
+
+        nonSharedCounterStore.send(SharedActionNonSharedCounterIncrement());
+        expect(storeEmissionCount, 4);
+        expect(counterAStoreEmissionCount, 2);
+        expect(counterBStoreEmissionCount, 2);
+
+        counterAStore.send(SharedCounterActionEnum.increment());
+        expect(storeEmissionCount, 5);
+        expect(counterAStoreEmissionCount, 3);
+        expect(counterBStoreEmissionCount, 3);
+
+        counterBStore.send(SharedCounterActionEnum.increment());
+        expect(storeEmissionCount, 6);
+        expect(counterAStoreEmissionCount, 4);
+        expect(counterBStoreEmissionCount, 4);
       });
-
-      counterAStore.syncStream.listen((_) {
-        counterAStoreEmissionCount += 1;
-      });
-
-      counterBStore.syncStream.listen((_) {
-        counterBStoreEmissionCount += 1;
-      });
-
-      store.send(
-        SharedActionEnum.counterA(SharedCounterActionEnum.increment()),
-      );
-      expect(storeEmissionCount, 1);
-      expect(counterAStoreEmissionCount, 1);
-      expect(counterBStoreEmissionCount, 1);
-
-      store.send(
-        SharedActionEnum.counterB(SharedCounterActionEnum.increment()),
-      );
-      expect(storeEmissionCount, 2);
-      expect(counterAStoreEmissionCount, 2);
-      expect(counterBStoreEmissionCount, 2);
-
-      store.send(SharedActionEnum.nonSharedCounterIncrement());
-      expect(storeEmissionCount, 3);
-      expect(counterAStoreEmissionCount, 2);
-      expect(counterBStoreEmissionCount, 2);
-
-      nonSharedCounterStore.send(SharedActionNonSharedCounterIncrement());
-      expect(storeEmissionCount, 4);
-      expect(counterAStoreEmissionCount, 2);
-      expect(counterBStoreEmissionCount, 2);
-
-      counterAStore.send(SharedCounterActionEnum.increment());
-      expect(storeEmissionCount, 5);
-      expect(counterAStoreEmissionCount, 3);
-      expect(counterBStoreEmissionCount, 3);
-
-      counterBStore.send(SharedCounterActionEnum.increment());
-      expect(storeEmissionCount, 6);
-      expect(counterAStoreEmissionCount, 4);
-      expect(counterBStoreEmissionCount, 4);
     });
   });
 }

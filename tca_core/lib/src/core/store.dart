@@ -11,10 +11,6 @@ part 'effect.dart';
 part 'key_path.dart';
 part 'reducer.dart';
 
-mixin Disposable {
-  void dispose();
-}
-
 mixin InitializableState<T> {
   T init();
 }
@@ -25,22 +21,19 @@ final class StateUpdate<State> {
   const StateUpdate(this.state, this.fromChild);
 }
 
-final class Store<State, Action> with Disposable {
+final class Store<State, Action> {
   final Inout<State> _state;
   State get state => _state._value;
   final Reducer<State, Action> _reducer;
   final syncStream = SyncStream<State>();
-  final void Function()? _dispose;
 
   Store({
     required State initialState,
     required Reducer<State, Action> reducer,
-    void Function()? dispose,
   })  : _state = initialState is InitializableState
             ? Inout(value: initialState.init())
             : Inout(value: initialState),
-        _reducer = reducer,
-        _dispose = dispose {
+        _reducer = reducer {
     syncStream.setInitialValue(_state.value);
   }
 
@@ -71,11 +64,6 @@ final class Store<State, Action> with Disposable {
       _effectSubscriptions[id] = subscription;
     }
   }
-
-  @override
-  void dispose() {
-    _dispose?.call();
-  }
 }
 
 extension StoreView<State, Action> on Store<State, Action> {
@@ -95,7 +83,9 @@ extension StoreView<State, Action> on Store<State, Action> {
     );
 
     syncStream.listen((update) {
-      store._state._value = state.get(update);
+      store._state._isMutationAllowed = true;
+      store._state.mutate((_) => state.get(update));
+      store._state._isMutationAllowed = false;
       store.syncStream.add(state.get(update));
     });
 
@@ -123,18 +113,14 @@ extension StorePresentable<State extends Presentable, Action>
         }
         return Effect.none();
       },
-      dispose: () {
-        _state._isMutationAllowed = true;
-        _state.mutate((s) => state.set(s, null));
-        _state._isMutationAllowed = false;
-        syncStream.add(_state._value);
-      },
     );
 
     syncStream.listen((update) {
       final localUpdate = state.get(update);
       if (localUpdate != null) {
-        store._state._value = localUpdate;
+        store._state._isMutationAllowed = true;
+        store._state.mutate((s) => localUpdate);
+        store._state._isMutationAllowed = false;
         store.syncStream.add(localUpdate);
       } else {
         // ?
