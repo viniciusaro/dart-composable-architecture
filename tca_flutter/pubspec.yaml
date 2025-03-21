@@ -13,9 +13,9 @@ dependencies:
 
   composable_architecture: ^0.0.5
 
-# dependency_overrides:
-#   composable_architecture:
-#     path: ../tca_core
+dependency_overrides:
+  composable_architecture:
+    path: ../tca_core
 
 dev_dependencies:
   flutter_test:

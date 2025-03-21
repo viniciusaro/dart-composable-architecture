@@ -8,20 +8,12 @@ final class Inout<T> {
 
   bool _isMutationAllowed = false;
   bool _didCallMutate = false;
-  int _latestValueHashCode;
-  Inout({required T value})
-      : _value = value,
-        _latestValueHashCode = value.hashCode;
+  Inout({required T value}) : _value = value;
 
   T mutate(T Function(T) mutation) {
     _didCallMutate = true;
-    if (_latestValueHashCode != _value.hashCode) {
-      throw EffectfullStateMutation();
-    }
-
     if (_isMutationAllowed) {
       _value = mutation(_value);
-      _latestValueHashCode = _value.hashCode;
       return _value;
     } else {
       throw EffectfullStateMutation();
@@ -96,7 +88,6 @@ Reducer<GlobalState, GlobalAction>
     final localEffect = other(localState, localAction);
     localState._isMutationAllowed = false;
     globalState._value = state.set(globalState._value, localState._value);
-    globalState._latestValueHashCode = globalState._value.hashCode;
 
     return localEffect.map((localAction) {
       globalAction = action.set(globalAction, localAction);
@@ -124,7 +115,6 @@ Reducer<GlobalState, GlobalAction>
     final localEffect = other(localState, localAction);
     localState._isMutationAllowed = false;
     globalState._value = state.set(globalState._value, localState._value);
-    globalState._latestValueHashCode = globalState._value.hashCode;
 
     return localEffect.map((localAction) {
       globalAction = action.set(globalAction, localAction);

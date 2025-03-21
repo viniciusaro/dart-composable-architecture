@@ -1,16 +1,15 @@
+import 'package:composable_architecture/composable_architecture.dart';
 import 'package:flutter/material.dart';
 
 class NavigationDestination<T> extends StatelessWidget {
   final T? _value;
   final Widget Function(BuildContext, T) builder;
-  final void Function(T)? onDispose;
   final Widget child;
 
   const NavigationDestination(
     T? value, {
     super.key,
     required this.builder,
-    this.onDispose,
     required this.child,
   }) : _value = value;
 
@@ -24,8 +23,8 @@ class NavigationDestination<T> extends StatelessWidget {
       ],
       onDidRemovePage: (page) {
         final value = _value;
-        if (value != null) {
-          onDispose?.call(value);
+        if (value is Disposable) {
+          value.dispose();
         }
       },
     );

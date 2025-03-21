@@ -11,6 +11,10 @@ part 'effect.dart';
 part 'key_path.dart';
 part 'reducer.dart';
 
+mixin Disposable {
+  void dispose();
+}
+
 mixin InitializableState<T> {
   T init();
 }
@@ -21,15 +25,17 @@ final class StateUpdate<State> {
   const StateUpdate(this.state, this.fromChild);
 }
 
-final class Store<State, Action> {
+final class Store<State, Action> with Disposable {
   final Inout<State> _state;
   State get state => _state._value;
   final Reducer<State, Action> _reducer;
   final syncStream = SyncStream<State>();
+  void Function()? onDispose;
 
   Store({
     required State initialState,
     required Reducer<State, Action> reducer,
+    this.onDispose,
   })  : _state = initialState is InitializableState
             ? Inout(value: initialState.init())
             : Inout(value: initialState),
@@ -38,10 +44,6 @@ final class Store<State, Action> {
   }
 
   void send(Action action) {
-    _send(action);
-  }
-
-  void _send(Action action) {
     final effect = runZoned(
       () {
         _state._isMutationAllowed = true;
@@ -64,6 +66,11 @@ final class Store<State, Action> {
       _effectSubscriptions[id] = subscription;
     }
   }
+
+  @override
+  void dispose() {
+    onDispose?.call();
+  }
 }
 
 extension StoreView<State, Action> on Store<State, Action> {
@@ -76,7 +83,7 @@ extension StoreView<State, Action> on Store<State, Action> {
       reducer: (localState, localAction) {
         final globalAction = action.set(null, localAction);
         if (globalAction != null) {
-          _send(globalAction);
+          send(globalAction);
         }
         return Effect.none();
       },
@@ -109,9 +116,15 @@ extension StorePresentable<State extends Presentable, Action>
       reducer: (localState, localAction) {
         final globalAction = action.set(null, localAction);
         if (globalAction != null) {
-          _send(globalAction);
+          send(globalAction);
         }
         return Effect.none();
+      },
+      onDispose: () {
+        _state._isMutationAllowed = true;
+        _state.mutate((s) => state.set(s, null));
+        _state._isMutationAllowed = false;
+        syncStream.add(this.state);
       },
     );
 

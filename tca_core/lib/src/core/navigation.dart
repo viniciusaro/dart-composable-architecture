@@ -59,8 +59,8 @@ mixin Presentable {}
 /// associated route from the navigation stack.
 /// ```
 final class Presents<T> {
-  final T value;
-  const Presents(this.value);
+  T value;
+  Presents(this.value);
 
   @override
   int get hashCode => runtimeType.hashCode ^ value.hashCode ^ 31;

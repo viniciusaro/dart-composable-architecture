@@ -94,6 +94,12 @@ final class WritableKeyPath<Root, Prop> implements KeyPath<Root, Prop> {
   WritableKeyPath({required this.get, required this.set});
 }
 
+/// Nests two KeyPaths.
+///
+/// If there is a KeyPath that allows read/write from A to B
+/// and another KeyPath that allows read/write from B to C,
+/// this function creates a new KeyPath that is able
+/// to read/write from A to C.
 extension WritableKeyPathObject<Root, Prop extends Object>
     on WritableKeyPath<Root, Prop> {
   WritableKeyPath<Root, Deeper> path<Deeper>(
@@ -111,6 +117,11 @@ extension WritableKeyPathObject<Root, Prop extends Object>
   }
 }
 
+/// Special implementation for [Presents] property with *non* nullable values.
+///
+/// This is simply syntax sugar for working with the [Presents] type, allowing
+/// the user to derive a KeyPath from a Presents property
+/// as if it was a normal property.
 extension WritableKeyPathPresents<Root, Prop extends Object> //
     on WritableKeyPath<Root, Presents<Prop>> {
   WritableKeyPath<Root, Deeper> path<Deeper>(
@@ -128,6 +139,14 @@ extension WritableKeyPathPresents<Root, Prop extends Object> //
   }
 }
 
+/// Special implementation for [Presents] property with nullable values.
+///
+/// In this implementation, when setting null to the property,
+/// Presents value is mutated instead of a copy being made.
+///
+/// This takes advantage of reference type semantis allowing the
+/// change to propagate up in the tree. It enables automatic state sync
+/// for navigation disposal.
 extension WritableKeyPathPresentsOptional<Root, Prop> //
     on WritableKeyPath<Root, Presents<Prop?>> {
   WritableKeyPath<Root, Deeper?> path<Deeper>(
@@ -142,8 +161,14 @@ extension WritableKeyPathPresentsOptional<Root, Prop> //
       return deeper.get(value);
     }, set: (root, deep) {
       final prop = root != null ? get(root) : Presents(null);
-      final updatedProp = deep != null ? deeper.set(prop.value, deep) : null;
-      final updatedRoot = set(root, Presents(updatedProp));
+
+      if (deep == null) {
+        prop.value = null;
+      } else {
+        deeper.set(prop.value, deep);
+      }
+
+      final updatedRoot = set(root, prop);
       return updatedRoot;
     });
   }
