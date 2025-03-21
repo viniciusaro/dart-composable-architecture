@@ -69,4 +69,9 @@ final class Presents<T> {
   bool operator ==(Object other) {
     return other is Presents<T> && other.value == value;
   }
+
+  @override
+  String toString() {
+    return "Presents($value)";
+  }
 }

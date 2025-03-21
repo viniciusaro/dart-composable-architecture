@@ -18,11 +18,29 @@ extension EditStatePath on EditState {
 // **************************************************************************
 
 extension EditActionEnum on EditAction {
+  static EditAction onEditCancelled() => EditActionOnEditCancelled();
   static EditAction onEditComplete(Item p) => EditActionOnEditComplete(p);
 }
 
-final class EditActionOnEditComplete<A extends Item> extends EditAction<A> {
-  final A onEditComplete;
+final class EditActionOnEditCancelled<A, B extends Item>
+    extends EditAction<A, B> {
+  EditActionOnEditCancelled() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is EditActionOnEditCancelled;
+
+  @override
+  String toString() {
+    return "EditActionOnEditCancelled()";
+  }
+}
+
+final class EditActionOnEditComplete<A, B extends Item>
+    extends EditAction<A, B> {
+  final B onEditComplete;
   EditActionOnEditComplete(this.onEditComplete) : super();
 
   @override
@@ -40,6 +58,21 @@ final class EditActionOnEditComplete<A extends Item> extends EditAction<A> {
 }
 
 extension EditActionPath on EditAction {
+  static final onEditCancelled =
+      WritableKeyPath<EditAction, EditActionOnEditCancelled?>(
+        get: (action) {
+          if (action is EditActionOnEditCancelled) {
+            return action;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = EditActionEnum.onEditCancelled();
+          }
+          return rootAction!;
+        },
+      );
   static final onEditComplete = WritableKeyPath<EditAction, Item?>(
     get: (action) {
       if (action is EditActionOnEditComplete) {
