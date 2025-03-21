@@ -21,3 +21,7 @@ Adds navigation support and exapmles with [NavigationDestination] widget and [Pr
 ## 0.0.5
 
 Fix: remove automatic [Store] state clean up on [NavigationDestination] and associated types (Disposable).
+
+## 0.0.6
+
+Feat: make use of Presents reference semantics to implement automatic [Store] state clean up on [NavigationDestination], propagating the change up in the store tree.

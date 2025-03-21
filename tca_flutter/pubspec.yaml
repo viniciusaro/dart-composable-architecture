@@ -11,11 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  composable_architecture: ^0.0.5
+  composable_architecture: 0.0.6
 
-dependency_overrides:
-  composable_architecture:
-    path: ../tca_core
+# dependency_overrides:
+#   composable_architecture:
+#     path: ../tca_core
 
 dev_dependencies:
   flutter_test:

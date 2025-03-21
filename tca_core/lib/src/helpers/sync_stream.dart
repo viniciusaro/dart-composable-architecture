@@ -16,7 +16,7 @@ final class SyncStream<T> {
 
   void add(T value) {
     if (value != _latestValue ||
-        Zone.current[#sharedZoneValues].didRunSharedSet == true) {
+        Zone.current[#sharedZoneValues]?.didRunSharedSet == true) {
       _latestValue = value;
       _notifyListeners(value);
     }

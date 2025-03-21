@@ -1,6 +1,6 @@
 name: composable_architecture
 description: Port of The Composable Architecture for Dart. A state management library with composability and exaustive testability at it's core.
-version: 0.0.5
+version: 0.0.6
 repository: https://github.com/viniciusaro/dart-composable-architecture
 
 environment:
