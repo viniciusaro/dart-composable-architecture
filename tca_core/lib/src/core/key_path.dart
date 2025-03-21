@@ -147,6 +147,10 @@ extension WritableKeyPathPresents<Root, Prop extends Object> //
 /// This takes advantage of reference type semantis allowing the
 /// change to propagate up in the tree. It enables automatic state sync
 /// for navigation disposal.
+///
+/// Caution: this KeyPath has different behavior when value set is
+/// null or non null. When null, it updates the current Presents
+/// value and when non null it creates a new Presents instance.
 extension WritableKeyPathPresentsOptional<Root, Prop> //
     on WritableKeyPath<Root, Presents<Prop?>> {
   WritableKeyPath<Root, Deeper?> path<Deeper>(
