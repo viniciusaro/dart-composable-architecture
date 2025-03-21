@@ -165,7 +165,7 @@ extension WritableKeyPathPresentsOptional<Root, Prop> //
       if (deep == null) {
         prop.value = null;
       } else {
-        deeper.set(prop.value, deep);
+        prop.value = deeper.set(prop.value, deep);
       }
 
       final updatedRoot = set(root, prop);
