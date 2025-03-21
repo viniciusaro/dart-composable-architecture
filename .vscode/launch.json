@@ -19,6 +19,13 @@
             "program": "lib/navigation/navigation.dart",
         },
         {
+            "name": "Example - Navigation with root",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/navigation/root.dart",
+        },
+        {
             "name": "Example - Number Fact",
             "cwd": "tca_flutter_example",
             "request": "launch",

@@ -46,7 +46,7 @@ abstract mixin class $AppStateCopyWith<$Res>  {
   factory $AppStateCopyWith(AppState value, $Res Function(AppState) _then) = _$AppStateCopyWithImpl;
 @useResult
 $Res call({
- List<Item> items, Presents<AppDestination<EditState>?> destination
+ List<Item> items, Presents<AppDestination<EditState>?>? destination
 });
 
 
@@ -63,11 +63,11 @@ class _$AppStateCopyWithImpl<$Res>
 
 /// Create a copy of AppState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? destination = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? destination = freezed,}) {
   return _then(AppState(
 items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
-as List<Item>,destination: null == destination ? _self.destination! : destination // ignore: cast_nullable_to_non_nullable
-as Presents<AppDestination<EditState>?>,
+as List<Item>,destination: freezed == destination ? _self.destination! : destination // ignore: cast_nullable_to_non_nullable
+as Presents<AppDestination<EditState>?>?,
   ));
 }
 

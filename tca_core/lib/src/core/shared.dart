@@ -29,7 +29,7 @@ final class Shared<T> {
   }
 
   Shared<T> set(T Function(T) update) {
-    Zone.current[#sharedZoneValues].didRunSharedSet = true;
+    Zone.current[#sharedZoneValues]?.didRunSharedSet = true;
     _source.set(update(_source.get()));
     return Shared<T>(_source);
   }

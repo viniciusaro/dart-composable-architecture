@@ -21,7 +21,8 @@ final class AppState with _$AppState, Presentable {
   @override
   final Presents<AppDestination?> destination;
 
-  AppState({this.items = const [], this.destination = const Presents(null)});
+  AppState({this.items = const [], Presents<AppDestination?>? destination})
+    : destination = destination ?? Presents(null);
 }
 
 @CaseKeyPathable()
@@ -90,9 +91,6 @@ class AppWidget extends StatelessWidget {
           ),
           builder: (context, store) {
             return EditWiget(store: store);
-          },
-          onDispose: (store) {
-            store.send(EditActionEnum.onEditCancelled());
           },
           child: Scaffold(
             appBar: AppBar(title: Text("Navigation")),
