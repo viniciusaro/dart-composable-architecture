@@ -18,11 +18,11 @@ extension RootStatePath on RootState {
 // **************************************************************************
 
 extension RootActionEnum on RootAction {
-  static RootAction app(AppAction<Item, EditAction<dynamic, Item>> p) =>
+  static RootAction app(AppAction<Item, EditAction<Item>> p) =>
       RootActionApp(p);
 }
 
-final class RootActionApp<A extends AppAction<Item, EditAction<dynamic, Item>>>
+final class RootActionApp<A extends AppAction<Item, EditAction<Item>>>
     extends RootAction<A> {
   final A app;
   RootActionApp(this.app) : super();
@@ -41,7 +41,7 @@ final class RootActionApp<A extends AppAction<Item, EditAction<dynamic, Item>>>
 
 extension RootActionPath on RootAction {
   static final app =
-      WritableKeyPath<RootAction, AppAction<Item, EditAction<dynamic, Item>>?>(
+      WritableKeyPath<RootAction, AppAction<Item, EditAction<Item>>?>(
         get: (action) {
           if (action is RootActionApp) {
             return action.app;

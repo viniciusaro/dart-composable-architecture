@@ -7,11 +7,6 @@ import 'item.dart';
 part 'navigation.freezed.dart';
 part 'navigation.g.dart';
 
-@CaseKeyPathable()
-sealed class AppDestination<
-  Edit extends EditState //
-> {}
-
 @freezed
 @KeyPathable()
 final class AppState with _$AppState, Presentable {
@@ -24,6 +19,11 @@ final class AppState with _$AppState, Presentable {
   AppState({this.items = const [], Presents<AppDestination?>? destination})
     : destination = destination ?? Presents(null);
 }
+
+@CaseKeyPathable()
+sealed class AppDestination<
+  Edit extends EditState //
+> {}
 
 @CaseKeyPathable()
 sealed class AppAction<
@@ -54,8 +54,6 @@ Effect<AppAction> appReducer(Inout<AppState> state, AppAction action) {
               destination: Presents(null),
             );
           });
-        case EditActionOnEditCancelled():
-          state.mutate((s) => s.copyWith(destination: Presents(null)));
       }
       return Effect.none();
   }
