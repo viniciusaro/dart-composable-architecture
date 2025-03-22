@@ -63,12 +63,12 @@ extension AppDestinationPath on AppDestination {
 extension AppActionEnum on AppAction {
   static AppAction editItemButtonTapped(Item p) =>
       AppActionEditItemButtonTapped(p);
-  static AppAction edit(EditAction<dynamic, Item> p) => AppActionEdit(p);
+  static AppAction edit(EditAction<Item> p) => AppActionEdit(p);
 }
 
 final class AppActionEditItemButtonTapped<
   A extends Item,
-  B extends EditAction<dynamic, Item>
+  B extends EditAction<Item>
 >
     extends AppAction<A, B> {
   final A editItemButtonTapped;
@@ -88,7 +88,7 @@ final class AppActionEditItemButtonTapped<
   }
 }
 
-final class AppActionEdit<A extends Item, B extends EditAction<dynamic, Item>>
+final class AppActionEdit<A extends Item, B extends EditAction<Item>>
     extends AppAction<A, B> {
   final B edit;
   AppActionEdit(this.edit) : super();
@@ -121,7 +121,7 @@ extension AppActionPath on AppAction {
       return rootAction!;
     },
   );
-  static final edit = WritableKeyPath<AppAction, EditAction<dynamic, Item>?>(
+  static final edit = WritableKeyPath<AppAction, EditAction<Item>?>(
     get: (action) {
       if (action is AppActionEdit) {
         return action.edit;

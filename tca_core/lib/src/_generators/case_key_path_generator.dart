@@ -49,6 +49,7 @@ extension ${clazz.name}Enum on ${clazz.name} {
     const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
     final genericsWithExtends = <String>[];
     final genericsOnly = <String>[];
+    final hasConst = clazz.constructors.firstOrNull?.isConst == true;
 
     for (final typeIndexed in clazz.typeParameters.indexed) {
       final genericTypeName = extendsOf(typeIndexed.$2);
@@ -73,11 +74,12 @@ extension ${clazz.name}Enum on ${clazz.name} {
       final newClassName = "$rootType$typeName";
       final genericTypeName = extendsOf(typeIndexed.$2);
       final genericLetter = letters[typeIndexed.$1];
+      final constWord = hasConst ? "const " : "";
 
       if (genericTypeName == "void") {
         code +=
             '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
-  $newClassName(): super();
+  $constWord$newClassName(): super();
 
   @override
   int get hashCode => runtimeType.hashCode ^ 31;
@@ -94,7 +96,7 @@ extension ${clazz.name}Enum on ${clazz.name} {
         code +=
             '''final class $newClassName$genericsString extends $rootType$genericsOnlyString {
   final $genericLetter $prop;
-  $newClassName(this.$prop): super();
+  $constWord$newClassName(this.$prop): super();
 
   @override
   int get hashCode => $prop.hashCode ^ 31;

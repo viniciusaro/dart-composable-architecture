@@ -16,7 +16,6 @@ final class EditState with _$EditState {
 
 @CaseKeyPathable()
 sealed class EditAction<
-  OnEditCancelled,
   OnEditComplete extends Item //
 > {}
 

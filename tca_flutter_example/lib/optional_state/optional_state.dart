@@ -48,7 +48,7 @@ final Reducer<AppState, AppAction> appReducer = combine([
           case LoginActionOnSignInSucceeded():
             state.mutate(
               (s) => s.copyWith(
-                destination: Presents(AppDestinationEnum.home(HomeState())), //
+                destination: Presents(AppDestinationEnum.home(HomeState())),
               ),
             );
             return Effect.none();
