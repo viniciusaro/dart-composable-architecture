@@ -4,7 +4,7 @@ import 'package:composable_architecture/composable_architecture.dart';
 import 'package:test/test.dart';
 
 import '_helper.dart';
-import '_helper_root_state.dart' hide counterReducer;
+import '_helper_root_state.dart';
 import '_helper_shared_state.dart';
 
 void main() {
@@ -16,7 +16,10 @@ void main() {
   group('store', () {
     group('send', () {
       test('send, updates state', () {
-        final store = Store(initialState: AppState(), reducer: counterReducer);
+        final store = Store(
+          initialState: AppState(),
+          reducer: Reduce(counterReducer),
+        );
 
         store.send(AppAction.actionA);
         expect(store.state.count, 1);
@@ -44,7 +47,7 @@ void main() {
 
         final store = Store(
           initialState: AppState(),
-          reducer: reducer,
+          reducer: Reduce(reducer),
         );
 
         expect(
@@ -84,7 +87,7 @@ void main() {
 
         final store = Store(
           initialState: AppState(),
-          reducer: reducer,
+          reducer: Reduce(reducer),
         );
 
         store.send(AppAction.actionA);
@@ -99,7 +102,7 @@ void main() {
       test('syncs state updates between viewed and original', () {
         final store = Store(
           initialState: 0,
-          reducer: incrementReducer,
+          reducer: Reduce(incrementReducer),
         );
 
         store.send(unit);
@@ -126,7 +129,7 @@ void main() {
 
         final store = Store(
           initialState: 0,
-          reducer: incrementReducer,
+          reducer: Reduce(incrementReducer),
         );
 
         final viewdStoreA = store.view(
@@ -174,7 +177,7 @@ void main() {
 
         final store = Store(
           initialState: RootState(),
-          reducer: rootReducer,
+          reducer: RootFeature(),
         );
 
         final counterStore = store.view(
@@ -227,7 +230,7 @@ void main() {
 
         final store = Store(
           initialState: SharedState(),
-          reducer: sharedReducer,
+          reducer: SharedFeature(),
         );
 
         final counterAStore = store.view(

@@ -8,6 +8,8 @@ import 'shared.dart';
 
 part 'exceptions.dart';
 part 'effect.dart';
+part 'feature.dart';
+part 'inout.dart';
 part 'key_path.dart';
 part 'reducer.dart';
 
@@ -47,7 +49,7 @@ final class Store<State, Action> with Disposable {
     final effect = runZoned(
       () {
         _state._isMutationAllowed = true;
-        final effect = _reducer(_state, action);
+        final effect = _reducer.run(_state, action);
         _state._isMutationAllowed = false;
         syncStream.add(_state._value);
         return effect;
@@ -80,13 +82,13 @@ extension StoreView<State, Action> on Store<State, Action> {
   }) {
     final store = Store<LocalState, LocalAction>(
       initialState: state.get(this.state),
-      reducer: (localState, localAction) {
+      reducer: Reduce((localState, localAction) {
         final globalAction = action.set(null, localAction);
         if (globalAction != null) {
           send(globalAction);
         }
         return Effect.none();
-      },
+      }),
     );
 
     syncStream.listen((update) {
@@ -113,13 +115,13 @@ extension StorePresentable<State extends Presentable, Action>
 
     final store = Store<LocalState, LocalAction>(
       initialState: initialState,
-      reducer: (localState, localAction) {
+      reducer: Reduce((localState, localAction) {
         final globalAction = action.set(null, localAction);
         if (globalAction != null) {
           send(globalAction);
         }
         return Effect.none();
-      },
+      }),
       onDispose: () {
         _state._isMutationAllowed = true;
         _state.mutate((s) => state.set(s, null));
@@ -164,7 +166,7 @@ final class TestStore<State, Action> {
       () => expectedStateUpdate(_state.value),
       zoneValues: {#expectedStateClosure: true},
     );
-    final effect = _reducer(_state, action);
+    final effect = _reducer.run(_state, action);
     final updated = _state.value;
     _state._isMutationAllowed = false;
 

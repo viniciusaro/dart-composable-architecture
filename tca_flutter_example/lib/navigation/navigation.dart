@@ -16,8 +16,10 @@ final class AppState with _$AppState, Presentable {
   @override
   final Presents<AppDestination?> destination;
 
-  AppState({this.items = const [], Presents<AppDestination?>? destination})
-    : destination = destination ?? Presents(null);
+  AppState({
+    this.items = const [],
+    Presents<AppDestination?>? destination, //
+  }) : destination = destination ?? Presents(null);
 }
 
 @CaseKeyPathable()
@@ -31,37 +33,38 @@ sealed class AppAction<
   Edit extends EditAction //
 > {}
 
-Effect<AppAction> appReducer(Inout<AppState> state, AppAction action) {
-  switch (action) {
-    case AppActionEditItemButtonTapped():
-      final item = action.editItemButtonTapped;
-      state.mutate(
-        (s) => s.copyWith(
-          destination: Presents(AppDestinationEnum.edit(EditState(item: item))),
-        ),
-      );
-      return Effect.none();
-    case AppActionEdit():
-      final edit = action.edit;
-      switch (edit) {
-        case EditActionOnEditComplete():
-          state.mutate((s) {
-            return s.copyWith(
-              items: s.items.replacingWhere(
-                (e) => e.id == edit.onEditComplete.id,
-                withValue: edit.onEditComplete,
+final class AppFeature extends Feature<AppState, AppAction> {
+  @override
+  Reducer<AppState, AppAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case AppActionEditItemButtonTapped():
+          final item = action.editItemButtonTapped;
+          state.mutate(
+            (s) => s.copyWith(
+              destination: Presents(
+                AppDestinationEnum.edit(EditState(item: item)),
               ),
-              destination: Presents(null),
-            );
-          });
+            ),
+          );
+          return Effect.none();
+        case AppActionEdit():
+          final edit = action.edit;
+          switch (edit) {
+            case EditActionOnEditComplete():
+              state.mutate((s) {
+                return s.copyWith(
+                  items: s.items.replacingWhere(
+                    (e) => e.id == edit.onEditComplete.id,
+                    withValue: edit.onEditComplete,
+                  ),
+                  destination: Presents(null),
+                );
+              });
+          }
+          return Effect.none();
       }
-      return Effect.none();
-  }
-}
-
-extension ReplaceableList<T> on List<T> {
-  List<T> replacingWhere(bool Function(T) value, {required T withValue}) {
-    return map((e) => value(e) ? withValue : e).toList();
+    });
   }
 }
 
@@ -112,9 +115,15 @@ void main() {
               Item(id: 3, name: "Item 3"),
             ],
           ),
-          reducer: debug(appReducer),
+          reducer: AppFeature().debug(),
         ),
       ),
     ),
   );
+}
+
+extension ReplaceableList<T> on List<T> {
+  List<T> replacingWhere(bool Function(T) value, {required T withValue}) {
+    return map((e) => value(e) ? withValue : e).toList();
+  }
 }

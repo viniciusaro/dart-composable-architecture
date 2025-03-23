@@ -26,26 +26,37 @@ sealed class NumberFactAction<
   NumberFactResponse extends String //
 > {}
 
-Effect<NumberFactAction> numberFactReducer(Inout<NumberFactState> state, NumberFactAction action) {
-  switch (action) {
-    case NumberFactActionDecrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
-      return Effect.none();
+final class NumberFactFeature
+    extends Feature<NumberFactState, NumberFactAction> {
+  @override
+  Reducer<NumberFactState, NumberFactAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case NumberFactActionDecrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count - 1));
+          return Effect.none();
 
-    case NumberFactActionIncrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
-      return Effect.none();
+        case NumberFactActionIncrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count + 1));
+          return Effect.none();
 
-    case NumberFactActionNumberFactButtonTapped():
-      state.mutate((s) => s.copyWith(isLoading: true));
-      return Effect.future(() async {
-        final response = await numberFactClient.factFor(state.value.count);
-        return NumberFactActionEnum.numberFactResponse(response);
-      });
+        case NumberFactActionNumberFactButtonTapped():
+          state.mutate((s) => s.copyWith(isLoading: true));
+          return Effect.future(() async {
+            final response = await numberFactClient.factFor(state.value.count);
+            return NumberFactActionEnum.numberFactResponse(response);
+          });
 
-    case NumberFactActionNumberFactResponse():
-      state.mutate((s) => s.copyWith(isLoading: false, numberFact: action.numberFactResponse));
-      return Effect.none();
+        case NumberFactActionNumberFactResponse():
+          state.mutate(
+            (s) => s.copyWith(
+              isLoading: false,
+              numberFact: action.numberFactResponse,
+            ),
+          );
+          return Effect.none();
+      }
+    });
   }
 }
 
@@ -56,7 +67,7 @@ class NumberFactWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore<NumberFactState, NumberFactAction>(
+    return WithViewStore(
       store,
       body: (viewStore) {
         return Center(
@@ -67,18 +78,28 @@ class NumberFactWidget extends StatelessWidget {
             children: [
               Text("Count: ${viewStore.state.count}"),
               ElevatedButton(
-                onPressed: () => viewStore.send(NumberFactActionEnum.numberFactButtonTapped()),
+                onPressed: () {
+                  viewStore.send(NumberFactActionEnum.numberFactButtonTapped());
+                },
                 child: Text("Number Fact"),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => viewStore.send(NumberFactActionEnum.incrementButtonTapped()),
+                    onPressed: () {
+                      viewStore.send(
+                        NumberFactActionEnum.incrementButtonTapped(),
+                      );
+                    },
                     child: Text("+"),
                   ),
                   ElevatedButton(
-                    onPressed: () => viewStore.send(NumberFactActionEnum.decrementButtonTapped()),
+                    onPressed: () {
+                      viewStore.send(
+                        NumberFactActionEnum.decrementButtonTapped(),
+                      );
+                    },
                     child: Text("-"),
                   ),
                 ],
@@ -91,7 +112,10 @@ class NumberFactWidget extends StatelessWidget {
               else if (viewStore.state.numberFact != null)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 18),
-                  child: Text("Fact: ${viewStore.state.numberFact}", textAlign: TextAlign.center),
+                  child: Text(
+                    "Fact: ${viewStore.state.numberFact}",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
             ],
           ),
@@ -107,7 +131,10 @@ void main() {
       home: Scaffold(
         backgroundColor: Colors.white,
         body: NumberFactWidget(
-          store: Store(initialState: NumberFactState(), reducer: numberFactReducer),
+          store: Store(
+            initialState: NumberFactState(),
+            reducer: NumberFactFeature().debug(),
+          ),
         ),
       ),
     ),

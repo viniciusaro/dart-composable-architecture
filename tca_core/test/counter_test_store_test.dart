@@ -8,7 +8,7 @@ void main() {
   test("increment", () {
     final store = TestStore(
       initialState: CounterState(),
-      reducer: counterReducer,
+      reducer: Reduce(counterReducer),
     );
 
     store.send(
@@ -22,7 +22,7 @@ void main() {
   test("increment repeatedly", () async {
     final store = TestStore(
       initialState: CounterState(),
-      reducer: counterReducer,
+      reducer: Reduce(counterReducer),
     );
 
     fakeAsync((async) {
@@ -47,7 +47,7 @@ void main() {
   test("increment with delay", () async {
     final store = TestStore(
       initialState: CounterState(),
-      reducer: counterReducer,
+      reducer: Reduce(counterReducer),
     );
 
     fakeAsync((async) {
@@ -63,7 +63,7 @@ void main() {
   test("cancall increment repeatedly", () async {
     final store = TestStore(
       initialState: CounterState(),
-      reducer: counterReducer,
+      reducer: Reduce(counterReducer),
     );
 
     fakeAsync((async) {
@@ -85,7 +85,7 @@ void main() {
   test("invalid state mutation", () {
     final store = TestStore(
       initialState: InvalidCounterState(),
-      reducer: invalidCounterReducer,
+      reducer: Reduce(invalidCounterReducer),
     );
 
     expect(

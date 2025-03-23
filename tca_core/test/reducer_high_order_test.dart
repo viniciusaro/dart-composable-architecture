@@ -24,10 +24,10 @@ void main() {
 
   group('reducer', () {
     test('pullback transforms local reducer into global one', () {
-      final Reducer<RootState, RootAction> reducer = pullback(
-        favoritesReducer,
+      final Reducer<RootState, RootAction> reducer = Scope(
         state: RootStatePath.favorites,
         action: RootActionPath.favorites,
+        feature: FavoritesFeature(),
       );
 
       final store = Store(initialState: RootState(), reducer: reducer);
@@ -40,9 +40,9 @@ void main() {
     });
 
     test('combine runs all reducers in list', () {
-      final reducer = combine([
-        favoritesReducer,
-        favoritesAnalyticsReducer,
+      final reducer = Reduce.combine([
+        FavoritesFeature(),
+        Reduce(favoritesAnalyticsReducer),
       ]);
 
       final store = Store(initialState: FavoritesState(), reducer: reducer);
@@ -57,17 +57,17 @@ void main() {
     });
 
     test('pullback and combine works together', () {
-      final Reducer<RootState, RootAction> reducer = combine([
-        pullback(
-          counterReducer,
+      final reducer = Reduce.combine([
+        Scope(
           state: RootStatePath.counter,
           action: RootActionPath.counter,
+          feature: CounterFeature(),
         ),
-        pullback(
-          favoritesReducer,
+        Scope(
           state: RootStatePath.favorites,
           action: RootActionPath.favorites,
-        ),
+          feature: FavoritesFeature(),
+        )
       ]);
 
       final store = Store(initialState: RootState(), reducer: reducer);

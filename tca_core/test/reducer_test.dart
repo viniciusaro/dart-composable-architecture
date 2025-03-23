@@ -18,7 +18,7 @@ void main() {
         () {
           final store = Store(
             initialState: AppState(),
-            reducer: debug(counterReducer),
+            reducer: Reduce(counterReducer).debug(),
           );
           store.send(AppAction.actionA);
         },
@@ -55,9 +55,9 @@ void main() {
 
       final store = Store(
         initialState: AppState(),
-        reducer: combine([
-          reducer1,
-          reducer2,
+        reducer: Reduce.combine([
+          Reduce(reducer1),
+          Reduce(reducer2),
         ]),
       );
 

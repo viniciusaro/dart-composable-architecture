@@ -51,43 +51,54 @@ sealed class FavoritesAction<
     RemoveAt extends int //
     > {}
 
-final rootReducer = combine([
-  pullback(
-    counterReducer,
-    state: RootStatePath.counter,
-    action: RootActionPath.counter,
-  ),
-  pullback(
-    favoritesReducer,
-    state: RootStatePath.favorites,
-    action: RootActionPath.favorites,
-  ),
-]);
-
-Effect<CounterAction> counterReducer(
-  Inout<CounterState> state,
-  CounterAction action,
-) {
-  switch (action) {
-    case CounterActionIncrement():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
-      return Effect.none();
-    case CounterActionDecrement():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
-      return Effect.none();
+final class RootFeature extends Feature<RootState, RootAction> {
+  @override
+  Reducer<RootState, RootAction<CounterAction, FavoritesAction>> build() {
+    return Reduce.combine([
+      Scope(
+        state: RootStatePath.counter,
+        action: RootActionPath.counter,
+        feature: CounterFeature(),
+      ),
+      Scope(
+        state: RootStatePath.favorites,
+        action: RootActionPath.favorites,
+        feature: FavoritesFeature(),
+      ),
+    ]);
   }
 }
 
-Effect<FavoritesAction> favoritesReducer(
-  Inout<FavoritesState> state,
-  FavoritesAction action,
-) {
-  switch (action) {
-    case FavoritesActionAdd():
-      state.mutate((s) => s.copyWith(favorites: [...s.favorites, action.add]));
-      return Effect.none();
-    case FavoritesActionRemoveAt():
-      state.mutate((s) => s..favorites.removeAt(action.removeAt));
-      return Effect.none();
+final class CounterFeature extends Feature<CounterState, CounterAction> {
+  @override
+  Reducer<CounterState, CounterAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case CounterActionIncrement():
+          state.mutate((s) => s.copyWith(count: s.count + 1));
+          return Effect.none();
+        case CounterActionDecrement():
+          state.mutate((s) => s.copyWith(count: s.count - 1));
+          return Effect.none();
+      }
+    });
+  }
+}
+
+final class FavoritesFeature extends Feature<FavoritesState, FavoritesAction> {
+  @override
+  Reducer<FavoritesState, FavoritesAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case FavoritesActionAdd():
+          state.mutate(
+            (s) => s.copyWith(favorites: [...s.favorites, action.add]),
+          );
+          return Effect.none();
+        case FavoritesActionRemoveAt():
+          state.mutate((s) => s..favorites.removeAt(action.removeAt));
+          return Effect.none();
+      }
+    });
   }
 }

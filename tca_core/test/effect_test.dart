@@ -20,7 +20,7 @@ void main() {
 
     final store = Store(
       initialState: AppState(),
-      reducer: reducer,
+      reducer: Reduce(reducer),
     );
 
     store.send(AppAction.actionA);
@@ -47,7 +47,7 @@ void main() {
 
     final store = Store(
       initialState: AppState(),
-      reducer: reducer,
+      reducer: Reduce(reducer),
     );
 
     store.send(AppAction.actionA);
@@ -72,7 +72,7 @@ void main() {
 
     final store = Store(
       initialState: AppState(),
-      reducer: reducer,
+      reducer: Reduce(reducer),
     );
 
     store.send(AppAction.actionA);

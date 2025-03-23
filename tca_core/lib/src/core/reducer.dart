@@ -1,51 +1,107 @@
 part of 'store.dart';
 
-typedef Reducer<State, Action> = Effect<Action> Function(Inout<State>, Action);
+mixin Reducer<State, Action> {
+  Effect<Action> run(Inout<State> state, Action action);
+}
 
-final class Inout<T> {
-  T _value;
-  T get value => _value;
+final class Reduce<State, Action> with Reducer<State, Action> {
+  final Effect<Action> Function(Inout<State>, Action) _reducer;
+  Reduce(this._reducer);
 
-  bool _isMutationAllowed = false;
-  bool _didCallMutate = false;
-  Inout({required T value}) : _value = value;
+  static Reducer<State, Action> combine<State, Action>(
+    List<Reducer<State, Action>> reduces,
+  ) {
+    return Reduce(
+      (state, action) => Effect.merge(
+        reduces.map((r) => r.run(state, action)).toList(),
+      ),
+    );
+  }
 
-  T mutate(T Function(T) mutation) {
-    _didCallMutate = true;
-    if (_isMutationAllowed) {
-      _value = mutation(_value);
-      return _value;
-    } else {
-      throw EffectfullStateMutation();
+  @override
+  Effect<Action> run(Inout<State> state, Action action) {
+    return _reducer(state, action);
+  }
+}
+
+final class EmptyReducer<State, Action> with Reducer<State, Action> {
+  @override
+  Effect<Action> run(Inout<State> state, Action action) {
+    return Effect.none();
+  }
+}
+
+final class Scope<State, Action, LocalState, LocalAction>
+    with Reducer<State, Action> {
+  final WritableKeyPath<State, LocalState> state;
+  final WritableKeyPath<Action, LocalAction?> action;
+  final Feature<LocalState, LocalAction> feature;
+
+  const Scope({
+    required this.state,
+    required this.action,
+    required this.feature,
+  });
+
+  @override
+  Effect<Action> run(Inout<State> state, Action action) {
+    final localAction = this.action.get(action);
+    if (localAction == null) {
+      return Effect.none();
     }
+
+    final localState = this.state.get(state.value);
+    final inoutLocalState = Inout(value: localState);
+    inoutLocalState._isMutationAllowed = true;
+    final effect = feature.build().run(inoutLocalState, localAction);
+    inoutLocalState._isMutationAllowed = false;
+    state._value = this.state.set(state._value, inoutLocalState._value);
+    return effect.map((localAction) {
+      return this.action.set(null, localAction);
+    });
   }
 }
 
-extension ReducerChangeEquatable<State, Action> on Reducer<State, Action> {
-  Reducer<State, Action> onChange<LocalState>({
-    required LocalState Function(State) of,
-    required void Function(Inout<State>, LocalState) update,
-  }) {
-    return (state, action) {
-      final previousValue = of(state._value);
-      final effect = this(state, action);
-      final updatedValue = of(state._value);
-      if (previousValue != updatedValue) {
-        update(state, updatedValue);
-      }
-      return effect;
-    };
+final class IfLet<State, Action, LocalState, LocalAction>
+    with Reducer<State, Action> {
+  final WritableKeyPath<State, LocalState?> state;
+  final WritableKeyPath<Action, LocalAction?> action;
+  final Feature<LocalState, LocalAction> feature;
+
+  const IfLet({
+    required this.state,
+    required this.action,
+    required this.feature,
+  });
+
+  @override
+  Effect<Action> run(Inout<State> state, Action action) {
+    final localAction = this.action.get(action);
+    final localState = this.state.get(state.value);
+    if (localAction == null || localState == null) {
+      return Effect.none();
+    }
+    final inoutLocalState = Inout(value: localState);
+    inoutLocalState._isMutationAllowed = true;
+    final effect = feature.build().run(inoutLocalState, localAction);
+    inoutLocalState._isMutationAllowed = false;
+    state._value = this.state.set(state._value, inoutLocalState._value);
+    return effect.map((localAction) {
+      return this.action.set(null, localAction);
+    });
   }
 }
 
-Reducer<State, Action> debug<State, Action>(
-  Reducer<State, Action> other,
-) {
-  return (state, action) {
+final class Debug<State, Action> with Reducer<State, Action> {
+  final Reducer<State, Action> _source;
+  Debug(this._source);
+
+  @override
+  Effect<Action> run(Inout<State> state, Action action) {
     final msgHeader = "--------";
     final msgAction = "received action: $action";
     final previous = state._value;
-    final effect = other(state, action);
+    final effect = _source.run(state, action);
     final updated = state._value;
     final msgUpdate = (previous != updated || identical(previous, updated))
         ? "state: $updated"
@@ -57,68 +113,9 @@ Reducer<State, Action> debug<State, Action>(
       print(msgUpdate);
       return effect.builder();
     });
-  };
+  }
 }
 
-Reducer<State, Action> combine<State, Action>(
-  List<Reducer<State, Action>> reducers,
-) {
-  return (state, action) {
-    return Effect.merge(
-      reducers.map((reducer) => reducer(state, action)).toList(),
-    );
-  };
-}
-
-Reducer<GlobalState, GlobalAction>
-    pullback<GlobalState, GlobalAction, LocalState, LocalAction>(
-  Reducer<LocalState, LocalAction> other, {
-  required WritableKeyPath<GlobalState, LocalState> state,
-  required WritableKeyPath<GlobalAction, LocalAction?> action,
-}) {
-  return (globalState, globalAction) {
-    final localState = Inout(value: state.get(globalState._value));
-    final localAction = action.get(globalAction);
-    if (localAction == null) {
-      return Effect.none();
-    }
-
-    localState._isMutationAllowed = true;
-    localState._didCallMutate = false;
-    final localEffect = other(localState, localAction);
-    localState._isMutationAllowed = false;
-    globalState._value = state.set(globalState._value, localState._value);
-
-    return localEffect.map((localAction) {
-      globalAction = action.set(globalAction, localAction);
-      return globalAction;
-    });
-  };
-}
-
-Reducer<GlobalState, GlobalAction>
-    ifLet<GlobalState, GlobalAction, LocalState, LocalAction>(
-  Reducer<LocalState, LocalAction> other, {
-  required WritableKeyPath<GlobalState, LocalState?> state,
-  required WritableKeyPath<GlobalAction, LocalAction?> action,
-}) {
-  return (globalState, globalAction) {
-    final localStateRaw = state.get(globalState._value);
-    final localAction = action.get(globalAction);
-    if (localStateRaw == null || localAction == null) {
-      return Effect.none();
-    }
-
-    final localState = Inout(value: localStateRaw);
-    localState._isMutationAllowed = true;
-    localState._didCallMutate = false;
-    final localEffect = other(localState, localAction);
-    localState._isMutationAllowed = false;
-    globalState._value = state.set(globalState._value, localState._value);
-
-    return localEffect.map((localAction) {
-      globalAction = action.set(globalAction, localAction);
-      return globalAction;
-    });
-  };
+extension DebugableReducer<State, Action> on Reducer<State, Action> {
+  Debug<State, Action> debug() => Debug<State, Action>(this);
 }

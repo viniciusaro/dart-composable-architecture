@@ -30,44 +30,53 @@ sealed class AppAction<
   Home extends HomeAction //
 > {}
 
-final Reducer<AppState, AppAction> appReducer = combine([
-  ifLet(
-    loginReducer,
-    state: AppStatePath.destination.path(AppDestinationPath.login),
-    action: AppActionPath.login,
-  ),
-  ifLet(
-    homeReducer,
-    state: AppStatePath.destination.path(AppDestinationPath.home),
-    action: AppActionPath.home,
-  ),
-  (state, action) {
-    switch (action) {
-      case AppActionLogin():
-        switch (action.login) {
-          case LoginActionOnSignInSucceeded():
-            state.mutate(
-              (s) => s.copyWith(
-                destination: Presents(AppDestinationEnum.home(HomeState())),
-              ),
-            );
-            return Effect.none();
-          default:
-            return Effect.none();
+final class AppFeature extends Feature<AppState, AppAction> {
+  @override
+  Reducer<AppState, AppAction> build() {
+    return Reduce.combine<AppState, AppAction>([
+      IfLet(
+        state: AppStatePath.destination.path(AppDestinationPath.login),
+        action: AppActionPath.login,
+        feature: LoginFeature(),
+      ),
+      IfLet(
+        state: AppStatePath.destination.path(AppDestinationPath.home),
+        action: AppActionPath.home,
+        feature: HomeFeature(),
+      ),
+      Reduce((state, action) {
+        switch (action) {
+          case AppActionLogin():
+            switch (action.login) {
+              case LoginActionOnSignInSucceeded():
+                state.mutate(
+                  (s) => s.copyWith(
+                    destination: Presents(
+                      AppDestinationEnum.home(HomeState()), //
+                    ),
+                  ),
+                );
+                return Effect.none();
+              default:
+                return Effect.none();
+            }
+          case AppActionHome():
+            switch (action.home) {
+              case HomeActionOnSignOutButtonTapped():
+                state.mutate(
+                  (s) => s.copyWith(
+                    destination: Presents(
+                      AppDestinationEnum.login(LoginState()),
+                    ),
+                  ),
+                );
+                return Effect.none();
+            }
         }
-      case AppActionHome():
-        switch (action.home) {
-          case HomeActionOnSignOutButtonTapped():
-            state.mutate(
-              (s) => s.copyWith(
-                destination: Presents(AppDestinationEnum.login(LoginState())),
-              ),
-            );
-            return Effect.none();
-        }
-    }
-  },
-]);
+      }),
+    ]);
+  }
+}
 
 class AppWidget extends StatelessWidget {
   final Store<AppState, AppAction> store;
@@ -106,7 +115,7 @@ void main() {
         body: AppWidget(
           store: Store(
             initialState: AppState(),
-            reducer: debug(appReducer), //
+            reducer: AppFeature().debug(), //
           ),
         ),
       ),

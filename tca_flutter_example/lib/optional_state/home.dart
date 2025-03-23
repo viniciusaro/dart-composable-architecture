@@ -6,17 +6,18 @@ part 'home.g.dart';
 
 @freezed
 @KeyPathable()
-final class HomeState with _$HomeState {
-  const HomeState();
-}
+final class HomeState with _$HomeState {}
 
 @CaseKeyPathable()
 sealed class HomeAction<
   OnSignOutButtonTapped //
 > {}
 
-Effect<HomeAction> homeReducer(Inout<HomeState> state, HomeAction action) {
-  return Effect.none();
+final class HomeFeature extends Feature<HomeState, HomeAction> {
+  @override
+  Reducer<HomeState, HomeAction> build() {
+    return EmptyReducer();
+  }
 }
 
 class HomeWidget extends StatelessWidget {
@@ -38,7 +39,9 @@ class HomeWidget extends StatelessWidget {
               children: [
                 Text("Welcome!"),
                 ElevatedButton(
-                  onPressed: () => viewStore.send(HomeActionEnum.onSignOutButtonTapped()),
+                  onPressed: () {
+                    viewStore.send(HomeActionEnum.onSignOutButtonTapped());
+                  },
                   child: Text("Sign out"),
                 ),
               ],

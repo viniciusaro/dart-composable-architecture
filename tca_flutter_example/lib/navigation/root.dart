@@ -21,11 +21,16 @@ sealed class RootAction<
   App extends AppAction //
 > {}
 
-final rootReducer = pullback(
-  appReducer,
-  state: RootStatePath.app,
-  action: RootActionPath.app,
-);
+final class RootFeature extends Feature<RootState, RootAction> {
+  @override
+  Reducer<RootState, RootAction> build() {
+    return Scope(
+      state: RootStatePath.app,
+      action: RootActionPath.app,
+      feature: AppFeature(),
+    );
+  }
+}
 
 class RootWidget extends StatelessWidget {
   final Store<RootState, RootAction> store;
@@ -62,7 +67,7 @@ void main() {
               ],
             ),
           ),
-          reducer: debug(rootReducer),
+          reducer: RootFeature().debug(),
         ),
       ),
     ),

@@ -8,7 +8,7 @@ import 'package:tca_flutter_example/realtime_counter_sync/realtime_counter_sync.
 void main() {
   test("increment button tapped", () {
     messageBrokerClient = emptyMessageBrokerClient;
-    final store = TestStore(initialState: AppState(), reducer: appReducer);
+    final store = TestStore(initialState: AppState(), reducer: AppFeature());
     store.send(
       AppActionEnum.counter(CounterActionEnum.incrementButtonTapped()),
       (_) => AppState(counter: CounterState(count: 1)),
@@ -20,10 +20,14 @@ void main() {
         unimplementedMessageBrokerClient
           ..listen =
               () => Stream.value(
-                Message(action: "increment", deviceId: "id", id: "unique id"), //
+                Message(
+                  action: "increment",
+                  deviceId: "id",
+                  id: "unique id",
+                ), //
               );
 
-    final store = TestStore(initialState: AppState(), reducer: appReducer);
+    final store = TestStore(initialState: AppState(), reducer: AppFeature());
     store.send(AppActionOnInitState(), (_) => AppState());
     store.receive(
       AppActionEnum.messageBroker(MessageBrokerActionEnum.incrementExternal()),

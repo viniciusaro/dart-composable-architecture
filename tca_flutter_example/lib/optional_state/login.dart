@@ -18,17 +18,22 @@ sealed class LoginAction<
   OnSignInSucceeded //
 > {}
 
-Effect<LoginAction> loginReducer(Inout<LoginState> state, LoginAction action) {
-  switch (action) {
-    case LoginActionOnSignInButtonTapped():
-      state.mutate((s) => s.copyWith(isLoading: true));
-      return Effect.future(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        return LoginActionEnum.onSignInSucceeded();
-      });
-    case LoginActionOnSignInSucceeded():
-      state.mutate((s) => s.copyWith(isLoading: false));
-      return Effect.none();
+final class LoginFeature extends Feature<LoginState, LoginAction> {
+  @override
+  Reduce<LoginState, LoginAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case LoginActionOnSignInButtonTapped():
+          state.mutate((s) => s.copyWith(isLoading: true));
+          return Effect.future(() async {
+            await Future.delayed(const Duration(seconds: 1));
+            return LoginActionEnum.onSignInSucceeded();
+          });
+        case LoginActionOnSignInSucceeded():
+          state.mutate((s) => s.copyWith(isLoading: false));
+          return Effect.none();
+      }
+    });
   }
 }
 
@@ -49,7 +54,9 @@ class LoginWidget extends StatelessWidget {
                 viewStore.state.isLoading
                     ? CircularProgressIndicator()
                     : ElevatedButton(
-                      onPressed: () => viewStore.send(LoginActionEnum.onSignInButtonTapped()),
+                      onPressed: () {
+                        viewStore.send(LoginActionEnum.onSignInButtonTapped());
+                      },
                       child: Text("Sign in"),
                     ),
           );

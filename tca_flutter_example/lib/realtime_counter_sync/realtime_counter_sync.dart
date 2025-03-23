@@ -11,10 +11,10 @@ part 'realtime_counter_sync.g.dart';
 
 @freezed
 @KeyPathable()
-abstract class AppState with _$AppState {
-  factory AppState({
-    @Default(CounterState()) CounterState counter, //
-  }) = _AppState;
+final class AppState with _$AppState {
+  @override
+  final CounterState counter;
+  const AppState({this.counter = const CounterState()});
 }
 
 @CaseKeyPathable()
@@ -24,10 +24,19 @@ sealed class AppAction<
   OnInitState //
 > {}
 
-final appReducer = combine([
-  pullback(counterReducer, state: AppStatePath.counter, action: AppActionPath.counter),
-  messageBrokerReducer,
-]);
+final class AppFeature extends Feature<AppState, AppAction> {
+  @override
+  Reducer<AppState, AppAction> build() {
+    return Reduce.combine([
+      Scope(
+        state: AppStatePath.counter,
+        action: AppActionPath.counter,
+        feature: CounterFeature(),
+      ),
+      MessageBrokerFeature(),
+    ]);
+  }
+}
 
 class AppWidget extends StatelessWidget {
   final Store<AppState, AppAction> store;
@@ -58,7 +67,12 @@ Future<void> main() async {
     MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: AppWidget(store: Store(initialState: AppState(), reducer: debug(appReducer))),
+        body: AppWidget(
+          store: Store(
+            initialState: AppState(),
+            reducer: AppFeature().debug(), //
+          ),
+        ),
       ),
     ),
   );

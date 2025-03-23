@@ -50,7 +50,7 @@ $Res call({
 });
 
 
-$CounterStateCopyWith<$Res> get counter;
+
 
 }
 /// @nodoc
@@ -64,97 +64,13 @@ class _$AppStateCopyWithImpl<$Res>
 /// Create a copy of AppState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? counter = null,}) {
-  return _then(_self.copyWith(
-counter: null == counter ? _self.counter : counter // ignore: cast_nullable_to_non_nullable
-as CounterState,
-  ));
-}
-/// Create a copy of AppState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$CounterStateCopyWith<$Res> get counter {
-  
-  return $CounterStateCopyWith<$Res>(_self.counter, (value) {
-    return _then(_self.copyWith(counter: value));
-  });
-}
-}
-
-
-/// @nodoc
-
-
-class _AppState implements AppState {
-   _AppState({this.counter = const CounterState()});
-  
-
-@override@JsonKey() final  CounterState counter;
-
-/// Create a copy of AppState
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$AppStateCopyWith<_AppState> get copyWith => __$AppStateCopyWithImpl<_AppState>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppState&&(identical(other.counter, counter) || other.counter == counter));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,counter);
-
-@override
-String toString() {
-  return 'AppState(counter: $counter)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$AppStateCopyWith<$Res> implements $AppStateCopyWith<$Res> {
-  factory _$AppStateCopyWith(_AppState value, $Res Function(_AppState) _then) = __$AppStateCopyWithImpl;
-@override @useResult
-$Res call({
- CounterState counter
-});
-
-
-@override $CounterStateCopyWith<$Res> get counter;
-
-}
-/// @nodoc
-class __$AppStateCopyWithImpl<$Res>
-    implements _$AppStateCopyWith<$Res> {
-  __$AppStateCopyWithImpl(this._self, this._then);
-
-  final _AppState _self;
-  final $Res Function(_AppState) _then;
-
-/// Create a copy of AppState
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? counter = null,}) {
-  return _then(_AppState(
+  return _then(AppState(
 counter: null == counter ? _self.counter : counter // ignore: cast_nullable_to_non_nullable
 as CounterState,
   ));
 }
 
-/// Create a copy of AppState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$CounterStateCopyWith<$Res> get counter {
-  
-  return $CounterStateCopyWith<$Res>(_self.counter, (value) {
-    return _then(_self.copyWith(counter: value));
-  });
 }
-}
+
 
 // dart format on

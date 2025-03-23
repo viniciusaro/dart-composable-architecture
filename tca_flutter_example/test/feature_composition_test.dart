@@ -11,7 +11,7 @@ void main() {
 
   group('counter', () {
     test("add to favorites button tapped", () {
-      final store = TestStore(initialState: AppState(), reducer: appReducer);
+      final store = TestStore(initialState: AppState(), reducer: AppFeature());
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
         (_) => AppState(
@@ -22,7 +22,7 @@ void main() {
     });
 
     test("decrement button tapped", () async {
-      final store = TestStore(initialState: AppState(), reducer: appReducer);
+      final store = TestStore(initialState: AppState(), reducer: AppFeature());
       store.send(
         AppActionEnum.counter(CounterActionEnum.decrementButtonTapped()),
         (_) => AppState(counter: CounterState(count: -1)),
@@ -30,7 +30,7 @@ void main() {
     });
 
     test("increment button tapped", () {
-      final store = TestStore(initialState: AppState(), reducer: appReducer);
+      final store = TestStore(initialState: AppState(), reducer: AppFeature());
       store.send(
         AppActionEnum.counter(CounterActionEnum.incrementButtonTapped()),
         (_) => AppState(counter: CounterState(count: 1)),
@@ -38,7 +38,7 @@ void main() {
     });
 
     test("remove from favorites button tapped", () async {
-      final store = TestStore(initialState: AppState(), reducer: appReducer);
+      final store = TestStore(initialState: AppState(), reducer: AppFeature());
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
@@ -49,7 +49,9 @@ void main() {
       );
 
       store.send(
-        AppActionEnum.counter(CounterActionEnum.removeFromFavoritesButtonTapped()),
+        AppActionEnum.counter(
+          CounterActionEnum.removeFromFavoritesButtonTapped(),
+        ),
         (_) => AppState(
           counter: CounterState(favorites: Shared.constant({})),
           favorites: FavoritesState(favorites: Shared.constant({})),
@@ -60,7 +62,7 @@ void main() {
 
   group("favorite", () {
     test("remove from favorites favorites button tapped", () async {
-      final store = TestStore(initialState: AppState(), reducer: appReducer);
+      final store = TestStore(initialState: AppState(), reducer: AppFeature());
 
       store.send(
         AppActionEnum.counter(CounterActionEnum.addToFavoritesButtonTapped()),
