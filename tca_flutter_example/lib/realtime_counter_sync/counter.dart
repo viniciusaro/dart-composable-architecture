@@ -6,10 +6,10 @@ part 'counter.g.dart';
 
 @freezed
 @KeyPathable()
-abstract class CounterState with _$CounterState {
-  const factory CounterState({
-    @Default(0) int count, //
-  }) = _CounterState;
+final class CounterState with _$CounterState {
+  @override
+  final int count;
+  const CounterState({this.count = 0});
 }
 
 @CaseKeyPathable()
@@ -18,14 +18,19 @@ sealed class CounterAction<
   IncrementButtonTapped //
 > {}
 
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
-  switch (action) {
-    case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
-      return Effect.none();
-    case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
-      return Effect.none();
+final class CounterFeature extends Feature<CounterState, CounterAction> {
+  @override
+  Reducer<CounterState, CounterAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case CounterActionDecrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count - 1));
+          return Effect.none();
+        case CounterActionIncrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count + 1));
+          return Effect.none();
+      }
+    });
   }
 }
 
@@ -52,11 +57,19 @@ class CounterWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterActionEnum.incrementButtonTapped()),
+                      onPressed: () {
+                        viewStore.send(
+                          CounterActionEnum.incrementButtonTapped(),
+                        );
+                      },
                       child: Text("+"),
                     ),
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterActionEnum.decrementButtonTapped()),
+                      onPressed: () {
+                        viewStore.send(
+                          CounterActionEnum.decrementButtonTapped(),
+                        );
+                      },
                       child: Text("-"),
                     ),
                   ],

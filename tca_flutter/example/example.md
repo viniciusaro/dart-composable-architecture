@@ -37,35 +37,44 @@ sealed class NumberFactAction<
 > {}
 ```
 
-And then we implement the reducer function, which is responsible for composing the actual logic and behavior for the feature. In it we can describe how to change the current state to the next state, and what effects need to be executed. Some actions don't need to execute effects, and they can return `.none()` to represent that:
+And then we implement the [Feature] type, which is responsible for composing the actual logic and behavior for the feature. In the `build` method we can describe how to change the current state to the next state, and what effects need to be executed. Some actions don't need to execute effects, and they can return `.none()` to represent that:
 
 ```dart
-Effect<NumberFactAction> numberFactReducer(Inout<NumberFactState> state, NumberFactAction action) {
-  switch (action) {
-    case NumberFactActionDecrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
-      return Effect.none();
+final class NumberFactFeature extends Feature<NumberFactState, NumberFactAction> {
+  @override
+  Reducer<NumberFactState, NumberFactAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case NumberFactActionDecrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count - 1));
+          return Effect.none();
 
-    case NumberFactActionIncrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
-      return Effect.none();
+        case NumberFactActionIncrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count + 1));
+          return Effect.none();
 
-    case NumberFactActionNumberFactButtonTapped():
-      state.mutate((s) => s.copyWith(isLoading: true));
-      return Effect.future(() async {
-        final uri = Uri.parse("http://numbersapi.com/${state.value.count}/trivia");
-        final response = await http.get(uri);
-        return NumberFactActionEnum.numberFactResponse(response.body);
-      });
+        case NumberFactActionNumberFactButtonTapped():
+          state.mutate((s) => s.copyWith(isLoading: true));
+          return Effect.future(() async {
+            final response = await numberFactClient.factFor(state.value.count);
+            return NumberFactActionEnum.numberFactResponse(response);
+          });
 
-    case NumberFactActionNumberFactResponse():
-      state.mutate((s) => s.copyWith(isLoading: false, numberFact: action.numberFactResponse));
-      return Effect.none();
+        case NumberFactActionNumberFactResponse():
+          state.mutate(
+            (s) => s.copyWith(
+              isLoading: false,
+              numberFact: action.numberFactResponse,
+            ),
+          );
+          return Effect.none();
+      }
+    });
   }
 }
 ```
 
-And then finally we define the widget that displays the feature. It holds onto a `Store<FeatureState, FeatureAction>` and wraps it's body in a `WithViewStore<FeatureState, FeatureAction>` so that it can observe all changes to the state and re-render. We can send all user actions to the store so that state changes:
+Finally we define the widget that displays the feature. It holds onto a `Store<FeatureState, FeatureAction>` and wraps it's body in a `WithViewStore<FeatureState, FeatureAction>` so that it can observe all changes to the state and re-render. We can send all user actions to the store so that state changes:
 
 ```dart
 class NumberFactWidget extends StatelessWidget {
@@ -75,7 +84,7 @@ class NumberFactWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore<NumberFactState, NumberFactAction>(
+    return WithViewStore(
       store,
       body: (viewStore) {
         return Center(

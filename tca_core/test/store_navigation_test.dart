@@ -5,7 +5,7 @@ import '_helper_navigation.dart';
 
 void main() {
   test('presents value is cleaned up on child store dispose', () {
-    final store = Store(initialState: AppState(), reducer: appReducer);
+    final store = Store(initialState: AppState(), reducer: AppFeature());
     store.send(AppActionEnum.onDetailButtonTapped());
     expect(
       store.state,
@@ -25,7 +25,7 @@ void main() {
   });
 
   test('presents value clean up is propagated up in the tree', () {
-    final store = Store(initialState: RootState(), reducer: rootReducer);
+    final store = Store(initialState: RootState(), reducer: RootFeature());
     store.send(RootActionEnum.app(AppActionEnum.onDetailButtonTapped()));
     expect(
       store.state,

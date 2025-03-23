@@ -26,24 +26,35 @@ sealed class CounterAction<
   RemoveFromFavoritesButtonTapped //
 > {}
 
-Effect<CounterAction> counterReducer(Inout<CounterState> state, CounterAction action) {
-  switch (action) {
-    case CounterActionAddToFavoritesButtonTapped():
-      state.mutate((s) => s.copyWith(favorites: s.favorites.set((curr) => {...curr, s.count})));
-      return Effect.none();
-    case CounterActionIncrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count + 1));
-      return Effect.none();
-    case CounterActionDecrementButtonTapped():
-      state.mutate((s) => s.copyWith(count: s.count - 1));
-      return Effect.none();
-    case CounterActionRemoveFromFavoritesButtonTapped():
-      state.mutate(
-        (s) => s.copyWith(
-          favorites: s.favorites.set((curr) => curr.where((c) => c != s.count).toSet()),
-        ),
-      );
-      return Effect.none();
+final class CounterFeature extends Feature<CounterState, CounterAction> {
+  @override
+  Reducer<CounterState, CounterAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case CounterActionAddToFavoritesButtonTapped():
+          state.mutate(
+            (s) => s.copyWith(
+              favorites: s.favorites.set((curr) => {...curr, s.count}),
+            ),
+          );
+          return Effect.none();
+        case CounterActionIncrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count + 1));
+          return Effect.none();
+        case CounterActionDecrementButtonTapped():
+          state.mutate((s) => s.copyWith(count: s.count - 1));
+          return Effect.none();
+        case CounterActionRemoveFromFavoritesButtonTapped():
+          state.mutate(
+            (s) => s.copyWith(
+              favorites: s.favorites.set(
+                (curr) => curr.where((c) => c != s.count).toSet(),
+              ),
+            ),
+          );
+          return Effect.none();
+      }
+    });
   }
 }
 
@@ -70,11 +81,19 @@ class CounterWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterActionEnum.incrementButtonTapped()),
+                      onPressed: () {
+                        viewStore.send(
+                          CounterActionEnum.incrementButtonTapped(),
+                        );
+                      },
                       child: Text("+"),
                     ),
                     ElevatedButton(
-                      onPressed: () => viewStore.send(CounterActionEnum.decrementButtonTapped()),
+                      onPressed: () {
+                        viewStore.send(
+                          CounterActionEnum.decrementButtonTapped(),
+                        );
+                      },
                       child: Text("-"),
                     ),
                   ],

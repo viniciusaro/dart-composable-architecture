@@ -9,7 +9,7 @@ void main() {
     test('increment repeatedly increments on every second tick', () {
       final store = Store(
         initialState: CounterState(),
-        reducer: counterReducer,
+        reducer: Reduce(counterReducer),
       );
 
       fakeAsync((async) {
@@ -28,7 +28,7 @@ void main() {
     test('increment repeatedly stops repeating after cancellation', () {
       final store = Store(
         initialState: CounterState(),
-        reducer: counterReducer,
+        reducer: Reduce(counterReducer),
       );
 
       fakeAsync((async) async {
@@ -45,7 +45,7 @@ void main() {
     test('increment with delay increments after 1 second', () {
       final store = Store(
         initialState: CounterState(),
-        reducer: counterReducer,
+        reducer: Reduce(counterReducer),
       );
 
       fakeAsync((async) {

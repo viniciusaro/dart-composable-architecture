@@ -12,7 +12,7 @@ void main() {
 
       final store = TestStore(
         initialState: AppState(items: [item1]),
-        reducer: appReducer,
+        reducer: AppFeature(),
       );
 
       store.send(

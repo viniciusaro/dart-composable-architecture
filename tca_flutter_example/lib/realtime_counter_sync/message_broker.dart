@@ -12,37 +12,57 @@ sealed class MessageBrokerAction<
   IncrementExternal //
 > {}
 
-Effect<AppAction> messageBrokerReducer(Inout<AppState> state, AppAction action) {
-  switch (action) {
-    case AppActionCounter():
-      switch (action.counter) {
-        case CounterActionDecrementButtonTapped():
-          return Effect.async(() => messageBrokerClient.publish("decrement"));
-        case CounterActionIncrementButtonTapped():
-          return Effect.async(() => messageBrokerClient.publish("increment"));
-      }
-    case AppActionMessageBroker():
-      switch (action.messageBroker) {
-        case MessageBrokerActionDecrementExternal():
-          state.mutate((s) => s.copyWith(counter: s.counter.copyWith(count: s.counter.count - 1)));
-          return Effect.none();
-        case MessageBrokerActionIncrementExternal():
-          state.mutate((s) => s.copyWith(counter: s.counter.copyWith(count: s.counter.count + 1)));
-          return Effect.none();
-      }
-
-    case AppActionOnInitState():
-      return Effect.stream(() {
-        return messageBrokerClient.listen().map((message) {
-          switch (message.action) {
-            case "decrement":
-              return AppActionEnum.messageBroker(MessageBrokerActionEnum.decrementExternal());
-            case "increment":
-              return AppActionEnum.messageBroker(MessageBrokerActionEnum.incrementExternal());
-            default:
-              throw Exception("invalid action: $message");
+final class MessageBrokerFeature extends Feature<AppState, AppAction> {
+  @override
+  Reducer<AppState, AppAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case AppActionCounter():
+          switch (action.counter) {
+            case CounterActionDecrementButtonTapped():
+              return Effect.async(
+                () => messageBrokerClient.publish("decrement"),
+              );
+            case CounterActionIncrementButtonTapped():
+              return Effect.async(
+                () => messageBrokerClient.publish("increment"),
+              );
           }
-        });
-      });
+        case AppActionMessageBroker():
+          switch (action.messageBroker) {
+            case MessageBrokerActionDecrementExternal():
+              state.mutate(
+                (s) => s.copyWith(
+                  counter: s.counter.copyWith(count: s.counter.count - 1),
+                ),
+              );
+              return Effect.none();
+            case MessageBrokerActionIncrementExternal():
+              state.mutate(
+                (s) => s.copyWith(
+                  counter: s.counter.copyWith(count: s.counter.count + 1),
+                ),
+              );
+              return Effect.none();
+          }
+        case AppActionOnInitState():
+          return Effect.stream(() {
+            return messageBrokerClient.listen().map((message) {
+              switch (message.action) {
+                case "decrement":
+                  return AppActionEnum.messageBroker(
+                    MessageBrokerActionEnum.decrementExternal(),
+                  );
+                case "increment":
+                  return AppActionEnum.messageBroker(
+                    MessageBrokerActionEnum.incrementExternal(),
+                  );
+                default:
+                  throw Exception("invalid action: $message");
+              }
+            });
+          });
+      }
+    });
   }
 }

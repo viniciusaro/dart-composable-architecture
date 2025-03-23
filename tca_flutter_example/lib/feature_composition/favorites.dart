@@ -19,15 +19,22 @@ sealed class FavoritesAction<
   Remove extends int //
 > {}
 
-Effect<FavoritesAction> favoritesReducer(Inout<FavoritesState> state, FavoritesAction action) {
-  switch (action) {
-    case FavoritesActionRemove():
-      state.mutate(
-        (s) => s.copyWith(
-          favorites: s.favorites.set((curr) => curr.where((c) => c != action.remove).toSet()),
-        ),
-      );
-      return Effect.none();
+final class FavoritesFeature extends Feature<FavoritesState, FavoritesAction> {
+  @override
+  Reducer<FavoritesState, FavoritesAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case FavoritesActionRemove():
+          state.mutate(
+            (s) => s.copyWith(
+              favorites: s.favorites.set(
+                (curr) => curr.where((c) => c != action.remove).toSet(),
+              ),
+            ),
+          );
+          return Effect.none();
+      }
+    });
   }
 }
 

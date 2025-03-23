@@ -14,11 +14,16 @@ final class RootState with _$RootState {
 @CaseKeyPathable()
 sealed class RootAction<App extends AppAction> {}
 
-final rootReducer = pullback(
-  appReducer,
-  state: RootStatePath.app,
-  action: RootActionPath.app,
-);
+final class RootFeature extends Feature<RootState, RootAction> {
+  @override
+  Reducer<RootState, RootAction> build() {
+    return Scope(
+      state: RootStatePath.app,
+      action: RootActionPath.app,
+      feature: AppFeature(),
+    );
+  }
+}
 
 @CaseKeyPathable()
 sealed class AppDestination<Detail extends DetailState> {}
@@ -38,17 +43,22 @@ sealed class AppAction<
     Detail extends DetailAction //
     > {}
 
-Effect<AppAction> appReducer(Inout<AppState> state, AppAction action) {
-  switch (action) {
-    case AppActionOnDetailButtonTapped():
-      state.mutate(
-        (s) => s.copyWith(
-          destination: Presents(AppDestinationEnum.detail(DetailState())),
-        ),
-      );
-      return Effect.none();
-    case AppActionDetail():
-      return Effect.none();
+final class AppFeature extends Feature<AppState, AppAction> {
+  @override
+  Reducer<AppState, AppAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case AppActionOnDetailButtonTapped():
+          state.mutate(
+            (s) => s.copyWith(
+              destination: Presents(AppDestinationEnum.detail(DetailState())),
+            ),
+          );
+          return Effect.none();
+        case AppActionDetail():
+          return Effect.none();
+      }
+    });
   }
 }
 

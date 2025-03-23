@@ -29,18 +29,23 @@ sealed class AppAction<
   Favorites extends FavoritesAction //
 > {}
 
-final appReducer = combine([
-  pullback(
-    counterReducer,
-    state: AppStatePath.counter,
-    action: AppActionPath.counter,
-  ),
-  pullback(
-    favoritesReducer,
-    state: AppStatePath.favorites,
-    action: AppActionPath.favorites,
-  ),
-]);
+final class AppFeature extends Feature<AppState, AppAction> {
+  @override
+  Reducer<AppState, AppAction> build() {
+    return Reduce.combine([
+      Scope(
+        state: AppStatePath.counter,
+        action: AppActionPath.counter,
+        feature: CounterFeature(),
+      ),
+      Scope(
+        state: AppStatePath.favorites,
+        action: AppActionPath.favorites,
+        feature: FavoritesFeature(),
+      ),
+    ]);
+  }
+}
 
 class AppWidget extends StatelessWidget {
   final Store<AppState, AppAction> store;
@@ -89,7 +94,10 @@ void main() {
       home: Scaffold(
         backgroundColor: Colors.white,
         body: AppWidget(
-          store: Store(initialState: AppState(), reducer: debug(appReducer)),
+          store: Store(
+            initialState: AppState(),
+            reducer: AppFeature().debug(), //
+          ),
         ),
       ),
     ),

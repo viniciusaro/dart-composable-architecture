@@ -30,29 +30,34 @@ sealed class SharedAction<
     NonSharedCounterIncrement //
     > {}
 
-final sharedReducer = combine([
-  pullback(
-    sharedCounterReducer,
-    state: SharedStatePath.counterA,
-    action: SharedActionPath.counterA,
-  ),
-  pullback(
-    sharedCounterReducer,
-    state: SharedStatePath.counterB,
-    action: SharedActionPath.counterB,
-  ),
-  (Inout<SharedState> state, SharedAction action) {
-    switch (action) {
-      case SharedActionNonSharedCounterIncrement():
-        state.mutate(
-          (s) => s.copyWith(nonSharedCounter: s.nonSharedCounter + 1),
-        );
-        return Effect.none<SharedAction>();
-      default:
-        return Effect.none<SharedAction>();
-    }
+final class SharedFeature extends Feature<SharedState, SharedAction> {
+  @override
+  Reducer<SharedState, SharedAction> build() {
+    return Reduce.combine([
+      Scope(
+        state: SharedStatePath.counterA,
+        action: SharedActionPath.counterA,
+        feature: SharedCounterFeature(),
+      ),
+      Scope(
+        state: SharedStatePath.counterB,
+        action: SharedActionPath.counterB,
+        feature: SharedCounterFeature(),
+      ),
+      Reduce((state, action) {
+        switch (action) {
+          case SharedActionNonSharedCounterIncrement():
+            state.mutate(
+              (s) => s.copyWith(nonSharedCounter: s.nonSharedCounter + 1),
+            );
+            return Effect.none<SharedAction>();
+          default:
+            return Effect.none<SharedAction>();
+        }
+      }),
+    ]);
   }
-]);
+}
 
 @freezed
 @KeyPathable()
@@ -69,11 +74,16 @@ sealed class SharedCounterAction<
     Increment //
     > {}
 
-Effect<SharedCounterAction> sharedCounterReducer(
-    Inout<SharedCounterState> state, SharedCounterAction action) {
-  switch (action) {
-    case SharedCounterActionIncrement():
-      state.mutate((s) => s.copyWith(count: s.count.set((c) => c + 1)));
-      return Effect.none();
+final class SharedCounterFeature
+    extends Feature<SharedCounterState, SharedCounterAction> {
+  @override
+  Reducer<SharedCounterState, SharedCounterAction> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case SharedCounterActionIncrement():
+          state.mutate((s) => s.copyWith(count: s.count.set((c) => c + 1)));
+          return Effect.none();
+      }
+    });
   }
 }
