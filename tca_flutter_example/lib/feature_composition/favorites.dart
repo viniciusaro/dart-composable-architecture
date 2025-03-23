@@ -21,7 +21,7 @@ sealed class FavoritesAction<
 
 final class FavoritesFeature extends Feature<FavoritesState, FavoritesAction> {
   @override
-  Reducer<FavoritesState, FavoritesAction<int>> build() {
+  Reducer<FavoritesState, FavoritesAction> build() {
     return Reduce((state, action) {
       switch (action) {
         case FavoritesActionRemove():

@@ -45,7 +45,7 @@ sealed class AppAction<
 
 final class AppFeature extends Feature<AppState, AppAction> {
   @override
-  Reducer<AppState, AppAction<dynamic, DetailAction>> build() {
+  Reducer<AppState, AppAction> build() {
     return Reduce((state, action) {
       switch (action) {
         case AppActionOnDetailButtonTapped():

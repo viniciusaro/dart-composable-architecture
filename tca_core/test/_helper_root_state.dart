@@ -53,7 +53,7 @@ sealed class FavoritesAction<
 
 final class RootFeature extends Feature<RootState, RootAction> {
   @override
-  Reducer<RootState, RootAction<CounterAction, FavoritesAction>> build() {
+  Reducer<RootState, RootAction> build() {
     return Reduce.combine([
       Scope(
         state: RootStatePath.counter,

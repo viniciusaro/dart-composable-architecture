@@ -33,7 +33,7 @@ sealed class AppAction<
 final class AppFeature extends Feature<AppState, AppAction> {
   @override
   Reducer<AppState, AppAction> build() {
-    return Reduce.combine<AppState, AppAction>([
+    return Reduce.combine([
       IfLet(
         state: AppStatePath.destination.path(AppDestinationPath.login),
         action: AppActionPath.login,
