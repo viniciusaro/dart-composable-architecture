@@ -132,4 +132,5 @@ class NumberFactWidget extends StatelessWidget {
 
 The final result is something like the following:
 
-![Simulator Screen Recording - iPhone 16 Pro - 2025-01-31 at 11 07 36](https://github.com/user-attachments/assets/6d94c617-0318-48ba-806a-0b7d6ca50a93)
+![Simulator Screen Recording - iPhone 16 Pro - 2025-03-23 at 12 05 45](https://github.com/user-attachments/assets/dc9b271c-0850-4ba4-9f2d-79286dd82c09)
+
