@@ -122,6 +122,24 @@ final class Debug<State, Action> with Reducer<State, Action> {
   }
 }
 
+extension OnChangeReducer<State, Action, LocalAction>
+    on Reducer<State, Action> {
+  Reducer<State, Action> onChange<LocalState>({
+    required LocalState Function(State) of,
+    required void Function(Inout<State>, LocalState) update,
+  }) {
+    return Reduce((state, action) {
+      final previousValue = of(state._value);
+      final effect = run(state, action);
+      final updatedValue = of(state._value);
+      if (previousValue != updatedValue) {
+        update(state, updatedValue);
+      }
+      return effect;
+    });
+  }
+}
+
 extension DebugableReducer<State, Action> on Reducer<State, Action> {
   Debug<State, Action> debug() => Debug<State, Action>(this);
 }
