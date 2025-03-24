@@ -25,3 +25,7 @@ Fix: remove automatic [Store] state clean up on [NavigationDestination] and asso
 ## 0.0.6
 
 Feat: make use of Presents reference semantics to implement automatic [Store] state clean up on [NavigationDestination], propagating the change up in the store tree.
+
+## 0.1.0
+
+Breaking: create [Reducer] mixin and [Feature] type. Feature implementations must provide a `build` method, bringing the domain and business logic implementation closer to the Widgets api. Reducer operators such as `pullback`, `ifLet` and `combine` are now Reducer implementations such as `Scope`, `IfLet` and `Reduce.combine`. See [tca_flutter_example](https://github.com/viniciusaro/dart-composable-architecture/tree/main/tca_flutter_example/lib) for concrete implementations.
