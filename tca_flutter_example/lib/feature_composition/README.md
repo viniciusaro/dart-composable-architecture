@@ -161,7 +161,8 @@ Since our features maintain completely separate states, we need a way to synchro
 
 To achieve this, we use another reducer operator called onChange:
 
-> ⚠️ > [!WARNING]
+> ⚠️ **Warning**
+> 
 > The library ships with an alterantive way of syncrhonizing state called `Shared`. More about it here.
 
 ```dart
