@@ -36,12 +36,12 @@ final class AppFeature extends Feature<AppState, AppAction> {
       Scope(
         state: AppStatePath.counter,
         action: AppActionPath.counter,
-        feature: CounterFeature(),
+        reducer: CounterFeature(),
       ),
       Scope(
         state: AppStatePath.favorites,
         action: AppActionPath.favorites,
-        feature: FavoritesFeature(),
+        reducer: FavoritesFeature(),
       ),
     ]);
   }

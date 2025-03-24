@@ -58,12 +58,12 @@ final class RootFeature extends Feature<RootState, RootAction> {
       Scope(
         state: RootStatePath.counter,
         action: RootActionPath.counter,
-        feature: CounterFeature(),
+        reducer: CounterFeature(),
       ),
       Scope(
         state: RootStatePath.favorites,
         action: RootActionPath.favorites,
-        feature: FavoritesFeature(),
+        reducer: FavoritesFeature(),
       ),
     ]);
   }

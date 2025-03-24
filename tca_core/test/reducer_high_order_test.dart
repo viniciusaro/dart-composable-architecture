@@ -27,7 +27,7 @@ void main() {
       final Reducer<RootState, RootAction> reducer = Scope(
         state: RootStatePath.favorites,
         action: RootActionPath.favorites,
-        feature: FavoritesFeature(),
+        reducer: FavoritesFeature(),
       );
 
       final store = Store(initialState: RootState(), reducer: reducer);
@@ -61,12 +61,12 @@ void main() {
         Scope(
           state: RootStatePath.counter,
           action: RootActionPath.counter,
-          feature: CounterFeature(),
+          reducer: CounterFeature(),
         ),
         Scope(
           state: RootStatePath.favorites,
           action: RootActionPath.favorites,
-          feature: FavoritesFeature(),
+          reducer: FavoritesFeature(),
         )
       ]);
 

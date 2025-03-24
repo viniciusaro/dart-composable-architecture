@@ -27,7 +27,7 @@ final class RootFeature extends Feature<RootState, RootAction> {
     return Scope(
       state: RootStatePath.app,
       action: RootActionPath.app,
-      feature: AppFeature(),
+      reducer: AppFeature(),
     );
   }
 }
