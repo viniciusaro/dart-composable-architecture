@@ -37,12 +37,12 @@ final class AppFeature extends Feature<AppState, AppAction> {
       IfLet(
         state: AppStatePath.destination.path(AppDestinationPath.login),
         action: AppActionPath.login,
-        feature: LoginFeature(),
+        reducer: LoginFeature(),
       ),
       IfLet(
         state: AppStatePath.destination.path(AppDestinationPath.home),
         action: AppActionPath.home,
-        feature: HomeFeature(),
+        reducer: HomeFeature(),
       ),
       Reduce((state, action) {
         switch (action) {

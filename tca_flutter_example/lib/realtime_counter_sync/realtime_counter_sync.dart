@@ -31,7 +31,7 @@ final class AppFeature extends Feature<AppState, AppAction> {
       Scope(
         state: AppStatePath.counter,
         action: AppActionPath.counter,
-        feature: CounterFeature(),
+        reducer: CounterFeature(),
       ),
       MessageBrokerFeature(),
     ]);

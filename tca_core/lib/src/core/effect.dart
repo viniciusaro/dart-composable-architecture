@@ -29,7 +29,7 @@ final class Effect<Action> {
     return Effects.cancel(id);
   }
 
-  static Effect<Action> merge<Action>(List<Effect<Action>> effects) {
+  static Effect<Action> merge<Action>(Iterable<Effect<Action>> effects) {
     return Effects.merge(effects);
   }
 
@@ -62,7 +62,7 @@ extension Effects on Effect {
     });
   }
 
-  static Effect<Action> merge<Action>(List<Effect<Action>> effects) {
+  static Effect<Action> merge<Action>(Iterable<Effect<Action>> effects) {
     return effects.reduce(
       (acc, effect) => acc.merge(effect),
     );

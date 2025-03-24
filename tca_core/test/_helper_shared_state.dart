@@ -37,12 +37,12 @@ final class SharedFeature extends Feature<SharedState, SharedAction> {
       Scope(
         state: SharedStatePath.counterA,
         action: SharedActionPath.counterA,
-        feature: SharedCounterFeature(),
+        reducer: SharedCounterFeature(),
       ),
       Scope(
         state: SharedStatePath.counterB,
         action: SharedActionPath.counterB,
-        feature: SharedCounterFeature(),
+        reducer: SharedCounterFeature(),
       ),
       Reduce((state, action) {
         switch (action) {
