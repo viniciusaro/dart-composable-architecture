@@ -29,3 +29,7 @@ Feat: make use of Presents reference semantics to implement automatic [Store] st
 ## 0.0.7
 
 Fix: loosen `composable_architecture` dependency constraint.
+
+## 0.0.8
+
+Fix: fix `composable_architecture` dependency constraint until 1.0.0.
