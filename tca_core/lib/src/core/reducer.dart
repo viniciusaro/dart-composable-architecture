@@ -122,6 +122,72 @@ final class Debug<State, Action> with Reducer<State, Action> {
   }
 }
 
+final class CrashLoggerClient {
+  final Future<void> Function(Object e, StackTrace s) onError;
+  CrashLoggerClient({required this.onError});
+}
+
+final consoleCrashLoggerClient = CrashLoggerClient(
+  onError: (e, s) {
+    print("ERROR: $e");
+    return Future.value();
+  },
+);
+
+var crashLoggerClient = consoleCrashLoggerClient;
+
+final class CrashLogger<State, Action> extends Feature<State, Action> {
+  final Reducer<State, Action> reducer;
+
+  CrashLogger(this.reducer);
+
+  @override
+  Reducer<State, Action> build() {
+    return Reduce((state, action) {
+      try {
+        final effect = reducer.run(state, action);
+        return Effect(() {
+          try {
+            return effect.builder();
+          } catch (e, s) {
+            crashLoggerClient.onError(e, s);
+            rethrow;
+          }
+        });
+      } catch (e, s) {
+        crashLoggerClient.onError(e, s);
+        rethrow;
+      }
+    });
+  }
+}
+
+final class AnalyticsClient {
+  final void Function(String name) logEvent;
+  AnalyticsClient({required this.logEvent});
+}
+
+final unimplementedAnalyticsClient = AnalyticsClient(
+  logEvent: (_) => throw UnimplementedError(),
+);
+
+final consoleAnalyticsClient = AnalyticsClient(
+  logEvent: (name) => print("Log event named: $name"), //
+);
+
+var analyticsClient = consoleAnalyticsClient;
+
+final class Analytcs<State, Action> extends Feature<State, Action> {
+  @override
+  Reducer<State, Action> build() {
+    return Reduce(
+      (_, action) => Effect.sync(
+        () => analyticsClient.logEvent(action.toString()), //
+      ),
+    );
+  }
+}
+
 extension OnChangeReducer<State, Action, LocalAction>
     on Reducer<State, Action> {
   Reducer<State, Action> onChange<LocalState>({
@@ -141,5 +207,9 @@ extension OnChangeReducer<State, Action, LocalAction>
 }
 
 extension DebugableReducer<State, Action> on Reducer<State, Action> {
-  Debug<State, Action> debug() => Debug<State, Action>(this);
+  Reducer<State, Action> debug() => Debug(this);
+}
+
+extension CrashLoggerReducer<State, Action> on Reducer<State, Action> {
+  Reducer<State, Action> crashLogger() => CrashLogger(this);
 }

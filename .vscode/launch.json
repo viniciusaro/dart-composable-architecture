@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Example - Analytics",
+            "cwd": "tca_flutter_example",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/analytics/analytics.dart",
+        },
+        {
             "name": "Example - Feature Composition",
             "cwd": "tca_flutter_example",
             "request": "launch",

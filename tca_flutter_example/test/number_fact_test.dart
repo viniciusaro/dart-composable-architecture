@@ -42,8 +42,10 @@ void main() {
 
     store.receive(
       NumberFactActionEnum.numberFactResponse("0 is a good number"),
-      (_) =>
-          NumberFactState(isLoading: false, numberFact: "0 is a good number"),
+      (_) => NumberFactState(
+        isLoading: false,
+        numberFact: "0 is a good number", //
+      ),
     );
   });
 }
