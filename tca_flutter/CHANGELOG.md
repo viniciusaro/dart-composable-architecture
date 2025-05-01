@@ -25,3 +25,7 @@ Fix: remove automatic [Store] state clean up on [NavigationDestination] and asso
 ## 0.0.6
 
 Feat: make use of Presents reference semantics to implement automatic [Store] state clean up on [NavigationDestination], propagating the change up in the store tree.
+
+## 0.0.7
+
+Fix: loosen `composable_architecture` dependency constraint.

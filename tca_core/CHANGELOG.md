@@ -32,4 +32,6 @@ Breaking: create [Reducer] mixin and [Feature] type. Feature implementations mus
 
 ## 0.1.1
 
-- onChange reducer
+Feat: add onChange reducer
+Chore: more organized unit tests for stores, effects and reducers
+Chore: more documentation comments
