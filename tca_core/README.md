@@ -1,3 +1,9 @@
+> 🎙️⚠️
+> 
+> I would love community insights and help for taking next steps.
+> 
+> If you feel like contributing, join discussions [here](https://github.com/viniciusaro/dart-composable-architecture/discussions)!
+
 # The Composable Architecture - Dart (experimental)
 
 Port of [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (TCA, for short) for the [Dart Language](https://dart.dev) and [Flutter Framework](https://flutter.dev).
