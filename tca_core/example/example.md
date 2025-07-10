@@ -16,11 +16,20 @@ To implement this feature we start by defining a new type for the feature's stat
 @freezed
 @KeyPathable()
 abstract class NumberFactState with _$NumberFactState {
-  factory NumberFactState({
-    @Default(0) int count,
-    @Default(false) bool isLoading,
-    String? numberFact,
-  }) = _NumberFactState;
+  @override
+  final int count;
+
+  @override
+  final bool isLoading;
+
+  @override
+  final String? numberFact;
+
+  const NumberFactState({
+    required this.count,
+    required this.isLoading,
+    this.numberFact,
+  });
 }
 
 ```
