@@ -26,8 +26,8 @@ abstract class NumberFactState with _$NumberFactState {
   final String? numberFact;
 
   const NumberFactState({
-    required this.count,
-    required this.isLoading,
+    this.count = 0,
+    this.isLoading = false,
     this.numberFact,
   });
 }
