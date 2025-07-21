@@ -1,10 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
-part 'home.freezed.dart';
 part 'home.g.dart';
 
-@freezed
 @KeyPathable()
 final class HomeState with _$HomeState {}
 

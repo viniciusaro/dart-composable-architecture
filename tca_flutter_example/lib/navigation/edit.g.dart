@@ -13,6 +13,26 @@ extension EditStatePath on EditState {
   );
 }
 
+mixin _$EditState {
+  Item get item;
+  EditState copyWith({Item? item}) {
+    return EditState(item: item ?? this.item);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EditState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(item, other.item);
+  @override
+  int get hashCode => Object.hash(runtimeType, item);
+  @override
+  String toString() {
+    return "EditState(item: $item)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

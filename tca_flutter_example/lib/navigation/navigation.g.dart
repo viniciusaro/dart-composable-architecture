@@ -18,6 +18,34 @@ extension AppStatePath on AppState {
       );
 }
 
+mixin _$AppState {
+  List<Item> get items;
+  Presents<AppDestination<EditState>?> get destination;
+  AppState copyWith({
+    List<Item>? items,
+    Presents<AppDestination<EditState>?>? destination,
+  }) {
+    return AppState(
+      items: items ?? this.items,
+      destination: destination ?? this.destination,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(items, other.items) &&
+          const DeepCollectionEquality().equals(destination, other.destination);
+  @override
+  int get hashCode => Object.hash(runtimeType, items, destination);
+  @override
+  String toString() {
+    return "AppState(items: $items, destination: $destination)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

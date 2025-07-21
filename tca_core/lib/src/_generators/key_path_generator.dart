@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:source_gen/source_gen.dart';
@@ -45,10 +46,91 @@ static final $prop = WritableKeyPath<$rootType, $propType>(
     }
 
     code += "\n}";
+
+    // Only generate mixin if not using freezed
+    if (!_hasFreezedAnnotation(clazz)) {
+      code += _generateCopyAndEqualityMixin(clazz, fields);
+    }
+
+    return code;
+  }
+
+  bool _hasFreezedAnnotation(ClassElement clazz) {
+    return clazz.metadata.any((annotation) {
+      final value = annotation.computeConstantValue();
+      final type = value?.type;
+      // Check for both 'freezed' and 'Freezed' for robustness
+      return type != null &&
+          (type.getDisplayString(withNullability: false) == 'freezed' ||
+              type.getDisplayString(withNullability: false) == 'Freezed');
+    });
+  }
+
+  String _generateCopyAndEqualityMixin(
+    ClassElement element,
+    List<VariableElement> fields,
+  ) {
+    String code = '';
+    // Generate mixin for value equality, copyWith, and toString
+    code += '\nmixin _\$${element.name} {\n';
+    // Abstract getters for all fields
+    for (final field in fields) {
+      final propType = field.type.getDisplayString();
+      final prop = field.name;
+      code += '  $propType get $prop;\n';
+    }
+    // copyWith
+    if (fields.isNotEmpty) {
+      final params = fields
+          .map((f) =>
+              '${f.type.getDisplayStringWithoutFinalNullability()}? ${f.name}')
+          .join(', ');
+      final args = fields
+          .map((f) => '${f.name}: ${f.name} ?? this.${f.name}')
+          .join(', ');
+      code +=
+          '  ${element.name} copyWith({$params}) {\n    return ${element.name}($args);\n  }\n';
+    } else {
+      code += '\n';
+    }
+    // operator ==
+    code += '  @override\n  bool operator ==(Object other) =>\n';
+    code += '      identical(this, other) ||\n';
+    code += '      other is ${element.name} &&\n';
+    code += '          runtimeType == other.runtimeType';
+    for (final field in fields) {
+      code +=
+          ' &&\n          const DeepCollectionEquality().equals(${field.name}, other.${field.name})';
+    }
+    code += ';\n';
+    // hashCode
+    if (fields.isNotEmpty) {
+      code += '  @override\n  int get hashCode => Object.hash(runtimeType,';
+      code += fields.map((f) => f.name).join(', ');
+      code += ');\n';
+    } else {
+      code += '  @override\n  int get hashCode => runtimeType.hashCode;\n';
+    }
+    // toString
+    code += '  @override\n  String toString() {';
+    if (fields.isNotEmpty) {
+      final props = fields.map((f) => '${f.name}: \$${f.name}').join(', ');
+      code += '\n    return "${element.name}($props)";\n';
+    } else {
+      code += '\n    return "${element.name}()";\n';
+    }
+    code += '  }\n';
+    code += '}\n';
     return code;
   }
 }
 
-bool isGetterOnly(ParameterElement field) {
-  return false;
+extension on DartType {
+  String getDisplayStringWithoutFinalNullability() {
+    final displayString = getDisplayString();
+    if (displayString.endsWith('?')) {
+      return displayString.substring(0, displayString.length - 1);
+    }
+    return displayString;
+  }
 }

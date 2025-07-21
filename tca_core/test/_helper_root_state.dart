@@ -1,9 +1,7 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
-part '_helper_root_state.freezed.dart';
 part '_helper_root_state.g.dart';
 
-@freezed
 @KeyPathable()
 class RootState with _$RootState {
   @override
@@ -23,7 +21,6 @@ sealed class RootAction<
     Favorites extends FavoritesAction //
     > {}
 
-@freezed
 @KeyPathable()
 final class CounterState with _$CounterState {
   @override
@@ -37,7 +34,6 @@ sealed class CounterAction<
     Decrement //
     > {}
 
-@freezed
 @KeyPathable()
 final class FavoritesState with _$FavoritesState {
   @override

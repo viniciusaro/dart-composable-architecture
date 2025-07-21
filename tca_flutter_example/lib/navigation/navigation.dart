@@ -4,10 +4,8 @@ import 'package:flutter/material.dart' hide NavigationDestination;
 import 'edit.dart';
 import 'item.dart';
 
-part 'navigation.freezed.dart';
 part 'navigation.g.dart';
 
-@freezed
 @KeyPathable()
 final class AppState with _$AppState, Presentable {
   @override

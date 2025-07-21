@@ -13,6 +13,26 @@ extension CounterStatePath on CounterState {
   );
 }
 
+mixin _$CounterState {
+  int get count;
+  CounterState copyWith({int? count}) {
+    return CounterState(count: count ?? this.count);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CounterState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(count, other.count);
+  @override
+  int get hashCode => Object.hash(runtimeType, count);
+  @override
+  String toString() {
+    return "CounterState(count: $count)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

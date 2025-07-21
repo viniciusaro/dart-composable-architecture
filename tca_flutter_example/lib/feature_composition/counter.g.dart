@@ -17,6 +17,31 @@ extension CounterStatePath on CounterState {
   );
 }
 
+mixin _$CounterState {
+  int get count;
+  Shared<Set<int>> get favorites;
+  CounterState copyWith({int? count, Shared<Set<int>>? favorites}) {
+    return CounterState(
+      count: count ?? this.count,
+      favorites: favorites ?? this.favorites,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CounterState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(count, other.count) &&
+          const DeepCollectionEquality().equals(favorites, other.favorites);
+  @override
+  int get hashCode => Object.hash(runtimeType, count, favorites);
+  @override
+  String toString() {
+    return "CounterState(count: $count, favorites: $favorites)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

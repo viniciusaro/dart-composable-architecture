@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'counter.dart';
 import 'favorites.dart';
 
-part 'feature_composition.freezed.dart';
 part 'feature_composition.g.dart';
 
-@freezed
 @KeyPathable()
 class AppState with _$AppState {
   @override

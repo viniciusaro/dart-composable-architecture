@@ -3,19 +3,22 @@ import 'package:flutter/material.dart';
 
 import 'number_fact_client.dart';
 
-part 'number_fact.freezed.dart';
 part 'number_fact.g.dart';
 
 var numberFactClient = liveNumberFactClient;
 
-@freezed
 @KeyPathable()
-abstract class NumberFactState with _$NumberFactState {
-  factory NumberFactState({
-    @Default(0) int count,
-    @Default(false) bool isLoading,
-    String? numberFact,
-  }) = _NumberFactState;
+class NumberFactState with _$NumberFactState {
+  @override
+  final int count;
+
+  @override
+  final bool isLoading;
+
+  @override
+  final String? numberFact;
+
+  NumberFactState({this.count = 0, this.isLoading = false, this.numberFact});
 }
 
 @CaseKeyPathable()

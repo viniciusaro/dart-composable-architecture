@@ -17,6 +17,30 @@ extension RootStatePath on RootState {
   );
 }
 
+mixin _$RootState {
+  CounterState get counter;
+  FavoritesState get favorites;
+  RootState copyWith({CounterState? counter, FavoritesState? favorites}) {
+    return RootState(
+        counter: counter ?? this.counter,
+        favorites: favorites ?? this.favorites);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RootState &&
+          runtimeType == other.runtimeType &&
+          counter == other.counter &&
+          favorites == other.favorites;
+  @override
+  int get hashCode => Object.hash(runtimeType, counter, favorites);
+  @override
+  String toString() {
+    return "RootState(counter: \counter, favorites: \favorites)";
+  }
+}
+
 extension CounterStatePath on CounterState {
   static final count = WritableKeyPath<CounterState, int>(
     get: (obj) => obj.count,
@@ -24,11 +48,51 @@ extension CounterStatePath on CounterState {
   );
 }
 
+mixin _$CounterState {
+  int get count;
+  CounterState copyWith({int? count}) {
+    return CounterState(count: count ?? this.count);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CounterState &&
+          runtimeType == other.runtimeType &&
+          count == other.count;
+  @override
+  int get hashCode => Object.hash(runtimeType, count);
+  @override
+  String toString() {
+    return "CounterState(count: \count)";
+  }
+}
+
 extension FavoritesStatePath on FavoritesState {
   static final favorites = WritableKeyPath<FavoritesState, List<int>>(
     get: (obj) => obj.favorites,
     set: (obj, favorites) => obj!.copyWith(favorites: favorites),
   );
+}
+
+mixin _$FavoritesState {
+  List<int> get favorites;
+  FavoritesState copyWith({List<int>? favorites}) {
+    return FavoritesState(favorites: favorites ?? this.favorites);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FavoritesState &&
+          runtimeType == other.runtimeType &&
+          favorites == other.favorites;
+  @override
+  int get hashCode => Object.hash(runtimeType, favorites);
+  @override
+  String toString() {
+    return "FavoritesState(favorites: \favorites)";
+  }
 }
 
 // **************************************************************************

@@ -33,3 +33,7 @@ Fix: loosen `composable_architecture` dependency constraint.
 ## 0.0.8
 
 Fix: fix `composable_architecture` dependency constraint until 1.0.0.
+
+## 0.1.0
+
+Breaking: Bump composable_architecture dependency to 0.2.0

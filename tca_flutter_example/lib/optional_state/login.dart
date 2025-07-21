@@ -1,10 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
-part 'login.freezed.dart';
 part 'login.g.dart';
 
-@freezed
 @KeyPathable()
 final class LoginState with _$LoginState {
   @override

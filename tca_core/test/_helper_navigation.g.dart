@@ -21,7 +21,40 @@ extension AppStatePath on AppState {
   );
 }
 
+mixin _$AppState {
+  Presents<AppDestination<DetailState>?> get destination;
+  AppState copyWith({Presents<AppDestination<DetailState>?>? destination}) {
+    return AppState(destination: destination ?? this.destination);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppState &&
+          runtimeType == other.runtimeType &&
+          destination == other.destination;
+  @override
+  int get hashCode => Object.hash(runtimeType, destination);
+  @override
+  String toString() {
+    return "AppState(destination: \destination)";
+  }
+}
+
 extension DetailStatePath on DetailState {}
+
+mixin _$DetailState {
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DetailState && runtimeType == other.runtimeType;
+  @override
+  int get hashCode => runtimeType.hashCode;
+  @override
+  String toString() {
+    return "DetailState()";
+  }
+}
 
 // **************************************************************************
 // CaseKeyPathGenerator

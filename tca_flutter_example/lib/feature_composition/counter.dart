@@ -1,10 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
-part 'counter.freezed.dart';
 part 'counter.g.dart';
 
-@freezed
 @KeyPathable()
 class CounterState with _$CounterState {
   @override

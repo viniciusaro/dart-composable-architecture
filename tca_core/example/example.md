@@ -13,9 +13,8 @@ As a basic example, consider a UI that shows a number along with "+" and "−" b
 To implement this feature we start by defining a new type for the feature's state, which consists of an integer for the current count, as well as an optional string that represents the fact being presented:
 
 ```dart
-@freezed
 @KeyPathable()
-abstract class NumberFactState with _$NumberFactState {
+class NumberFactState with _$NumberFactState {
   @override
   final int count;
 

@@ -1,10 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
-part 'favorites.freezed.dart';
 part 'favorites.g.dart';
 
-@freezed
 @KeyPathable()
 class FavoritesState with _$FavoritesState {
   @override

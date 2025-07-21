@@ -46,7 +46,7 @@ abstract mixin class $RootStateCopyWith<$Res> {
   factory $RootStateCopyWith(RootState value, $Res Function(RootState) _then) =
       _$RootStateCopyWithImpl;
   @useResult
-  $Res call({AppState app});
+  $Res call({AppState? app});
 }
 
 /// @nodoc
@@ -61,97 +61,15 @@ class _$RootStateCopyWithImpl<$Res> implements $RootStateCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? app = null,
+    Object? app = freezed,
   }) {
     return _then(RootState(
-      app: null == app
-          ? _self.app
+      app: freezed == app
+          ? _self.app!
           : app // ignore: cast_nullable_to_non_nullable
-              as AppState,
+              as AppState?,
     ));
   }
-}
-
-/// @nodoc
-mixin _$AppState {
-  Presents<AppDestination?> get destination;
-
-  /// Create a copy of AppState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $AppStateCopyWith<AppState> get copyWith =>
-      _$AppStateCopyWithImpl<AppState>(this as AppState, _$identity);
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is AppState &&
-            (identical(other.destination, destination) ||
-                other.destination == destination));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, destination);
-
-  @override
-  String toString() {
-    return 'AppState(destination: $destination)';
-  }
-}
-
-/// @nodoc
-abstract mixin class $AppStateCopyWith<$Res> {
-  factory $AppStateCopyWith(AppState value, $Res Function(AppState) _then) =
-      _$AppStateCopyWithImpl;
-  @useResult
-  $Res call({Presents<AppDestination<DetailState>?> destination});
-}
-
-/// @nodoc
-class _$AppStateCopyWithImpl<$Res> implements $AppStateCopyWith<$Res> {
-  _$AppStateCopyWithImpl(this._self, this._then);
-
-  final AppState _self;
-  final $Res Function(AppState) _then;
-
-  /// Create a copy of AppState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? destination = null,
-  }) {
-    return _then(AppState(
-      destination: null == destination
-          ? _self.destination!
-          : destination // ignore: cast_nullable_to_non_nullable
-              as Presents<AppDestination<DetailState>?>,
-    ));
-  }
-}
-
-/// @nodoc
-mixin _$DetailState {
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is DetailState);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'DetailState()';
-  }
-}
-
-/// @nodoc
-class $DetailStateCopyWith<$Res> {
-  $DetailStateCopyWith(DetailState _, $Res Function(DetailState) __);
 }
 
 // dart format on

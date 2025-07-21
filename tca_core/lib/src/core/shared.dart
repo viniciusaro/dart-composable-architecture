@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:composable_architecture/composable_architecture.dart';
+import 'package:collection/collection.dart';
 
 bool get isExpectedStateClosure => Zone.current[#expectedStateClosure] == true;
 

@@ -1,4 +1,5 @@
 import 'package:composable_architecture/composable_architecture.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part '_helper_navigation.freezed.dart';
 part '_helper_navigation.g.dart';
@@ -26,9 +27,10 @@ final class RootFeature extends Feature<RootState, RootAction> {
 }
 
 @CaseKeyPathable()
-sealed class AppDestination<Detail extends DetailState> {}
+sealed class AppDestination<
+    Detail extends DetailState //
+    > {}
 
-@freezed
 @KeyPathable()
 final class AppState with _$AppState, Presentable {
   @override
@@ -62,7 +64,6 @@ final class AppFeature extends Feature<AppState, AppAction> {
   }
 }
 
-@freezed
 @KeyPathable()
 final class DetailState with _$DetailState {}
 

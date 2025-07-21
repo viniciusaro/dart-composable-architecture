@@ -13,6 +13,26 @@ extension LoginStatePath on LoginState {
   );
 }
 
+mixin _$LoginState {
+  bool get isLoading;
+  LoginState copyWith({bool? isLoading}) {
+    return LoginState(isLoading: isLoading ?? this.isLoading);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LoginState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(isLoading, other.isLoading);
+  @override
+  int get hashCode => Object.hash(runtimeType, isLoading);
+  @override
+  String toString() {
+    return "LoginState(isLoading: $isLoading)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

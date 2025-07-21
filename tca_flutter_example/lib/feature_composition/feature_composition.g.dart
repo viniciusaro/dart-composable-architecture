@@ -17,6 +17,31 @@ extension AppStatePath on AppState {
   );
 }
 
+mixin _$AppState {
+  CounterState get counter;
+  FavoritesState get favorites;
+  AppState copyWith({CounterState? counter, FavoritesState? favorites}) {
+    return AppState(
+      counter: counter ?? this.counter,
+      favorites: favorites ?? this.favorites,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(counter, other.counter) &&
+          const DeepCollectionEquality().equals(favorites, other.favorites);
+  @override
+  int get hashCode => Object.hash(runtimeType, counter, favorites);
+  @override
+  String toString() {
+    return "AppState(counter: $counter, favorites: $favorites)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

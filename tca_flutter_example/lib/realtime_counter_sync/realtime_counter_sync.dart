@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'counter.dart';
 import 'message_broker.dart';
 
-part 'realtime_counter_sync.freezed.dart';
 part 'realtime_counter_sync.g.dart';
 
-@freezed
 @KeyPathable()
 final class AppState with _$AppState {
   @override

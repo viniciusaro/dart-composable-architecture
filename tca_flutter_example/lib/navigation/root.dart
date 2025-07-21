@@ -5,10 +5,8 @@ import 'edit.dart';
 import 'item.dart';
 import 'navigation.dart';
 
-part 'root.freezed.dart';
 part 'root.g.dart';
 
-@freezed
 @KeyPathable()
 final class RootState with _$RootState {
   @override
