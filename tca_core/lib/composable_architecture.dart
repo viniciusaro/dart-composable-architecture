@@ -1,7 +1,5 @@
 library;
 
-export 'package:freezed_annotation/freezed_annotation.dart';
-
 export 'src/core/navigation.dart';
 export 'src/core/shared.dart';
 export 'src/core/store.dart';

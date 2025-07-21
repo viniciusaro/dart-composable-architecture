@@ -13,6 +13,26 @@ extension RootStatePath on RootState {
   );
 }
 
+mixin _$RootState {
+  AppState get app;
+  RootState copyWith({AppState? app}) {
+    return RootState(app: app ?? this.app);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RootState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(app, other.app);
+  @override
+  int get hashCode => Object.hash(runtimeType, app);
+  @override
+  String toString() {
+    return "RootState(app: $app)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

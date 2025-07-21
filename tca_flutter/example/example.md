@@ -13,14 +13,22 @@ As a basic example, consider a UI that shows a number along with "+" and "−" b
 To implement this feature we start by defining a new type for the feature's state, which consists of an integer for the current count, as well as an optional string that represents the fact being presented:
 
 ```dart
-@freezed
 @KeyPathable()
-abstract class NumberFactState with _$NumberFactState {
-  factory NumberFactState({
-    @Default(0) int count,
-    @Default(false) bool isLoading,
-    String? numberFact,
-  }) = _NumberFactState;
+class NumberFactState with _$NumberFactState {
+  @override
+  final int count;
+
+  @override
+  final bool isLoading;
+
+  @override
+  final String? numberFact;
+
+  const NumberFactState({
+    this.count = 0,
+    this.isLoading = false,
+    this.numberFact,
+  });
 }
 
 ```
@@ -133,3 +141,4 @@ class NumberFactWidget extends StatelessWidget {
 The final result is something like the following:
 
 ![Simulator Screen Recording - iPhone 16 Pro - 2025-03-23 at 12 05 45](https://github.com/user-attachments/assets/dc9b271c-0850-4ba4-9f2d-79286dd82c09)
+

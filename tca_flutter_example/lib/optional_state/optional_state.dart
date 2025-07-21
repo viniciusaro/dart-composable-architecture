@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 import 'login.dart';
 
-part 'optional_state.freezed.dart';
 part 'optional_state.g.dart';
 
 @CaseKeyPathable()
@@ -13,7 +12,6 @@ sealed class AppDestination<
   Home extends HomeState //
 > {}
 
-@freezed
 @KeyPathable()
 final class AppState with _$AppState, Presentable {
   @override

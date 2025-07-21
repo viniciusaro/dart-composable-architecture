@@ -35,3 +35,8 @@ Breaking: create [Reducer] mixin and [Feature] type. Feature implementations mus
 Feat: add onChange reducer
 Chore: more organized unit tests for stores, effects and reducers
 Chore: more documentation comments
+
+## 0.2.0
+
+Feat: Integrate copyWith, hashCode, toString and == operator into KeyPathable generator. This leads to simpler setup while also allowing using freezed, if that's a user requirement.
+Breaking: Removes freezed_annotation dependency and export directive.

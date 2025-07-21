@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'item.dart';
 
-part 'edit.freezed.dart';
 part 'edit.g.dart';
 
-@freezed
 @KeyPathable()
 final class EditState with _$EditState {
   @override

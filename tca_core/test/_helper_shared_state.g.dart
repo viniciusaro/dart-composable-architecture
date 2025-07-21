@@ -22,11 +22,62 @@ extension SharedStatePath on SharedState {
   );
 }
 
+mixin _$SharedState {
+  SharedCounterState get counterA;
+  SharedCounterState get counterB;
+  int get nonSharedCounter;
+  SharedState copyWith(
+      {SharedCounterState? counterA,
+      SharedCounterState? counterB,
+      int? nonSharedCounter}) {
+    return SharedState(
+        counterA: counterA ?? this.counterA,
+        counterB: counterB ?? this.counterB,
+        nonSharedCounter: nonSharedCounter ?? this.nonSharedCounter);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SharedState &&
+          runtimeType == other.runtimeType &&
+          counterA == other.counterA &&
+          counterB == other.counterB &&
+          nonSharedCounter == other.nonSharedCounter;
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, counterA, counterB, nonSharedCounter);
+  @override
+  String toString() {
+    return "SharedState(counterA: \counterA, counterB: \counterB, nonSharedCounter: \nonSharedCounter)";
+  }
+}
+
 extension SharedCounterStatePath on SharedCounterState {
   static final count = WritableKeyPath<SharedCounterState, Shared<int>>(
     get: (obj) => obj.count,
     set: (obj, count) => obj!.copyWith(count: count),
   );
+}
+
+mixin _$SharedCounterState {
+  Shared<int> get count;
+  SharedCounterState copyWith({Shared<int>? count}) {
+    return SharedCounterState(count: count ?? this.count);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SharedCounterState &&
+          runtimeType == other.runtimeType &&
+          count == other.count;
+  @override
+  int get hashCode => Object.hash(runtimeType, count);
+  @override
+  String toString() {
+    return "SharedCounterState(count: \count)";
+  }
 }
 
 // **************************************************************************

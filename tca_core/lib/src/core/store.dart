@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:collection/collection.dart';
 
 import '../helpers/sync_stream.dart';
 import 'navigation.dart';

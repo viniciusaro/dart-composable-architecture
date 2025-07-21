@@ -8,6 +8,19 @@ part of 'home.dart';
 
 extension HomeStatePath on HomeState {}
 
+mixin _$HomeState {
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HomeState && runtimeType == other.runtimeType;
+  @override
+  int get hashCode => runtimeType.hashCode;
+  @override
+  String toString() {
+    return "HomeState()";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

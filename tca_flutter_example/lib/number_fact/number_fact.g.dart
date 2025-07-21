@@ -21,6 +21,34 @@ extension NumberFactStatePath on NumberFactState {
   );
 }
 
+mixin _$NumberFactState {
+  int get count;
+  bool get isLoading;
+  String? get numberFact;
+  NumberFactState copyWith({int? count, bool? isLoading, String? numberFact}) {
+    return NumberFactState(
+      count: count ?? this.count,
+      isLoading: isLoading ?? this.isLoading,
+      numberFact: numberFact ?? this.numberFact,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NumberFactState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(count, other.count) &&
+          const DeepCollectionEquality().equals(isLoading, other.isLoading) &&
+          const DeepCollectionEquality().equals(numberFact, other.numberFact);
+  @override
+  int get hashCode => Object.hash(runtimeType, count, isLoading, numberFact);
+  @override
+  String toString() {
+    return "NumberFactState(count: $count, isLoading: $isLoading, numberFact: $numberFact)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

@@ -1,9 +1,7 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
-part '_helper_shared_state.freezed.dart';
 part '_helper_shared_state.g.dart';
 
-@freezed
 @KeyPathable()
 class SharedState with _$SharedState {
   @override
@@ -59,7 +57,6 @@ final class SharedFeature extends Feature<SharedState, SharedAction> {
   }
 }
 
-@freezed
 @KeyPathable()
 class SharedCounterState with _$SharedCounterState {
   @override

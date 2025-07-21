@@ -13,6 +13,26 @@ extension FavoritesStatePath on FavoritesState {
   );
 }
 
+mixin _$FavoritesState {
+  Shared<Set<int>> get favorites;
+  FavoritesState copyWith({Shared<Set<int>>? favorites}) {
+    return FavoritesState(favorites: favorites ?? this.favorites);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FavoritesState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(favorites, other.favorites);
+  @override
+  int get hashCode => Object.hash(runtimeType, favorites);
+  @override
+  String toString() {
+    return "FavoritesState(favorites: $favorites)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************

@@ -13,6 +13,26 @@ extension AppStatePath on AppState {
   );
 }
 
+mixin _$AppState {
+  CounterState get counter;
+  AppState copyWith({CounterState? counter}) {
+    return AppState(counter: counter ?? this.counter);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppState &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(counter, other.counter);
+  @override
+  int get hashCode => Object.hash(runtimeType, counter);
+  @override
+  String toString() {
+    return "AppState(counter: $counter)";
+  }
+}
+
 // **************************************************************************
 // CaseKeyPathGenerator
 // **************************************************************************
