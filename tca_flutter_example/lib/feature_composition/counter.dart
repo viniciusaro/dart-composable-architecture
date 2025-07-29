@@ -11,9 +11,8 @@ class CounterState with _$CounterState {
   @override
   final Shared<Set<int>> favorites;
 
-  CounterState({int? count, Shared<Set<int>>? favorites})
-    : count = count ?? 0,
-      favorites = favorites ?? Shared(InMemorySource({}));
+  CounterState({this.count = 0, Shared<Set<int>>? favorites})
+    : favorites = favorites ?? Shared(InMemorySource({}));
 }
 
 @CaseKeyPathable()

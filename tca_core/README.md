@@ -12,6 +12,7 @@ Port of [The Composable Architecture](https://github.com/pointfreeco/swift-compo
 
 - [Examples](#examples)
 - [Basic Usage](#basic-usage)
+- [Testing](#testing)
 - [Setup](#setup)
 
 ## Examples
@@ -168,8 +169,52 @@ The final result is something like the following:
 
 ![Simulator Screen Recording - iPhone 16 Pro - 2025-03-23 at 12 05 45](https://github.com/user-attachments/assets/dc9b271c-0850-4ba4-9f2d-79286dd82c09)
 
-## Setup
+## Testing
+To test use a TestStore, which can be created with the same information as the Store, but it does extra work to allow you to assert how your feature evolves as actions are sent:
 
+```dart
+final store = TestStore(
+  initialState: NumberFactState(),
+  reducer: NumberFactFeature(),
+);
+```
+Once the test store is created we can use it to make an assertion of an entire user flow of steps. Each step of the way we need to prove that state changed how we expect. For example, we can simulate the user flow of tapping on the increment and decrement buttons:
+
+```dart
+store.send(
+  NumberFactActionEnum.incrementButtonTapped(),
+  (_) => NumberFactState(count: 1), //
+);
+store.send(
+  NumberFactActionEnum.decrementButtonTapped(),
+  (_) => NumberFactState(count: 0), //
+);
+```
+
+Further, if a step causes an effect to be executed, which feeds data back into the store, we must assert on that. For example, if we simulate the user tapping on the fact button we expect to receive a fact response back with the fact, which then causes the numberFact state to be populated:
+
+```dart
+numberFactClient = NumberFactClient(
+  factFor: (n) async => "$n is a good number",
+);
+
+final store = TestStore(
+  initialState: NumberFactState(),
+  reducer: NumberFactFeature(),
+);
+
+store.send(
+  NumberFactActionEnum.numberFactButtonTapped(),
+  (_) => NumberFactState(isLoading: true), //
+);
+
+store.receive(
+  NumberFactActionEnum.numberFactResponse("0 is a good number"),
+  (_) => NumberFactState(isLoading: false, numberFact: "0 is a good number"),
+);
+```
+
+## Setup
 This package relies on code generation to enhance the developer experience and improve coding ergonomics. It includes built-in generators that create KeyPaths for states and actions in types annotated with @KeyPathable and @CaseKeyPathable.
 
 **Types annotated with `@KeyPathable` automatically get `copyWith`, equality (`==`), `hashCode`, and `toString` methods generated for you.** You do not need to provide your own `copyWith` or equality implementations—these are handled by the code generator.

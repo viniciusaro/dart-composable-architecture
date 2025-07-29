@@ -12,39 +12,48 @@ https://github.com/user-attachments/assets/073e4014-bd97-4fbc-a02d-dc33d9bf668f
 We begin by defining our feature domains, specifically the state that holds all the necessary data for each feature:
 
 ```dart
-@freezed
 @KeyPathable()
-abstract class CounterState with _$CounterState {
-  const factory CounterState({
-    @Default(0) int count,
-    @Default({}) Set<int> favorites,
-  }) = _CounterState;
+class CounterState with _$CounterState {
+  @override
+  final int count;
+
+  @override
+  final Shared<Set<int>> favorites;
+
+  CounterState({this.count = 0, Shared<Set<int>>? favorites})
+    : favorites = favorites ?? Shared(InMemorySource({}));
 }
 ```
 
 ```dart
-@freezed
 @KeyPathable()
-abstract class FavoritesState with _$FavoritesState {
-  const factory FavoritesState({
-    @Default({}) Set<int> favorites,
-  }) = _FavoritesState;
+class FavoritesState with _$FavoritesState {
+  @override
+  final Shared<Set<int>> favorites;
+
+  FavoritesState({Shared<Set<int>>? favorites})
+    : favorites = favorites ?? Shared(InMemorySource({}));
 }
 ```
 
-Both features require access to a list of favorites since they interact with it. However, they each define their own independent properties for favorites within their respective domains.
+Both features require access to a list of favorites since they interact with it. However, they each define their own independent properties for favorites within their respective domains. They are wrapped in the special `Shared` type that comes with the library. This type allows automatic synchronization between the values in the features.
 
-Finally, we need a shared state to encapsulate both feature states. In this example, we use a TabBar to switch between the Counter and Favorites features, and AppState serves as the root state in our domain hierarchy:
+Finally, we need a state to encapsulate both feature states. In this example, we use a TabBar to switch between the Counter and Favorites features, and AppState serves as the root state in our domain hierarchy:
 
 ```dart
-
-@freezed
 @KeyPathable()
-abstract class AppState with _$AppState {
-  const factory AppState({
-    @Default(CounterState()) CounterState counter,
-    @Default(FavoritesState()) FavoritesState favorites,
-  }) = _AppState;
+class AppState with _$AppState {
+  @override
+  final CounterState counter;
+
+  @override
+  final FavoritesState favorites;
+
+  AppState({
+    CounterState? counter,
+    FavoritesState? favorites, //
+  }) : counter = counter ?? CounterState(),
+       favorites = favorites ?? FavoritesState();
 }
 ```
 
@@ -57,14 +66,14 @@ sealed class CounterAction<
   AddToFavoritesButtonTapped,
   IncrementButtonTapped,
   DecrementButtonTapped,
-  RemoveFromFavoritesButtonTapped
+  RemoveFromFavoritesButtonTapped //
 > {}
 ```
 
 ```dart
 @CaseKeyPathable()
 sealed class FavoritesAction<
-  Remove extends int
+  Remove extends int //
 > {}
 ```
 
@@ -72,11 +81,11 @@ sealed class FavoritesAction<
 @CaseKeyPathable()
 sealed class AppAction<
   Counter extends CounterAction,
-  Favorites extends FavoritesAction
+  Favorites extends FavoritesAction //
 > {}
 ```
 
-The CaseKeyPathable annotation enables the library to generate child classes for our sealed classes. These subclasses represent actions that will be processed by reducers.
+The `@CaseKeyPathable` annotation enables the library to generate child classes for our sealed classes. These subclasses represent actions that will be processed by reducers.
 
 ## Reducers and Features
 
@@ -88,19 +97,25 @@ final class CounterFeature extends Feature<CounterState, CounterAction> {
   Reducer<CounterState, CounterAction> build() {
     return Reduce((state, action) {
       switch (action) {
-        case CounterActionAddToFavoritesButtonTapped():
-          state.mutate((s) => s.copyWith(favorites: {...s.favorites, s.count}));
-          return Effect.none();
         case CounterActionIncrementButtonTapped():
           state.mutate((s) => s.copyWith(count: s.count + 1));
           return Effect.none();
         case CounterActionDecrementButtonTapped():
           state.mutate((s) => s.copyWith(count: s.count - 1));
           return Effect.none();
+        case CounterActionAddToFavoritesButtonTapped():
+          state.mutate(
+            (s) => s.copyWith(
+              favorites: s.favorites.set((curr) => {...curr, s.count}),
+            ),
+          );
+          return Effect.none();
         case CounterActionRemoveFromFavoritesButtonTapped():
           state.mutate(
             (s) => s.copyWith(
-              favorites: s.favorites.where((c) => c != s.count).toSet(),
+              favorites: s.favorites.set(
+                (curr) => curr.where((c) => c != s.count).toSet(),
+              ),
             ),
           );
           return Effect.none();
@@ -119,7 +134,9 @@ final class FavoritesFeature extends Feature<FavoritesState, FavoritesAction> {
         case FavoritesActionRemove():
           state.mutate(
             (s) => s.copyWith(
-              favorites: s.favorites.where((c) => c != action.remove).toSet(),
+              favorites: s.favorites.set(
+                (curr) => curr.where((c) => c != action.remove).toSet(),
+              ),
             ),
           );
           return Effect.none();
@@ -155,54 +172,4 @@ final class AppFeature extends Feature<AppState, AppAction> {
 
 `AppStatePath.counter`, `AppActionPath.counter`, `AppStatePath.favorites` and `AppActionPath.favorites` are generated by the `@KeyPathable` and `@CaseKeyPathable` annotations. More about that on `key_paths`.
 
-### Synchronizing feature state
-
-Since our features maintain completely separate states, we need a way to synchronize them when dealing with shared data. In this case, we must ensure that changes to the favorites in the Counter feature are reflected in the Favorites feature and vice versa.
-
-To achieve this, we use another reducer operator called onChange:
-
-> ⚠️ **Warning**
-> 
-> The library ships with an alterantive way of syncrhonizing state called `Shared`. More about it here.
-
-```dart
-final class AppFeature extends Feature<AppState, AppAction> {
-  @override
-  Reducer<AppState, AppAction> build() {
-    return Reduce.combine([
-      Scope(
-        state: AppStatePath.counter,
-        action: AppActionPath.counter,
-        reducer: CounterFeature(),
-      ),
-      Scope(
-        state: AppStatePath.favorites,
-        action: AppActionPath.favorites,
-        reducer: FavoritesFeature(),
-      ),
-    ])
-    .onChange(
-      of: (state) => state.counter.favorites,
-      update: (state, favorites) {
-        state.mutate(
-          (s) => s.copyWith(
-            favorites: s.favorites.copyWith(favorites: favorites),
-          ),
-        );
-      },
-    )
-    .onChange(
-      of: (state) => state.favorites.favorites,
-      update: (state, favorites) {
-        state.mutate(
-          (s) =>
-              s.copyWith(counter: s.counter.copyWith(favorites: favorites)),
-        );
-      },
-    );
-  }
-}
-```
-
-This is the final structure of our AppFeature.
 
