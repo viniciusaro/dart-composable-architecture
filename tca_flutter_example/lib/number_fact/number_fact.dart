@@ -45,10 +45,17 @@ final class NumberFactFeature
 
         case NumberFactActionNumberFactButtonTapped():
           state.mutate((s) => s.copyWith(isLoading: true));
-          return Effect.future(() async {
-            final response = await numberFactClient.factFor(state.value.count);
-            return NumberFactActionEnum.numberFactResponse(response);
-          });
+          return Effect.future(
+            () async {
+              final count = state.value.count;
+              final response = await numberFactClient.factFor(count);
+              return NumberFactActionEnum.numberFactResponse(response);
+            },
+            onError: (error, stackTrace) {
+              final response = "Failed to fetch fact: $error";
+              return NumberFactActionEnum.numberFactResponse(response);
+            },
+          );
 
         case NumberFactActionNumberFactResponse():
           state.mutate(
@@ -136,7 +143,18 @@ void main() {
         body: NumberFactWidget(
           store: Store(
             initialState: NumberFactState(),
-            reducer: NumberFactFeature().debug(),
+            reducer: NumberFactFeature().debug().catchErrors((
+              error,
+              stackTrace,
+              state,
+              action,
+            ) {
+              print("--------------------------------");
+              print("Error: $error");
+              print("Stack trace: $stackTrace");
+              print("State: $state");
+              print("Action: $action");
+            }),
           ),
         ),
       ),

@@ -143,3 +143,59 @@ extension OnChangeReducer<State, Action, LocalAction>
 extension DebugableReducer<State, Action> on Reducer<State, Action> {
   Debug<State, Action> debug() => Debug<State, Action>(this);
 }
+
+final class Catch<State, Action> with Reducer<State, Action> {
+  final Reducer<State, Action> reducer;
+  final void Function(
+    Object error,
+    StackTrace stackTrace,
+    State state,
+    Action action,
+  )? onError;
+
+  Catch(this.reducer, this.onError);
+
+  @override
+  Effect<Action> run(Inout<State> state, Action action) {
+    try {
+      final effect = reducer.run(state, action);
+
+      // Wrap effect execution to capture errors thrown while building the stream
+      // and errors emitted by the stream itself.
+      return Effect(() {
+        try {
+          final stream = effect.builder();
+          return stream.handleError(
+            (error, stackTrace) {
+              onError?.call(
+                error,
+                stackTrace ?? StackTrace.current,
+                state._value,
+                action,
+              );
+            },
+          );
+        } catch (error, stackTrace) {
+          onError?.call(error, stackTrace, state._value, action);
+          return Stream<Action>.empty();
+        }
+      });
+    } catch (error, stackTrace) {
+      onError?.call(error, stackTrace, state._value, action);
+      return Effect.none();
+    }
+  }
+}
+
+extension ErrorCatchingReducer<State, Action> on Reducer<State, Action> {
+  Reducer<State, Action> catchErrors(
+    void Function(
+      Object error,
+      StackTrace stackTrace,
+      State state,
+      Action action,
+    )? onError,
+  ) {
+    return Catch<State, Action>(this, onError);
+  }
+}

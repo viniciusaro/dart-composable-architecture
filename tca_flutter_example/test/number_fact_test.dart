@@ -46,4 +46,30 @@ void main() {
           NumberFactState(isLoading: false, numberFact: "0 is a good number"),
     );
   });
+
+  test('number fact button tapped with error', () async {
+    numberFactClient = NumberFactClient(
+      factFor: (n) async => throw Exception(),
+    );
+
+    final store = TestStore(
+      initialState: NumberFactState(),
+      reducer: NumberFactFeature().catchErrors(null),
+    );
+
+    store.send(
+      NumberFactActionEnum.numberFactButtonTapped(),
+      (_) => NumberFactState(isLoading: true), //
+    );
+
+    store.receive(
+      NumberFactActionEnum.numberFactResponse(
+        "Failed to fetch fact: Exception",
+      ),
+      (_) => NumberFactState(
+        isLoading: false,
+        numberFact: "Failed to fetch fact: Exception",
+      ),
+    );
+  });
 }
