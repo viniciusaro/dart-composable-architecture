@@ -28,14 +28,18 @@ extension ${clazz.name}Enum on ${clazz.name} {
 
     for (final type in clazz.typeParameters) {
       final prop = type.name.lowerCaseFirst();
-      final genericTypeName = extendsOf(type);
+      final extendsTypeName = extendsOf(type);
+      final hasDefaultConstructor = hasZeroArgumentsConstructor(type);
 
-      if (genericTypeName == "void") {
+      if (extendsTypeName == "void") {
         code += """
   static $rootType $prop() => $rootType${type.name}();""";
+      } else if (hasDefaultConstructor) {
+        code += """
+  static $rootType $prop([$extendsTypeName? p]) => $rootType${type.name}(p ?? $extendsTypeName());""";
       } else {
         code += """
-  static $rootType $prop($genericTypeName p) => $rootType${type.name}(p);""";
+  static $rootType $prop($extendsTypeName p) => $rootType${type.name}(p);""";
       }
     }
 
@@ -178,4 +182,22 @@ extension on String {
 
 String extendsOf(TypeParameterElement type) {
   return type.bound?.getDisplayString() ?? "void";
+}
+
+ClassElement? extendsOfClazz(TypeParameterElement type) {
+  final bond = type.bound;
+  if (bond?.element is ClassElement) {
+    return bond!.element as ClassElement;
+  }
+  return null;
+}
+
+bool hasZeroArgumentsConstructor(TypeParameterElement type) {
+  final clazz = extendsOfClazz(type);
+
+  final hasDefaultConstructor =
+      clazz?.constructors.where((c) => c.isDefaultConstructor).isNotEmpty ==
+          true;
+  final isAbstract = clazz?.isAbstract == true || clazz?.isSealed == true;
+  return hasDefaultConstructor && !isAbstract;
 }

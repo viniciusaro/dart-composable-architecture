@@ -18,10 +18,14 @@ final class Shared<T> {
 
   Shared(
     SharedSource<T> source,
-  ) : _source = isExpectedStateClosure ? ConstSource(source.get()) : source;
+  ) : _source = isExpectedStateClosure ? ConstSource<T>(source.get()) : source;
 
   factory Shared.constant(T initialValue) {
     return Shared(ConstSource(initialValue));
+  }
+
+  factory Shared.inMemory(T initialValue) {
+    return Shared(InMemorySource(initialValue));
   }
 
   T get value {
@@ -54,7 +58,12 @@ var _inMemoryStorage = <String, dynamic>{};
 final class InMemorySource<T> with SharedSource<T> {
   final T _initialValue;
 
-  const InMemorySource(this._initialValue);
+  InMemorySource(this._initialValue) {
+    final value = _inMemoryStorage[T.toString()];
+    if (value == null) {
+      _inMemoryStorage[T.toString()] = _initialValue;
+    }
+  }
 
   @override
   T get() {
@@ -68,6 +77,8 @@ final class InMemorySource<T> with SharedSource<T> {
   }
 }
 
+var _constOverrides = <String, dynamic>{};
+
 final class ConstSource<T> with SharedSource<T> {
   final T _value;
 
@@ -75,11 +86,25 @@ final class ConstSource<T> with SharedSource<T> {
 
   @override
   T get() {
-    return _value;
+    return _constOverrides[T.toString()] ?? _value;
   }
 
   @override
   void set(T newValue) {
     throw Exception("ConstSource cannot be set");
   }
+
+  static void _overrideValue<T>(T value) {
+    _constOverrides[T.toString()] = value;
+  }
+}
+
+B Function(B) overrideSharedValue<A, B>(A value, B Function(B) update) {
+  return (state) {
+    if (!isExpectedStateClosure) {
+      throw Exception("Cannot override test value outside testing scope");
+    }
+    ConstSource._overrideValue(value);
+    return update(state);
+  };
 }

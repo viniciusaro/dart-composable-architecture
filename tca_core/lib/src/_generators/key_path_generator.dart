@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
+import 'package:collection/collection.dart';
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -20,13 +21,29 @@ class KeyPathGenerator extends GeneratorForAnnotation<KeyPathable> {
     } catch (_) {
       fields = clazz.fields;
     }
+
+    final hasNonFinalSharedFields = fields.where((field) {
+      final isShared = field.type.getDisplayString().startsWith("Shared<");
+      return isShared && !field.isFinal;
+    });
+
+    if (hasNonFinalSharedFields.isNotEmpty) {
+      throw Exception("Shared fields must be final: $hasNonFinalSharedFields");
+    }
+
     final rootType = clazz.name;
+    final filteredFields = fields.where((field) {
+      final existsInConstructor = element.constructors.first.parameters
+          .map((p) => p.element)
+          .firstWhereOrNull((e) => e.displayName == field.displayName);
+      return existsInConstructor != null;
+    });
 
     String code = '''
 extension ${element.name}Path on ${element.name} {
 ''';
 
-    for (final field in fields) {
+    for (final field in filteredFields) {
       final propType = field.type.getDisplayString();
       final prop = field.name;
       var propAssignment = prop;
@@ -79,8 +96,16 @@ static final $prop = WritableKeyPath<$rootType, $propType>(
       final prop = field.name;
       code += '  $propType get $prop;\n';
     }
+
+    final filteredFields = fields.where((field) {
+      final existsInConstructor = element.constructors.first.parameters
+          .map((p) => p.element)
+          .firstWhereOrNull((e) => e.displayName == field.displayName);
+      return existsInConstructor != null;
+    });
+
     // copyWith
-    if (fields.isNotEmpty) {
+    if (filteredFields.isNotEmpty) {
       final params = fields
           .map((f) =>
               '${f.type.getDisplayStringWithoutFinalNullability()}? ${f.name}')

@@ -40,3 +40,12 @@ Chore: more documentation comments
 
 Feat: Integrate copyWith, hashCode, toString and == operator into KeyPathable generator. This leads to simpler setup while also allowing using freezed, if that's a user requirement.
 Breaking: Removes freezed_annotation dependency and export directive.
+
+## 0.2.1
+
+- Feat: Add `Catch` reducer with `catchErrors` helper method. 
+- Feat: Add `onError` param to `Effect.stream` and `Effect.future`, allowing actions to be sent on errors.
+- Chore: Update `number_fact.dart` example and `number_fact_test.dart` with error handling.
+- Chore: Add `form.dart` example with more complete uses of `Shared` type.
+- Chore: Better `CaseKeyPathable()` ergonomics: if enum param has a default constructor, param becomes optional.
+- Chore: Better `KeyPathable()` ergonomics: do not create copy with params for fields not present in constructor (ex: assigned final fields and get only fields). This also implies that key paths are not created for those fields. Non writable keypaths can be used on those cases in the future, if needed.

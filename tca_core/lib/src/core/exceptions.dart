@@ -30,18 +30,38 @@ final class MutationOfSameInstance implements Exception {
   }
 }
 
+final class ExpectedIsSameInstance implements Exception {
+  @override
+  String toString() {
+    return "ExpectedIsSameInstance: Same instance is not allowed to be returned on TestStore.send";
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ExpectedIsSameInstance;
+  }
+}
+
 final class UnexpectedChanges implements Exception {
+  final dynamic action;
   final dynamic expected;
   final dynamic updated;
 
-  UnexpectedChanges({required this.expected, required this.updated});
+  UnexpectedChanges(
+      {required this.action, required this.expected, required this.updated});
 
   @override
   String toString() {
+    final actionString = action;
     final expectedString = expected;
     final updatedString = updated;
 
     return """UnexpectedChanges: Detected unexpected changes. 
+Action:
+  $actionString,
 Expected:
   $expectedString,
 Got: 
