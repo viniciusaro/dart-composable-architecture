@@ -185,6 +185,7 @@ store.send(
   NumberFactActionEnum.incrementButtonTapped(),
   (_) => NumberFactState(count: 1), //
 );
+
 store.send(
   NumberFactActionEnum.decrementButtonTapped(),
   (_) => NumberFactState(count: 0), //

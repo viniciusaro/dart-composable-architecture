@@ -329,6 +329,12 @@ final class TestStore<State, Action> {
       () => expectedStateUpdate(_state.value),
       zoneValues: {#expectedStateClosure: true},
     );
+    final expectIsSameInstance = identical(expected, _state.value);
+
+    if (expectIsSameInstance) {
+      throw ExpectedIsSameInstance();
+    }
+
     final effect = _reducer.run(_state, action);
     final updated = _state.value;
     _state._isMutationAllowed = false;
@@ -338,7 +344,11 @@ final class TestStore<State, Action> {
     }
 
     if (!DeepCollectionEquality().equals(expected, updated)) {
-      throw UnexpectedChanges(expected: expected, updated: updated);
+      throw UnexpectedChanges(
+        action: action,
+        expected: expected,
+        updated: updated,
+      );
     }
 
     final stream = effect.builder();
