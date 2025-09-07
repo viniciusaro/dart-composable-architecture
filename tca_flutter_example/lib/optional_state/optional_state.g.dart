@@ -43,8 +43,10 @@ mixin _$AppState {
 // **************************************************************************
 
 extension AppDestinationEnum on AppDestination {
-  static AppDestination login(LoginState p) => AppDestinationLogin(p);
-  static AppDestination home(HomeState p) => AppDestinationHome(p);
+  static AppDestination login([LoginState? p]) =>
+      AppDestinationLogin(p ?? LoginState());
+  static AppDestination home([HomeState? p]) =>
+      AppDestinationHome(p ?? HomeState());
 }
 
 final class AppDestinationLogin<A extends LoginState, B extends HomeState>
