@@ -32,14 +32,66 @@ final class Effect<Action> {
   /// Creates an effect fom a Dart [Stream]. The stream will be subscribed
   /// by a [Store] and every action emited will be forward back into
   /// the system.
-  static Effect<Action> stream<Action>(Stream<Action> Function() builder) {
-    return Effect(builder);
+  ///
+  /// When [onError] is provided, any error emitted by the underlying
+  /// stream will be converted into an [Action] (which is emitted first)
+  /// and then the same error will be rethrown back into the stream's
+  /// error stack.
+  static Effect<Action> stream<Action>(
+    Stream<Action> Function() builder, {
+    Action Function(Object error, StackTrace stackTrace)? onError,
+  }) {
+    if (onError == null) {
+      return Effect(builder);
+    }
+
+    return Effect(() {
+      final source = builder();
+      final controller = StreamController<Action>();
+
+      StreamSubscription<Action>? subscription;
+      subscription = source.listen(
+        (value) {
+          if (!controller.isClosed) {
+            controller.add(value);
+          } else {
+            subscription?.cancel();
+          }
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!controller.isClosed) {
+            final action = onError(error, stackTrace);
+            controller.add(action);
+            // Re-emit the error so it bubbles up to the zone if unhandled
+            controller.addError(error, stackTrace);
+          } else {
+            subscription?.cancel();
+          }
+        },
+        onDone: () {
+          if (!controller.isClosed) {
+            controller.close();
+          }
+        },
+        cancelOnError: false,
+      );
+
+      controller.onCancel = () => subscription?.cancel();
+
+      return controller.stream;
+    });
   }
 
   /// Creates an effect fom a Dart [Future]. As soon as the Future returns
   /// a value, it will be forward back into the [Store].
-  static Effect<Action> future<Action>(Future<Action> Function() builder) {
-    return Effect(() => builder().asStream());
+  static Effect<Action> future<Action>(
+    Future<Action> Function() builder, {
+    Action Function(Object error, StackTrace stackTrace)? onError,
+  }) {
+    return Effect.stream(
+      () => builder().asStream(),
+      onError: onError,
+    );
   }
 
   /// Cancels the [Effect] tagged with [id].

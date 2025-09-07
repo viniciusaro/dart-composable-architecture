@@ -58,4 +58,107 @@ void main() {
     store.send(unit);
     expect(store.state, 11);
   });
+
+  test('catchErrors captures synchronous reducer errors', () {
+    Object? capturedError;
+    StackTrace? capturedStack;
+    int capturedState = -1;
+    Object? capturedAction;
+
+    Effect<Unit> throwingReducer(Inout<int> state, Unit action) {
+      throw StateError('sync error');
+    }
+
+    final store = Store(
+      initialState: 0,
+      reducer: Reduce(throwingReducer).catchErrors(
+        (error, stack, state, action) {
+          capturedError = error;
+          capturedStack = stack;
+          capturedState = state;
+          capturedAction = action;
+        },
+      ),
+    );
+
+    // Should not throw out of send; error is captured
+    store.send(unit);
+
+    expect(capturedError is StateError, true);
+    expect(capturedStack != null, true);
+    expect(capturedState, 0);
+    expect(capturedAction, unit);
+    expect(store.state, 0);
+  });
+
+  test('catchErrors captures errors thrown when building the effect stream',
+      () async {
+    Object? capturedError;
+    StackTrace? capturedStack;
+    int capturedState = -1;
+    Object? capturedAction;
+
+    Effect<Unit> reducer(Inout<int> state, Unit action) {
+      return Effect(() {
+        throw StateError('builder error');
+      });
+    }
+
+    final store = Store(
+      initialState: 0,
+      reducer: Reduce(reducer).catchErrors(
+        (error, stack, state, action) {
+          capturedError = error;
+          capturedStack = stack;
+          capturedState = state;
+          capturedAction = action;
+        },
+      ),
+    );
+
+    store.send(unit);
+
+    // Give microtask queue a chance in case anything was scheduled
+    await Future<void>.delayed(Duration(milliseconds: 10));
+
+    expect(capturedError is StateError, true);
+    expect(capturedStack != null, true);
+    expect(capturedState, 0);
+    expect(capturedAction, unit);
+    expect(store.state, 0);
+  });
+
+  test('catchErrors captures errors emitted by the effect stream', () async {
+    Object? capturedError;
+    StackTrace? capturedStack;
+    int capturedState = -1;
+    Object? capturedAction;
+
+    Effect<Unit> reducer(Inout<int> state, Unit action) {
+      return Effect(() => Stream<Unit>.error(StateError('stream error')));
+    }
+
+    final store = Store(
+      initialState: 0,
+      reducer: Reduce(reducer).catchErrors(
+        (error, stack, state, action) {
+          capturedError = error;
+          capturedStack = stack;
+          capturedState = state;
+          capturedAction = action;
+        },
+      ),
+    );
+
+    store.send(unit);
+
+    // Allow the stream to emit the error
+    await Future<void>.delayed(Duration(milliseconds: 10));
+
+    expect(capturedError is StateError, true);
+    expect(capturedStack != null, true);
+    expect(capturedState, 0);
+    expect(capturedAction, unit);
+    expect(store.state, 0);
+  });
 }
