@@ -18,11 +18,10 @@ final class FormState with _$FormState, Presentable {
 
   @override
   final Presents<FormStep> step;
-  FormState({
-    Presents<FormStep>? step,
-    FormData? data, //
-  }) : data = data ?? FormData(),
-       step = step ?? Presents(FormStepEnum.personalInformation());
+
+  FormState({Presents<FormStep>? step, FormData? data})
+    : data = data ?? FormData(),
+      step = step ?? Presents(FormStepEnum.personalInformation());
 }
 
 @CaseKeyPathable()
