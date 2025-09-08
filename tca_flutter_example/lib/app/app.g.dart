@@ -43,7 +43,8 @@ mixin _$AppState {
 // **************************************************************************
 
 extension AppDestinationEnum on AppDestination {
-  static AppDestination home(HomeState p) => AppDestinationHome(p);
+  static AppDestination home([HomeState? p]) =>
+      AppDestinationHome(p ?? HomeState());
   static AppDestination login([LoginState? p]) =>
       AppDestinationLogin(p ?? LoginState());
 }

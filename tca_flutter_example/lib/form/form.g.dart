@@ -62,7 +62,15 @@ mixin _$FormState {
   }
 }
 
-extension FormDataPath on FormData {}
+extension FormDataPath on FormData {
+  static final personalInformation =
+      KeyPath<FormData, Shared<PersonalInformationData>>(
+        get: (obj) => obj.personalInformation,
+      );
+  static final paymentMethodData = KeyPath<FormData, Shared<PaymentMethodData>>(
+    get: (obj) => obj.paymentMethodData,
+  );
+}
 
 mixin _$FormData {
   Shared<PersonalInformationData> get personalInformation;

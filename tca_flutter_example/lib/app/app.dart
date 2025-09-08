@@ -1,4 +1,7 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tca_flutter_example/app/clients.dart';
 
 import 'files.dart';
 import 'home.dart';
@@ -13,10 +16,13 @@ sealed class AppDestination<
 > {}
 
 @KeyPathable()
-final class AppState with _$AppState {
+final class AppState with _$AppState, Presentable {
   @override
   final Presents<AppDestination> destination;
-  AppState({required this.destination});
+
+  AppState({
+    Presents<AppDestination>? destination, //
+  }) : destination = destination ?? Presents(AppDestinationEnum.home());
 }
 
 @CaseKeyPathable()
@@ -41,4 +47,49 @@ final class AppFeature extends Feature<AppState, AppAction> {
       ),
     ]);
   }
+}
+
+final class AppWidget extends StatelessWidget {
+  final Store<AppState, AppAction> store;
+
+  const AppWidget({super.key, required this.store});
+
+  @override
+  Widget build(Object context) {
+    return WithViewStore(
+      store,
+      body: (viewStore) {
+        switch (viewStore.state.destination.value) {
+          case AppDestinationHome():
+            final store = viewStore.view(
+              state: AppStatePath.destination.path(AppDestinationPath.home),
+              action: AppActionPath.home,
+            );
+            return HomeWidget(store: store!);
+          case AppDestinationLogin():
+            final store = viewStore.view(
+              state: AppStatePath.destination.path(AppDestinationPath.login),
+              action: AppActionPath.login,
+            );
+            return LoginWidget(store: store!);
+        }
+      },
+    );
+  }
+}
+
+void main() async {
+  final prefs = await SharedPreferences.getInstance();
+  sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
+
+  runApp(
+    MaterialApp(
+      home: AppWidget(
+        store: Store(
+          initialState: AppState(),
+          reducer: AppFeature(), //
+        ),
+      ),
+    ),
+  );
 }

@@ -12,7 +12,8 @@ final class DeviceIdClient {
 DeviceIdClient liveDeviceIdClient = DeviceIdClient(
   getDeviceId: () async {
     final prefs = await SharedPreferences.getInstance();
-    final deviceId = prefs.getString("deviceId") ?? Random.secure().nextInt(1000).toString();
+    final deviceId =
+        prefs.getString("deviceId") ?? Random.secure().nextInt(1000).toString();
     await prefs.setString("deviceId", deviceId);
     return deviceId;
   },

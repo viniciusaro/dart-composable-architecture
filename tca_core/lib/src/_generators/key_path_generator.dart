@@ -32,18 +32,22 @@ class KeyPathGenerator extends GeneratorForAnnotation<KeyPathable> {
     }
 
     final rootType = clazz.name;
-    final filteredFields = fields.where((field) {
+    final writableFields = fields.where((field) {
       final existsInConstructor = element.constructors.first.parameters
           .map((p) => p.element)
           .firstWhereOrNull((e) => e.displayName == field.displayName);
       return existsInConstructor != null;
     });
 
+    final readOnlyFields = fields.where((field) {
+      return !writableFields.contains(field);
+    });
+
     String code = '''
 extension ${element.name}Path on ${element.name} {
 ''';
 
-    for (final field in filteredFields) {
+    for (final field in writableFields) {
       final propType = field.type.getDisplayString();
       final prop = field.name;
       var propAssignment = prop;
@@ -59,6 +63,15 @@ extension ${element.name}Path on ${element.name} {
 static final $prop = WritableKeyPath<$rootType, $propType>(
     get: (obj) => obj.$prop,
     set: (obj, $prop) => obj!.copyWith($prop: $propAssignment),
+  );""";
+    }
+
+    for (final field in readOnlyFields) {
+      final propType = field.type.getDisplayString();
+      final prop = field.name;
+      code += """
+static final $prop = KeyPath<$rootType, $propType>(
+    get: (obj) => obj.$prop,
   );""";
     }
 

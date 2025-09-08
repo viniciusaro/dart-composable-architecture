@@ -6,7 +6,12 @@ part of 'payment_method.dart';
 // KeyPathGenerator
 // **************************************************************************
 
-extension PaymentMethodStepStatePath on PaymentMethodStepState {}
+extension PaymentMethodStepStatePath on PaymentMethodStepState {
+  static final data =
+      KeyPath<PaymentMethodStepState, Shared<PaymentMethodData>>(
+        get: (obj) => obj.data,
+      );
+}
 
 mixin _$PaymentMethodStepState {
   Shared<PaymentMethodData> get data;

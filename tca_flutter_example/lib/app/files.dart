@@ -1,4 +1,5 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
+import 'package:flutter/material.dart';
 
 import 'models.dart';
 
@@ -23,5 +24,21 @@ final class FilesFeature extends Feature<FilesState, FilesAction> {
         //
       }
     });
+  }
+}
+
+final class FilesWidget extends StatelessWidget {
+  final Store<FilesState, FilesAction> store;
+
+  const FilesWidget({super.key, required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    return WithViewStore(
+      store,
+      body: (store) {
+        return Placeholder();
+      },
+    );
   }
 }

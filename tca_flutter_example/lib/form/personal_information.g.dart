@@ -6,7 +6,12 @@ part of 'personal_information.dart';
 // KeyPathGenerator
 // **************************************************************************
 
-extension PersonalInformationStepStatePath on PersonalInformationStepState {}
+extension PersonalInformationStepStatePath on PersonalInformationStepState {
+  static final data =
+      KeyPath<PersonalInformationStepState, Shared<PersonalInformationData>>(
+        get: (obj) => obj.data,
+      );
+}
 
 mixin _$PersonalInformationStepState {
   Shared<PersonalInformationData> get data;
