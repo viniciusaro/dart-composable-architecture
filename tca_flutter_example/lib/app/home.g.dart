@@ -38,10 +38,11 @@ mixin _$HomeState {
 // **************************************************************************
 
 extension HomeActionEnum on HomeAction {
-  static HomeAction files(FilesAction p) => HomeActionFiles(p);
+  static HomeAction files(FilesAction<dynamic> p) => HomeActionFiles(p);
 }
 
-final class HomeActionFiles<A extends FilesAction> extends HomeAction<A> {
+final class HomeActionFiles<A extends FilesAction<dynamic>>
+    extends HomeAction<A> {
   final A files;
   HomeActionFiles(this.files) : super();
 
@@ -59,7 +60,7 @@ final class HomeActionFiles<A extends FilesAction> extends HomeAction<A> {
 }
 
 extension HomeActionPath on HomeAction {
-  static final files = WritableKeyPath<HomeAction, FilesAction?>(
+  static final files = WritableKeyPath<HomeAction, FilesAction<dynamic>?>(
     get: (action) {
       if (action is HomeActionFiles) {
         return action.files;

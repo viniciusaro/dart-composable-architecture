@@ -7,7 +7,7 @@ final class FileDecoder with Decoder<File> {
     return File(
       id: args['id'],
       name: args['name'],
-      createdAt: DateTime.now(),
+      createdAt: args['createdAt'],
       path: args['path'],
     );
   }
@@ -45,8 +45,8 @@ final class SharedFileDecoder with Decoder<SharedFile> {
     return SharedFile(
       file: FileDecoder().call(args['file']),
       participants:
-          (args['participants'] as List<Map<String, dynamic>>)
-              .map(MemberDecoder().call)
+          (args['participants'] as List)
+              .map((p) => MemberDecoder().call(p))
               .toList(),
     );
   }
@@ -57,7 +57,26 @@ final class SharedFileEncoder with Encoder<SharedFile> {
   Map<String, dynamic> call(SharedFile value) {
     return {
       'file': FileEncoder().call(value.file),
-      'participants': value.participants.map(MemberEncoder().call),
+      'participants': value.participants.map(MemberEncoder().call).toList(),
     };
+  }
+}
+
+final class SharedFilesDecoder with Decoder<SharedFiles> {
+  @override
+  SharedFiles call(Map<String, dynamic> args) {
+    return SharedFiles(
+      items:
+          (args['items'] as List)
+              .map((i) => SharedFileDecoder().call(i))
+              .toList(),
+    );
+  }
+}
+
+final class SharedFilesEncoder with Encoder<SharedFiles> {
+  @override
+  Map<String, dynamic> call(SharedFiles value) {
+    return {'items': value.items.map(SharedFileEncoder().call).toList()};
   }
 }

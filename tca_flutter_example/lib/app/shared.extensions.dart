@@ -1,43 +1,105 @@
 import 'package:composable_architecture/composable_architecture.dart';
 import 'package:tca_flutter_example/app/clients.dart';
-import 'package:tca_flutter_example/app/models.decoder.dart';
+import 'package:tca_flutter_example/app/models.coding.dart';
+
+extension SharedX<T> on Shared<T> {
+  static Shared<T> userPrefs<T>(T initialValue) {
+    return Shared(UserPreferences(initialValue));
+  }
+}
 
 final class UserPreferences<T> with SharedSource<T> {
+  final T initialValue;
+
+  UserPreferences(this.initialValue);
+
   @override
   T get() {
-    return sharedPreferencesClient.get(T.toString(), getDecoder());
+    final value = sharedPreferencesClient.get(T.toString(), getDecoder<T>());
+    return value ?? initialValue;
   }
 
   @override
   void set(T newValue) {
-    sharedPreferencesClient.set(T.toString(), newValue, getEncoder());
+    sharedPreferencesClient.set(T.toString(), newValue, getEncoder<T>());
   }
 }
 
-Decoder<T> getDecoder<T>() {
-  final typeName = T.toString();
+Decoder getDecoder<T>() {
+  final tokens = Tokens(T.toString());
+
   dynamic decoder;
-  switch (typeName) {
+  switch (tokens.typeName) {
     case "File":
       decoder = FileDecoder();
     case "Member":
       decoder = MemberDecoder();
     case "SharedFile":
       decoder = SharedFileDecoder();
+    case "SharedFiles":
+      decoder = SharedFilesDecoder();
   }
-  return decoder;
+
+  return tokens.isList ? ListDecoder(decoder) : decoder;
 }
 
-Encoder<T> getEncoder<T>() {
-  final typeName = T.toString();
+Encoder getEncoder<T>() {
+  final tokens = Tokens(T.toString());
+
   dynamic encoder;
-  switch (typeName) {
+  switch (tokens.typeName) {
     case "File":
       encoder = FileEncoder();
     case "Member":
       encoder = MemberEncoder();
     case "SharedFile":
       encoder = SharedFileEncoder();
+    case "SharedFiles":
+      encoder = SharedFilesEncoder();
   }
-  return encoder;
+
+  return tokens.isList ? ListEncoder(encoder) : encoder;
+}
+
+final class ListDecoder<T> with Decoder<List<T>> {
+  final Decoder single;
+
+  ListDecoder(this.single);
+
+  @override
+  List<T> call(Map<String, dynamic> args) {
+    final list = args["items"];
+    if (list is! List) {
+      return [];
+    }
+
+    final result = (args["items"] as List).map((i) => single.call(i) as T);
+    return result.toList();
+  }
+}
+
+final class ListEncoder<T> with Encoder<List<T>> {
+  final Encoder<T> single;
+
+  ListEncoder(this.single);
+
+  @override
+  Map<String, dynamic> call(List<T> value) {
+    final result = {'items': value.map(single.call).toList()};
+    return result;
+  }
+}
+
+final class Tokens {
+  final String _raw;
+
+  Tokens(this._raw);
+
+  String get typeName {
+    return _raw.contains("<") ? _raw.split("<")[1].replaceAll(">", "") : _raw;
+  }
+
+  bool get isList {
+    return _raw.startsWith("List<");
+  }
 }

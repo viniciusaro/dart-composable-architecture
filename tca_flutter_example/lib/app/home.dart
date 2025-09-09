@@ -10,7 +10,7 @@ final class HomeState with _$HomeState {
   @override
   final FilesState files;
 
-  HomeState({FilesState? files}) : files = files ?? FilesState(files: []);
+  HomeState({FilesState? files}) : files = files ?? FilesState();
 }
 
 @CaseKeyPathable()
@@ -40,8 +40,31 @@ final class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return WithViewStore(
       store,
-      body: (store) {
-        return Placeholder();
+      body: (viewStore) {
+        final filesStore = viewStore.view(
+          state: HomeStatePath.files,
+          action: HomeActionPath.files,
+        );
+
+        return DefaultTabController(
+          length: 1,
+          child: Scaffold(
+            body: TabBarView(
+              children: [
+                FilesWidget(store: filesStore), //
+              ],
+            ),
+            bottomNavigationBar: const Material(
+              child: SafeArea(
+                child: TabBar(
+                  tabs: [
+                    Tab(icon: Icon(Icons.home), text: "Arquivos"), //
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
   }

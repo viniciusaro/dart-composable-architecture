@@ -35,12 +35,12 @@ final class AppFeature extends Feature<AppState, AppAction> {
   @override
   Reducer<AppState, AppAction> build() {
     return Reduce.combine([
-      Scope(
+      IfLet(
         state: AppStatePath.destination.path(AppDestinationPath.home),
         action: AppActionPath.home,
         reducer: HomeFeature(),
       ),
-      Scope(
+      IfLet(
         state: AppStatePath.destination.path(AppDestinationPath.login),
         action: AppActionPath.login,
         reducer: LoginFeature(),
@@ -79,6 +79,7 @@ final class AppWidget extends StatelessWidget {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
 

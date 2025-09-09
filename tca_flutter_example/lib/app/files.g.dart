@@ -7,17 +7,13 @@ part of 'files.dart';
 // **************************************************************************
 
 extension FilesStatePath on FilesState {
-  static final files = WritableKeyPath<FilesState, List<SharedFile>>(
+  static final files = KeyPath<FilesState, Shared<SharedFiles>>(
     get: (obj) => obj.files,
-    set: (obj, files) => obj!.copyWith(files: files),
   );
 }
 
 mixin _$FilesState {
-  List<SharedFile> get files;
-  FilesState copyWith({List<SharedFile>? files}) {
-    return FilesState(files: files ?? this.files);
-  }
+  Shared<SharedFiles> get files;
 
   @override
   bool operator ==(Object other) =>
@@ -37,6 +33,40 @@ mixin _$FilesState {
 // CaseKeyPathGenerator
 // **************************************************************************
 
-extension FilesActionEnum on FilesAction {}
+extension FilesActionEnum on FilesAction {
+  static FilesAction onAddFileButtonTapped() =>
+      FilesActionOnAddFileButtonTapped();
+}
 
-extension FilesActionPath on FilesAction {}
+final class FilesActionOnAddFileButtonTapped<A> extends FilesAction<A> {
+  FilesActionOnAddFileButtonTapped() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is FilesActionOnAddFileButtonTapped;
+
+  @override
+  String toString() {
+    return "FilesActionOnAddFileButtonTapped()";
+  }
+}
+
+extension FilesActionPath on FilesAction {
+  static final onAddFileButtonTapped =
+      WritableKeyPath<FilesAction, FilesActionOnAddFileButtonTapped?>(
+        get: (action) {
+          if (action is FilesActionOnAddFileButtonTapped) {
+            return action;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = FilesActionEnum.onAddFileButtonTapped();
+          }
+          return rootAction!;
+        },
+      );
+}

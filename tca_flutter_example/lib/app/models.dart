@@ -11,7 +11,7 @@ final class File with _$File {
   final String name;
 
   @override
-  final DateTime createdAt;
+  final String createdAt;
 
   @override
   final String path;
@@ -41,4 +41,12 @@ final class SharedFile with _$SharedFile {
   final List<Member> participants;
 
   SharedFile({required this.file, required this.participants});
+}
+
+@KeyPathable()
+final class SharedFiles with _$SharedFiles {
+  @override
+  final List<SharedFile> items;
+
+  SharedFiles({required this.items});
 }

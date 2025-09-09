@@ -117,12 +117,12 @@ extension AppDestinationPath on AppDestination {
 }
 
 extension AppActionEnum on AppAction {
-  static AppAction home(HomeAction<FilesAction> p) => AppActionHome(p);
+  static AppAction home(HomeAction<FilesAction<dynamic>> p) => AppActionHome(p);
   static AppAction login(LoginAction p) => AppActionLogin(p);
 }
 
 final class AppActionHome<
-  A extends HomeAction<FilesAction>,
+  A extends HomeAction<FilesAction<dynamic>>,
   B extends LoginAction
 >
     extends AppAction<A, B> {
@@ -143,7 +143,7 @@ final class AppActionHome<
 }
 
 final class AppActionLogin<
-  A extends HomeAction<FilesAction>,
+  A extends HomeAction<FilesAction<dynamic>>,
   B extends LoginAction
 >
     extends AppAction<A, B> {
@@ -164,20 +164,21 @@ final class AppActionLogin<
 }
 
 extension AppActionPath on AppAction {
-  static final home = WritableKeyPath<AppAction, HomeAction<FilesAction>?>(
-    get: (action) {
-      if (action is AppActionHome) {
-        return action.home;
-      }
-      return null;
-    },
-    set: (rootAction, propAction) {
-      if (propAction != null) {
-        rootAction = AppActionEnum.home(propAction);
-      }
-      return rootAction!;
-    },
-  );
+  static final home =
+      WritableKeyPath<AppAction, HomeAction<FilesAction<dynamic>>?>(
+        get: (action) {
+          if (action is AppActionHome) {
+            return action.home;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = AppActionEnum.home(propAction);
+          }
+          return rootAction!;
+        },
+      );
   static final login = WritableKeyPath<AppAction, LoginAction?>(
     get: (action) {
       if (action is AppActionLogin) {

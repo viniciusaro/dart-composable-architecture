@@ -38,7 +38,7 @@ final class LiveSharedPreferencesClient with SharedPreferencesClient {
   @override
   T? get<T>(String key, Decoder<T> decoder) {
     final raw = _prefs.getString(key);
-    if (raw == null) {
+    if (raw == null || raw.isEmpty) {
       return null;
     }
     final decoded = Map<String, dynamic>.from(json.decode(raw));

@@ -1,5 +1,6 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tca_flutter_example/app/shared.extensions.dart';
 
 import 'models.dart';
 
@@ -8,20 +9,37 @@ part 'files.g.dart';
 @KeyPathable()
 final class FilesState with _$FilesState {
   @override
-  final List<SharedFile> files;
-
-  FilesState({required this.files});
+  final files = SharedX.userPrefs(SharedFiles(items: []));
 }
 
 @CaseKeyPathable()
-sealed class FilesAction {}
+sealed class FilesAction<
+  OnAddFileButtonTapped //
+> {}
 
 final class FilesFeature extends Feature<FilesState, FilesAction> {
   @override
   Reducer<FilesState, FilesAction> build() {
     return Reduce((state, action) {
       switch (action) {
-        //
+        case FilesActionOnAddFileButtonTapped():
+          state.value.files.set(
+            (f) => SharedFiles(
+              items: [
+                ...f.items,
+                SharedFile(
+                  file: File(
+                    id: "${f.items.length + 1}",
+                    name: "Arquivo ${f.items.length + 1}",
+                    createdAt: DateTime.now().toString(),
+                    path: "caminho/para/arquivo/${f.items.length + 1}/",
+                  ),
+                  participants: [],
+                ),
+              ],
+            ),
+          );
+          return Effect.none();
       }
     });
   }
@@ -36,8 +54,33 @@ final class FilesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return WithViewStore(
       store,
-      body: (store) {
-        return Placeholder();
+      body: (viewStore) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Arquivos"),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  viewStore.send(FilesActionEnum.onAddFileButtonTapped());
+                },
+                icon: Icon(Icons.add),
+              ),
+            ],
+          ),
+          body: ListView(
+            children:
+                viewStore.state.files.value.items.map((f) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Nome: ${f.file.name}"),
+                      Text("Id: ${f.file.id}"),
+                      SizedBox(height: 16),
+                    ], //
+                  );
+                }).toList(),
+          ),
+        );
       },
     );
   }

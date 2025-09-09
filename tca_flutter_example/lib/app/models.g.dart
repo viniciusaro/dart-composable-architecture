@@ -15,7 +15,7 @@ extension FilePath on File {
     get: (obj) => obj.name,
     set: (obj, name) => obj!.copyWith(name: name),
   );
-  static final createdAt = WritableKeyPath<File, DateTime>(
+  static final createdAt = WritableKeyPath<File, String>(
     get: (obj) => obj.createdAt,
     set: (obj, createdAt) => obj!.copyWith(createdAt: createdAt),
   );
@@ -28,9 +28,9 @@ extension FilePath on File {
 mixin _$File {
   String get id;
   String get name;
-  DateTime get createdAt;
+  String get createdAt;
   String get path;
-  File copyWith({String? id, String? name, DateTime? createdAt, String? path}) {
+  File copyWith({String? id, String? name, String? createdAt, String? path}) {
     return File(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -119,5 +119,32 @@ mixin _$SharedFile {
   @override
   String toString() {
     return "SharedFile(file: $file, participants: $participants)";
+  }
+}
+
+extension SharedFilesPath on SharedFiles {
+  static final items = WritableKeyPath<SharedFiles, List<SharedFile>>(
+    get: (obj) => obj.items,
+    set: (obj, items) => obj!.copyWith(items: items),
+  );
+}
+
+mixin _$SharedFiles {
+  List<SharedFile> get items;
+  SharedFiles copyWith({List<SharedFile>? items}) {
+    return SharedFiles(items: items ?? this.items);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SharedFiles &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(items, other.items);
+  @override
+  int get hashCode => Object.hash(runtimeType, items);
+  @override
+  String toString() {
+    return "SharedFiles(items: $items)";
   }
 }
