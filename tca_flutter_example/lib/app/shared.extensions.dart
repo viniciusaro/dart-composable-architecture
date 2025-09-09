@@ -37,7 +37,7 @@ Decoder getDecoder<T>() {
     case "SharedFile":
       decoder = SharedFileDecoder();
     case "List<SharedFile>":
-      decoder = FoundationListDecoder(SharedFileDecoder());
+      decoder = ListDecoder(SharedFileDecoder());
   }
 
   return decoder;
@@ -55,7 +55,7 @@ Encoder getEncoder<T>() {
     case "SharedFile":
       encoder = SharedFileEncoder();
     case "List<SharedFile>":
-      encoder = FoundationListEncoder(SharedFileEncoder());
+      encoder = ListEncoder(SharedFileEncoder());
   }
 
   return encoder;
@@ -76,5 +76,31 @@ final class Tokens {
 
   bool get isList {
     return _raw.startsWith("List<");
+  }
+}
+
+final class ListEncoder<E> with Encoder<List<E>> {
+  final Encoder<E> single;
+
+  ListEncoder(this.single);
+
+  @override
+  Map<String, dynamic> call(List<E> value) {
+    return {'items': value.map(single.call).toList()};
+  }
+}
+
+final class ListDecoder<E> with Decoder<List<E>> {
+  final Decoder<E> single;
+
+  ListDecoder(this.single);
+
+  @override
+  List<E> call(Map<String, dynamic> args) {
+    final list = args['items'];
+    if (list is! List) {
+      return [];
+    }
+    return (args['items'] as List).map((i) => single.call(i)).toList();
   }
 }
