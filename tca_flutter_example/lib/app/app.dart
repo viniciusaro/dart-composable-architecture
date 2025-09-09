@@ -2,6 +2,7 @@ import 'package:composable_architecture_flutter/composable_architecture_flutter.
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tca_flutter_example/app/clients.dart';
+import 'package:tca_flutter_example/app/models.fixtures.dart';
 
 import 'files.dart';
 import 'home.dart';
@@ -82,6 +83,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
+  // sharedPreferencesClient = InMemoryPreferencesClient();
+  // sharedPreferencesClient = FixedPreferencesClient(
+  //   sharedFiles: [sharedFile0, sharedFile1],
+  // );
 
   runApp(
     MaterialApp(

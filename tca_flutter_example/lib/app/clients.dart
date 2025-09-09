@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tca_flutter_example/app/models.dart';
 
 SharedPreferencesClient sharedPreferencesClient =
     UnimplementedSharedPreferencesClient();
@@ -50,6 +51,46 @@ final class LiveSharedPreferencesClient with SharedPreferencesClient {
     final raw = encoder(value);
     final encoded = json.encode(raw);
     _prefs.setString(key, encoded);
+    return value;
+  }
+}
+
+final class FixedPreferencesClient with SharedPreferencesClient {
+  final List<SharedFile> sharedFiles;
+
+  FixedPreferencesClient({required this.sharedFiles});
+
+  @override
+  T? get<T>(String key, Decoder<T> decoder) {
+    final type = T.toString();
+    switch (type) {
+      case "List<SharedFile>":
+        return sharedFiles as T;
+    }
+    return null;
+  }
+
+  @override
+  T set<T>(String key, T value, Encoder<T> encoder) {
+    return value;
+  }
+}
+
+final class InMemoryPreferencesClient with SharedPreferencesClient {
+  final Map<String, dynamic> _storage = {};
+
+  @override
+  T? get<T>(String key, Decoder<T> decoder) {
+    final value = _storage[key];
+    if (value is T) {
+      return value;
+    }
+    return null;
+  }
+
+  @override
+  T set<T>(String key, T value, Encoder<T> encoder) {
+    _storage[key] = value;
     return value;
   }
 }
