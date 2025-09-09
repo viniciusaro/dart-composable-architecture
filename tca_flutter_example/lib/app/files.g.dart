@@ -7,13 +7,13 @@ part of 'files.dart';
 // **************************************************************************
 
 extension FilesStatePath on FilesState {
-  static final files = KeyPath<FilesState, Shared<SharedFiles>>(
+  static final files = KeyPath<FilesState, Shared<List<SharedFile>>>(
     get: (obj) => obj.files,
   );
 }
 
 mixin _$FilesState {
-  Shared<SharedFiles> get files;
+  Shared<List<SharedFile>> get files;
 
   @override
   bool operator ==(Object other) =>

@@ -29,15 +29,15 @@ Decoder getDecoder<T>() {
   final tokens = Tokens(T.toString());
 
   dynamic decoder;
-  switch (tokens.typeName) {
+  switch (tokens.rawTypeName) {
     case "File":
       decoder = FileDecoder();
     case "Member":
       decoder = MemberDecoder();
     case "SharedFile":
       decoder = SharedFileDecoder();
-    case "SharedFiles":
-      decoder = SharedFilesDecoder();
+    case "List<SharedFile>":
+      decoder = FoundationListDecoder(SharedFileDecoder());
   }
 
   return decoder;
@@ -47,15 +47,15 @@ Encoder getEncoder<T>() {
   final tokens = Tokens(T.toString());
 
   dynamic encoder;
-  switch (tokens.typeName) {
+  switch (tokens.rawTypeName) {
     case "File":
       encoder = FileEncoder();
     case "Member":
       encoder = MemberEncoder();
     case "SharedFile":
       encoder = SharedFileEncoder();
-    case "SharedFiles":
-      encoder = SharedFilesEncoder();
+    case "List<SharedFile>":
+      encoder = FoundationListEncoder(SharedFileEncoder());
   }
 
   return encoder;
@@ -65,6 +65,10 @@ final class Tokens {
   final String _raw;
 
   Tokens(this._raw);
+
+  String get rawTypeName {
+    return _raw;
+  }
 
   String get typeName {
     return _raw.contains("<") ? _raw.split("<")[1].replaceAll(">", "") : _raw;

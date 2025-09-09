@@ -95,8 +95,32 @@ mixin ListDecoder<T, E> implements Decoder<T> {
 
   @override
   T call(Map<String, dynamic> args) {
+    final list = args['items'];
+    if (list is! List) {
+      return fromList([]);
+    }
     return fromList(
       (args['items'] as List).map((i) => single.call(i)).toList(),
     );
   }
+}
+
+final class FoundationListEncoder<E> with ListEncoder<List<E>, E> {
+  @override
+  final Encoder<E> single;
+
+  FoundationListEncoder(this.single);
+
+  @override
+  List<E> Function(List<E>) get toList => (list) => list;
+}
+
+final class FoundationListDecoder<E> with ListDecoder<List<E>, E> {
+  @override
+  final Decoder<E> single;
+
+  FoundationListDecoder(this.single);
+
+  @override
+  List<E> Function(List<E> p1) get fromList => (list) => list;
 }

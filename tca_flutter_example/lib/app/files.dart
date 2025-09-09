@@ -9,7 +9,7 @@ part 'files.g.dart';
 @KeyPathable()
 final class FilesState with _$FilesState {
   @override
-  final files = SharedX.userPrefs(SharedFiles(items: []));
+  final files = SharedX.userPrefs(<SharedFile>[]);
 }
 
 @CaseKeyPathable()
@@ -24,20 +24,18 @@ final class FilesFeature extends Feature<FilesState, FilesAction> {
       switch (action) {
         case FilesActionOnAddFileButtonTapped():
           state.value.files.set(
-            (f) => SharedFiles(
-              items: [
-                ...f.items,
-                SharedFile(
-                  file: File(
-                    id: "${f.items.length + 1}",
-                    name: "Arquivo ${f.items.length + 1}",
-                    createdAt: DateTime.now().toString(),
-                    path: "caminho/para/arquivo/${f.items.length + 1}/",
-                  ),
-                  participants: [],
+            (f) => [
+              ...f,
+              SharedFile(
+                file: File(
+                  id: "${f.length + 1}",
+                  name: "Arquivo ${f.length + 1}",
+                  createdAt: DateTime.now().toString(),
+                  path: "caminho/para/arquivo/${f.length + 1}/",
                 ),
-              ],
-            ),
+                participants: [],
+              ),
+            ],
           );
           return Effect.none();
       }
@@ -69,7 +67,7 @@ final class FilesWidget extends StatelessWidget {
           ),
           body: ListView(
             children:
-                viewStore.state.files.value.items.map((f) {
+                viewStore.state.files.value.map((f) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
