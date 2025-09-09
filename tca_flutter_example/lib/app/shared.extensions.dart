@@ -25,7 +25,7 @@ final class UserPreferences<T> with SharedSource<T> {
   }
 }
 
-Decoder getDecoder<T>() {
+Decoder<T> getDecoder<T>() {
   final tokens = Tokens(T.toString());
 
   dynamic decoder;
@@ -43,7 +43,7 @@ Decoder getDecoder<T>() {
   return decoder;
 }
 
-Encoder getEncoder<T>() {
+Encoder<T> getEncoder<T>() {
   final tokens = Tokens(T.toString());
 
   dynamic encoder;
