@@ -62,21 +62,41 @@ final class SharedFileEncoder with Encoder<SharedFile> {
   }
 }
 
-final class SharedFilesDecoder with Decoder<SharedFiles> {
+final class SharedFilesDecoder with ListDecoder<SharedFiles, SharedFile> {
   @override
-  SharedFiles call(Map<String, dynamic> args) {
-    return SharedFiles(
-      items:
-          (args['items'] as List)
-              .map((i) => SharedFileDecoder().call(i))
-              .toList(),
-    );
+  SharedFiles Function(List<SharedFile>) get fromList =>
+      (items) => SharedFiles(items: items);
+
+  @override
+  Decoder<SharedFile> get single => SharedFileDecoder();
+}
+
+final class SharedFilesEncoder with ListEncoder<SharedFiles, SharedFile> {
+  @override
+  List<SharedFile> Function(SharedFiles) get toList => (i) => i.items;
+
+  @override
+  Encoder<SharedFile> get single => SharedFileEncoder();
+}
+
+mixin ListEncoder<T, E> implements Encoder<T> {
+  Encoder<E> get single;
+  List<E> Function(T) get toList;
+
+  @override
+  Map<String, dynamic> call(T value) {
+    return {'items': toList(value).map(single.call).toList()};
   }
 }
 
-final class SharedFilesEncoder with Encoder<SharedFiles> {
+mixin ListDecoder<T, E> implements Decoder<T> {
+  Decoder<E> get single;
+  T Function(List<E>) get fromList;
+
   @override
-  Map<String, dynamic> call(SharedFiles value) {
-    return {'items': value.items.map(SharedFileEncoder().call).toList()};
+  T call(Map<String, dynamic> args) {
+    return fromList(
+      (args['items'] as List).map((i) => single.call(i)).toList(),
+    );
   }
 }
