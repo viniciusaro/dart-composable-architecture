@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tca_flutter_example/app/clients.dart';
-import 'package:tca_flutter_example/app/shared.extensions.dart';
 
 final class TestModel {
   final int id;
@@ -31,20 +30,6 @@ void main() {
 
       final decoded = TestModelDecoder().call(encoded);
       expect(decoded.id, data.id);
-    });
-
-    test('list coding', () {
-      final data = [TestModel(0), TestModel(1)];
-
-      final encoded = ListEncoder(TestModelEncoder()).call(data);
-      expect(encoded['items'] is List, true);
-      expect(encoded['items'][0]['id'], 0);
-      expect(encoded['items'][1]['id'], 1);
-
-      final decoded = ListDecoder(TestModelDecoder()).call(encoded);
-      expect(decoded.length, 2);
-      expect(decoded[0].id, 0);
-      expect(decoded[1].id, 1);
     });
   });
 }

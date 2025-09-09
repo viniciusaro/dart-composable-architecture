@@ -40,7 +40,7 @@ Decoder getDecoder<T>() {
       decoder = SharedFilesDecoder();
   }
 
-  return tokens.isList ? ListDecoder(decoder) : decoder;
+  return decoder;
 }
 
 Encoder getEncoder<T>() {
@@ -58,36 +58,7 @@ Encoder getEncoder<T>() {
       encoder = SharedFilesEncoder();
   }
 
-  return tokens.isList ? ListEncoder(encoder) : encoder;
-}
-
-final class ListDecoder<T> with Decoder<List<T>> {
-  final Decoder single;
-
-  ListDecoder(this.single);
-
-  @override
-  List<T> call(Map<String, dynamic> args) {
-    final list = args["items"];
-    if (list is! List) {
-      return [];
-    }
-
-    final result = (args["items"] as List).map((i) => single.call(i) as T);
-    return result.toList();
-  }
-}
-
-final class ListEncoder<T> with Encoder<List<T>> {
-  final Encoder<T> single;
-
-  ListEncoder(this.single);
-
-  @override
-  Map<String, dynamic> call(List<T> value) {
-    final result = {'items': value.map(single.call).toList()};
-    return result;
-  }
+  return encoder;
 }
 
 final class Tokens {
