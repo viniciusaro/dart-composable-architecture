@@ -81,12 +81,12 @@ final class AppWidget extends StatelessWidget {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
-  sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
-  // sharedPreferencesClient = InMemoryPreferencesClient();
-  // sharedPreferencesClient = FixedPreferencesClient(
-  //   sharedFiles: [sharedFile0, sharedFile1],
-  // );
+  // final prefs = await SharedPreferences.getInstance();
+  // sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
+  sharedPreferencesClient = InMemoryPreferencesClient.list([
+    sharedFile0,
+    sharedFile1,
+  ]);
 
   runApp(
     MaterialApp(

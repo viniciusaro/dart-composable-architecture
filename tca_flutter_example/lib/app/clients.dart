@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tca_flutter_example/app/models.dart';
 
 SharedPreferencesClient sharedPreferencesClient =
     UnimplementedSharedPreferencesClient();
@@ -55,17 +54,19 @@ final class LiveSharedPreferencesClient with SharedPreferencesClient {
   }
 }
 
-final class FixedPreferencesClient with SharedPreferencesClient {
-  final List<SharedFile> sharedFiles;
+final class FixedPreferencesClient<A> with SharedPreferencesClient {
+  final List<A> items;
 
-  FixedPreferencesClient({required this.sharedFiles});
+  FixedPreferencesClient({required this.items});
 
   @override
   T? get<T>(String key, Decoder<T> decoder) {
     final type = T.toString();
-    switch (type) {
-      case "List<SharedFile>":
-        return sharedFiles as T;
+    if (type == "List<${A.toString()}>") {
+      return items as T;
+    }
+    if (type == A.toString()) {
+      return items[0] as T;
     }
     return null;
   }
@@ -77,7 +78,19 @@ final class FixedPreferencesClient with SharedPreferencesClient {
 }
 
 final class InMemoryPreferencesClient with SharedPreferencesClient {
-  final Map<String, dynamic> _storage = {};
+  final Map<String, dynamic> _storage;
+
+  InMemoryPreferencesClient({Map<String, dynamic>? storage})
+    : _storage = storage ?? {};
+
+  static InMemoryPreferencesClient list<T extends Object>(List<T> items) {
+    return InMemoryPreferencesClient(storage: {"List<${T.toString()}>": items});
+  }
+
+  static InMemoryPreferencesClient items(List items) {
+    final entries = items.map((i) => MapEntry(i.runtimeType.toString(), i));
+    return InMemoryPreferencesClient(storage: Map.fromEntries(entries));
+  }
 
   @override
   T? get<T>(String key, Decoder<T> decoder) {
