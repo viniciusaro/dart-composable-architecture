@@ -117,16 +117,65 @@ extension AppDestinationPath on AppDestination {
 }
 
 extension AppActionEnum on AppAction {
+  static AppAction onAppStart() => AppActionOnAppStart();
+  static AppAction onAuthResult(AppDestination<HomeState, LoginState> p) =>
+      AppActionOnAuthResult(p);
   static AppAction home(HomeAction<FilesAction<dynamic>> p) => AppActionHome(p);
-  static AppAction login(LoginAction p) => AppActionLogin(p);
+  static AppAction login(LoginAction<LoginInfo, User> p) => AppActionLogin(p);
+}
+
+final class AppActionOnAppStart<
+  A,
+  B extends AppDestination<HomeState, LoginState>,
+  C extends HomeAction<FilesAction<dynamic>>,
+  D extends LoginAction<LoginInfo, User>
+>
+    extends AppAction<A, B, C, D> {
+  AppActionOnAppStart() : super();
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) => other is AppActionOnAppStart;
+
+  @override
+  String toString() {
+    return "AppActionOnAppStart()";
+  }
+}
+
+final class AppActionOnAuthResult<
+  A,
+  B extends AppDestination<HomeState, LoginState>,
+  C extends HomeAction<FilesAction<dynamic>>,
+  D extends LoginAction<LoginInfo, User>
+>
+    extends AppAction<A, B, C, D> {
+  final B onAuthResult;
+  AppActionOnAuthResult(this.onAuthResult) : super();
+
+  @override
+  int get hashCode => onAuthResult.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppActionOnAuthResult && other.onAuthResult == onAuthResult;
+
+  @override
+  String toString() {
+    return "AppActionOnAuthResult.$onAuthResult";
+  }
 }
 
 final class AppActionHome<
-  A extends HomeAction<FilesAction<dynamic>>,
-  B extends LoginAction
+  A,
+  B extends AppDestination<HomeState, LoginState>,
+  C extends HomeAction<FilesAction<dynamic>>,
+  D extends LoginAction<LoginInfo, User>
 >
-    extends AppAction<A, B> {
-  final A home;
+    extends AppAction<A, B, C, D> {
+  final C home;
   AppActionHome(this.home) : super();
 
   @override
@@ -143,11 +192,13 @@ final class AppActionHome<
 }
 
 final class AppActionLogin<
-  A extends HomeAction<FilesAction<dynamic>>,
-  B extends LoginAction
+  A,
+  B extends AppDestination<HomeState, LoginState>,
+  C extends HomeAction<FilesAction<dynamic>>,
+  D extends LoginAction<LoginInfo, User>
 >
-    extends AppAction<A, B> {
-  final B login;
+    extends AppAction<A, B, C, D> {
+  final D login;
   AppActionLogin(this.login) : super();
 
   @override
@@ -164,6 +215,35 @@ final class AppActionLogin<
 }
 
 extension AppActionPath on AppAction {
+  static final onAppStart = WritableKeyPath<AppAction, AppActionOnAppStart?>(
+    get: (action) {
+      if (action is AppActionOnAppStart) {
+        return action;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = AppActionEnum.onAppStart();
+      }
+      return rootAction!;
+    },
+  );
+  static final onAuthResult =
+      WritableKeyPath<AppAction, AppDestination<HomeState, LoginState>?>(
+        get: (action) {
+          if (action is AppActionOnAuthResult) {
+            return action.onAuthResult;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = AppActionEnum.onAuthResult(propAction);
+          }
+          return rootAction!;
+        },
+      );
   static final home =
       WritableKeyPath<AppAction, HomeAction<FilesAction<dynamic>>?>(
         get: (action) {
@@ -179,18 +259,19 @@ extension AppActionPath on AppAction {
           return rootAction!;
         },
       );
-  static final login = WritableKeyPath<AppAction, LoginAction?>(
-    get: (action) {
-      if (action is AppActionLogin) {
-        return action.login;
-      }
-      return null;
-    },
-    set: (rootAction, propAction) {
-      if (propAction != null) {
-        rootAction = AppActionEnum.login(propAction);
-      }
-      return rootAction!;
-    },
-  );
+  static final login =
+      WritableKeyPath<AppAction, LoginAction<LoginInfo, User>?>(
+        get: (action) {
+          if (action is AppActionLogin) {
+            return action.login;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = AppActionEnum.login(propAction);
+          }
+          return rootAction!;
+        },
+      );
 }

@@ -58,7 +58,7 @@
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/app/app.dart",
+            "program": "lib/app/main.dart",
         },
     ]
 }
