@@ -1,8 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:tca_flutter_example/app/shared.extensions.dart';
 
-import 'models.dart';
+import 'clients/models/models.dart';
+import 'shared.extensions.dart';
 
 part 'files.g.dart';
 

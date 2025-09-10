@@ -1,4 +1,4 @@
-import 'package:tca_flutter_example/app/models.dart';
+import 'models.dart';
 
 final sharedFile0 = SharedFile(
   file: File(

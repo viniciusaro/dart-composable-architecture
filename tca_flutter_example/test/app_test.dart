@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tca_flutter_example/app/clients.dart';
+import 'package:tca_flutter_example/app/clients/shared_preferences_client.dart';
 
 final class TestModel {
   final int id;

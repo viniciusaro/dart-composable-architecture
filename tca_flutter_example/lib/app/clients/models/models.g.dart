@@ -56,6 +56,33 @@ mixin _$File {
   }
 }
 
+extension UserPath on User {
+  static final name = WritableKeyPath<User, String>(
+    get: (obj) => obj.name,
+    set: (obj, name) => obj!.copyWith(name: name),
+  );
+}
+
+mixin _$User {
+  String get name;
+  User copyWith({String? name}) {
+    return User(name: name ?? this.name);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(name, other.name);
+  @override
+  int get hashCode => Object.hash(runtimeType, name);
+  @override
+  String toString() {
+    return "User(name: $name)";
+  }
+}
+
 extension MemberPath on Member {
   static final name = WritableKeyPath<Member, String>(
     get: (obj) => obj.name,

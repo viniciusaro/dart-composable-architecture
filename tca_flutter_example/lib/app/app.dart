@@ -1,8 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tca_flutter_example/app/clients.dart';
-import 'package:tca_flutter_example/app/models.fixtures.dart';
+
+import 'clients/shared_preferences_client.dart';
+import 'clients/models/models.fixtures.dart';
 
 import 'files.dart';
 import 'home.dart';

@@ -25,6 +25,14 @@ final class File with _$File {
 }
 
 @KeyPathable()
+final class User with _$User {
+  @override
+  final String name;
+
+  User({required this.name});
+}
+
+@KeyPathable()
 final class Member with _$Member {
   @override
   final String name;
