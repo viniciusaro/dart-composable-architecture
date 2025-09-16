@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart' hide NavigationDestination;
+import 'package:tca_flutter_example/app/clients/models/models.fixtures.dart';
 import 'package:tca_flutter_example/app/testimonial_compose.dart';
 import 'clients/models/models.dart';
 import 'shared.extensions.dart';
@@ -39,13 +40,15 @@ final class TestimonialsFeature
     return Reduce((state, action) {
       switch (action) {
         case TestimonialsActionOnWriteButtonTapped():
-          // state.mutate(
-          //   (s) => s.copyWith(
-          //     destination: Presents(
-          //       TestimonialDestinationEnum.testimonialComposition(p),
-          //     ),
-          //   ),
-          // );
+          state.mutate(
+            (s) => s.copyWith(
+              destination: Presents(
+                TestimonialDestinationEnum.testimonialComposition(
+                  TestimonialComposeState(testimonial: draft()),
+                ),
+              ),
+            ),
+          );
           return Effect.none();
         case TestimonialsActionTestimonialComposition():
           return Effect.none();
@@ -68,27 +71,29 @@ final class TestimonialsWidget extends StatelessWidget {
     return WithViewStore(
       store,
       body: (viewStore) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Testimonials"),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  viewStore.send(TestimonialsActionEnum.onWriteButtonTapped());
-                },
-                icon: Icon(Icons.edit),
-              ),
-            ],
+        return NavigationDestination(
+          viewStore.view(
+            state: compositionDestinationPath,
+            action: TestimonialsActionPath.testimonialComposition,
           ),
-          body: NavigationDestination(
-            viewStore.view(
-              state: compositionDestinationPath,
-              action: TestimonialsActionPath.testimonialComposition,
+          builder: (context, store) {
+            return TestimonialComposeWidget(store: store);
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text("Testimonials"),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    viewStore.send(
+                      TestimonialsActionEnum.onWriteButtonTapped(),
+                    );
+                  },
+                  icon: Icon(Icons.edit),
+                ),
+              ],
             ),
-            builder: (context, store) {
-              return TestimonialComposeWidget(store: store);
-            },
-            child: ListView.builder(
+            body: ListView.builder(
               itemCount: viewStore.state.testimonials.value.length,
               itemBuilder: (context, index) {
                 final testimonial = viewStore.state.testimonials.value[index];

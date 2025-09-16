@@ -19,3 +19,7 @@ final sharedFile1 = SharedFile(
   ),
   participants: [],
 );
+
+Testimonial draft() {
+  return Testimonial(text: "", recipient: Member(name: "sem nome"));
+}
