@@ -66,13 +66,14 @@ mixin _$HomeState {
 
 extension HomeActionEnum on HomeAction {
   static HomeAction files(FilesAction<dynamic> p) => HomeActionFiles(p);
-  static HomeAction testimonials(TestimonialsAction<dynamic> p) =>
-      HomeActionTestimonials(p);
+  static HomeAction testimonials(
+    TestimonialsAction<dynamic, TestimonialComposeAction> p,
+  ) => HomeActionTestimonials(p);
 }
 
 final class HomeActionFiles<
   A extends FilesAction<dynamic>,
-  B extends TestimonialsAction<dynamic>
+  B extends TestimonialsAction<dynamic, TestimonialComposeAction>
 >
     extends HomeAction<A, B> {
   final A files;
@@ -93,7 +94,7 @@ final class HomeActionFiles<
 
 final class HomeActionTestimonials<
   A extends FilesAction<dynamic>,
-  B extends TestimonialsAction<dynamic>
+  B extends TestimonialsAction<dynamic, TestimonialComposeAction>
 >
     extends HomeAction<A, B> {
   final B testimonials;
@@ -127,19 +128,21 @@ extension HomeActionPath on HomeAction {
       return rootAction!;
     },
   );
-  static final testimonials =
-      WritableKeyPath<HomeAction, TestimonialsAction<dynamic>?>(
-        get: (action) {
-          if (action is HomeActionTestimonials) {
-            return action.testimonials;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = HomeActionEnum.testimonials(propAction);
-          }
-          return rootAction!;
-        },
-      );
+  static final testimonials = WritableKeyPath<
+    HomeAction,
+    TestimonialsAction<dynamic, TestimonialComposeAction>?
+  >(
+    get: (action) {
+      if (action is HomeActionTestimonials) {
+        return action.testimonials;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = HomeActionEnum.testimonials(propAction);
+      }
+      return rootAction!;
+    },
+  );
 }

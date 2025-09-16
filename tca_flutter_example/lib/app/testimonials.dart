@@ -1,31 +1,35 @@
 import 'dart:math';
 
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDestination;
+import 'package:tca_flutter_example/app/testimonial_compose.dart';
 import 'clients/models/models.dart';
 import 'shared.extensions.dart';
 
 part 'testimonials.g.dart';
 
-@CaseKeyPathable()
-sealed class TestimonialDestination<
-  TestimonialComposition //
-> {}
-
 @KeyPathable()
-final class TestimonialsState with _$TestimonialsState {
+final class TestimonialsState with _$TestimonialsState, Presentable {
   @override
-  final Presents<TestimonialDestination>? destination;
+  final Presents<TestimonialDestination?> destination;
 
   @override
   final testimonials = SharedX.userPrefs(<Testimonial>[]);
 
-  TestimonialsState({this.destination});
+  TestimonialsState({
+    Presents<TestimonialDestination?>? destination, //
+  }) : destination = destination ?? Presents(null);
 }
 
 @CaseKeyPathable()
+sealed class TestimonialDestination<
+  TestimonialComposition extends TestimonialComposeState //
+> {}
+
+@CaseKeyPathable()
 sealed class TestimonialsAction<
-  OnWriteButtonTapped //
+  OnWriteButtonTapped,
+  TestimonialComposition extends TestimonialComposeAction
 > {}
 
 final class TestimonialsFeature
@@ -33,7 +37,19 @@ final class TestimonialsFeature
   @override
   Reducer<TestimonialsState, TestimonialsAction> build() {
     return Reduce((state, action) {
-      return Effect.none();
+      switch (action) {
+        case TestimonialsActionOnWriteButtonTapped():
+          // state.mutate(
+          //   (s) => s.copyWith(
+          //     destination: Presents(
+          //       TestimonialDestinationEnum.testimonialComposition(p),
+          //     ),
+          //   ),
+          // );
+          return Effect.none();
+        case TestimonialsActionTestimonialComposition():
+          return Effect.none();
+      }
     });
   }
 }
@@ -45,6 +61,10 @@ final class TestimonialsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compositionDestinationPath = TestimonialsStatePath
+        .destination //
+        .path(TestimonialDestinationPath.testimonialComposition);
+
     return WithViewStore(
       store,
       body: (viewStore) {
@@ -60,19 +80,28 @@ final class TestimonialsWidget extends StatelessWidget {
               ),
             ],
           ),
-          body: ListView.builder(
-            itemCount: viewStore.state.testimonials.value.length,
-            itemBuilder: (context, index) {
-              final testimonial = viewStore.state.testimonials.value[index];
-              return ListTile(
-                title: Text(
-                  testimonial.text.substring(
-                    0,
-                    min(20, testimonial.text.length - 1),
-                  ),
-                ),
-              );
+          body: NavigationDestination(
+            viewStore.view(
+              state: compositionDestinationPath,
+              action: TestimonialsActionPath.testimonialComposition,
+            ),
+            builder: (context, store) {
+              return TestimonialComposeWidget(store: store);
             },
+            child: ListView.builder(
+              itemCount: viewStore.state.testimonials.value.length,
+              itemBuilder: (context, index) {
+                final testimonial = viewStore.state.testimonials.value[index];
+                return ListTile(
+                  title: Text(
+                    testimonial.text.substring(
+                      0,
+                      min(20, testimonial.text.length - 1),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         );
       },

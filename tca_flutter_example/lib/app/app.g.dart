@@ -134,7 +134,11 @@ extension AppActionEnum on AppAction {
   static AppAction onAuthResult(AppDestination<HomeState, LoginState> p) =>
       AppActionOnAuthResult(p);
   static AppAction home(
-    HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>> p,
+    HomeAction<
+      FilesAction<dynamic>,
+      TestimonialsAction<dynamic, TestimonialComposeAction>
+    >
+    p,
   ) => AppActionHome(p);
   static AppAction login(LoginAction<LoginInfo, User> p) => AppActionLogin(p);
 }
@@ -142,7 +146,10 @@ extension AppActionEnum on AppAction {
 final class AppActionOnAppStart<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
+  C extends HomeAction<
+    FilesAction<dynamic>,
+    TestimonialsAction<dynamic, TestimonialComposeAction>
+  >,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -163,7 +170,10 @@ final class AppActionOnAppStart<
 final class AppActionOnAuthResult<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
+  C extends HomeAction<
+    FilesAction<dynamic>,
+    TestimonialsAction<dynamic, TestimonialComposeAction>
+  >,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -186,7 +196,10 @@ final class AppActionOnAuthResult<
 final class AppActionHome<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
+  C extends HomeAction<
+    FilesAction<dynamic>,
+    TestimonialsAction<dynamic, TestimonialComposeAction>
+  >,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -209,7 +222,10 @@ final class AppActionHome<
 final class AppActionLogin<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
+  C extends HomeAction<
+    FilesAction<dynamic>,
+    TestimonialsAction<dynamic, TestimonialComposeAction>
+  >,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -261,7 +277,10 @@ extension AppActionPath on AppAction {
       );
   static final home = WritableKeyPath<
     AppAction,
-    HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>?
+    HomeAction<
+      FilesAction<dynamic>,
+      TestimonialsAction<dynamic, TestimonialComposeAction>
+    >?
   >(
     get: (action) {
       if (action is AppActionHome) {

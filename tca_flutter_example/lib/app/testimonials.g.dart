@@ -9,7 +9,7 @@ part of 'testimonials.dart';
 extension TestimonialsStatePath on TestimonialsState {
   static final destination = WritableKeyPath<
     TestimonialsState,
-    Presents<TestimonialDestination<dynamic>>?
+    Presents<TestimonialDestination<TestimonialComposeState>?>
   >(
     get: (obj) => obj.destination,
     set: (obj, destination) => obj!.copyWith(destination: destination),
@@ -21,10 +21,10 @@ extension TestimonialsStatePath on TestimonialsState {
 }
 
 mixin _$TestimonialsState {
-  Presents<TestimonialDestination<dynamic>>? get destination;
+  Presents<TestimonialDestination<TestimonialComposeState>?> get destination;
   Shared<List<Testimonial>> get testimonials;
   TestimonialsState copyWith({
-    Presents<TestimonialDestination<dynamic>>? destination,
+    Presents<TestimonialDestination<TestimonialComposeState>?>? destination,
   }) {
     return TestimonialsState(destination: destination ?? this.destination);
   }
@@ -55,54 +55,66 @@ mixin _$TestimonialsState {
 // **************************************************************************
 
 extension TestimonialDestinationEnum on TestimonialDestination {
-  static TestimonialDestination testimonialComposition() =>
-      TestimonialDestinationTestimonialComposition();
+  static TestimonialDestination testimonialComposition(
+    TestimonialComposeState p,
+  ) => TestimonialDestinationTestimonialComposition(p);
 }
 
-final class TestimonialDestinationTestimonialComposition<A>
+final class TestimonialDestinationTestimonialComposition<
+  A extends TestimonialComposeState
+>
     extends TestimonialDestination<A> {
-  TestimonialDestinationTestimonialComposition() : super();
+  final A testimonialComposition;
+  TestimonialDestinationTestimonialComposition(this.testimonialComposition)
+    : super();
 
   @override
-  int get hashCode => runtimeType.hashCode ^ 31;
+  int get hashCode => testimonialComposition.hashCode ^ 31;
 
   @override
   bool operator ==(Object other) =>
-      other is TestimonialDestinationTestimonialComposition;
+      other is TestimonialDestinationTestimonialComposition &&
+      other.testimonialComposition == testimonialComposition;
 
   @override
   String toString() {
-    return "TestimonialDestinationTestimonialComposition()";
+    return "TestimonialDestinationTestimonialComposition.$testimonialComposition";
   }
 }
 
 extension TestimonialDestinationPath on TestimonialDestination {
-  static final testimonialComposition = WritableKeyPath<
-    TestimonialDestination,
-    TestimonialDestinationTestimonialComposition?
-  >(
-    get: (action) {
-      if (action is TestimonialDestinationTestimonialComposition) {
-        return action;
-      }
-      return null;
-    },
-    set: (rootAction, propAction) {
-      if (propAction != null) {
-        rootAction = TestimonialDestinationEnum.testimonialComposition();
-      }
-      return rootAction!;
-    },
-  );
+  static final testimonialComposition =
+      WritableKeyPath<TestimonialDestination, TestimonialComposeState?>(
+        get: (action) {
+          if (action is TestimonialDestinationTestimonialComposition) {
+            return action.testimonialComposition;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = TestimonialDestinationEnum.testimonialComposition(
+              propAction,
+            );
+          }
+          return rootAction!;
+        },
+      );
 }
 
 extension TestimonialsActionEnum on TestimonialsAction {
   static TestimonialsAction onWriteButtonTapped() =>
       TestimonialsActionOnWriteButtonTapped();
+  static TestimonialsAction testimonialComposition(
+    TestimonialComposeAction p,
+  ) => TestimonialsActionTestimonialComposition(p);
 }
 
-final class TestimonialsActionOnWriteButtonTapped<A>
-    extends TestimonialsAction<A> {
+final class TestimonialsActionOnWriteButtonTapped<
+  A,
+  B extends TestimonialComposeAction
+>
+    extends TestimonialsAction<A, B> {
   TestimonialsActionOnWriteButtonTapped() : super();
 
   @override
@@ -115,6 +127,29 @@ final class TestimonialsActionOnWriteButtonTapped<A>
   @override
   String toString() {
     return "TestimonialsActionOnWriteButtonTapped()";
+  }
+}
+
+final class TestimonialsActionTestimonialComposition<
+  A,
+  B extends TestimonialComposeAction
+>
+    extends TestimonialsAction<A, B> {
+  final B testimonialComposition;
+  TestimonialsActionTestimonialComposition(this.testimonialComposition)
+    : super();
+
+  @override
+  int get hashCode => testimonialComposition.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is TestimonialsActionTestimonialComposition &&
+      other.testimonialComposition == testimonialComposition;
+
+  @override
+  String toString() {
+    return "TestimonialsActionTestimonialComposition.$testimonialComposition";
   }
 }
 
@@ -136,4 +171,21 @@ extension TestimonialsActionPath on TestimonialsAction {
       return rootAction!;
     },
   );
+  static final testimonialComposition =
+      WritableKeyPath<TestimonialsAction, TestimonialComposeAction?>(
+        get: (action) {
+          if (action is TestimonialsActionTestimonialComposition) {
+            return action.testimonialComposition;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = TestimonialsActionEnum.testimonialComposition(
+              propAction,
+            );
+          }
+          return rootAction!;
+        },
+      );
 }

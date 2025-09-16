@@ -7,6 +7,7 @@ import 'clients/models/models.dart';
 import 'files.dart';
 import 'home.dart';
 import 'login.dart';
+import 'testimonial_compose.dart';
 import 'testimonials.dart';
 
 part 'app.g.dart';
