@@ -32,8 +32,9 @@ class KeyPathGenerator extends GeneratorForAnnotation<KeyPathable> {
     }
 
     final rootType = clazz.name;
+
     final writableFields = fields.where((field) {
-      final existsInConstructor = element.constructors.first.parameters
+      final existsInConstructor = element.writableConstructor.parameters
           .map((p) => p.element)
           .firstWhereOrNull((e) => e.displayName == field.displayName);
       return existsInConstructor != null;
@@ -111,7 +112,7 @@ static final $prop = KeyPath<$rootType, $propType>(
     }
 
     final filteredFields = fields.where((field) {
-      final existsInConstructor = element.constructors.first.parameters
+      final existsInConstructor = element.writableConstructor.parameters
           .map((p) => p.element)
           .firstWhereOrNull((e) => e.displayName == field.displayName);
       return existsInConstructor != null;
@@ -177,4 +178,9 @@ extension on DartType {
     }
     return displayString;
   }
+}
+
+extension on ClassElement {
+  ConstructorElement get writableConstructor =>
+      constructors.firstWhereOrNull((c) => c.isPrivate) ?? constructors.first;
 }

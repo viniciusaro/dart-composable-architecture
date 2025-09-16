@@ -22,7 +22,7 @@ final class HomeState with _$HomeState, Presentable {
   HomeState({
     FilesState? files,
     TestimonialsState? testimonials, //
-    this.selectedIndex = 0,
+    this.selectedIndex = 1,
   }) : files = files ?? FilesState(),
        testimonials = testimonials ?? TestimonialsState();
 }

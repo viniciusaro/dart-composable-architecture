@@ -14,9 +14,8 @@ extension AppStatePath on AppState {
     get: (obj) => obj.destination,
     set: (obj, destination) => obj!.copyWith(destination: destination),
   );
-  static final homeState = WritableKeyPath<AppState, HomeState?>(
+  static final homeState = KeyPath<AppState, HomeState?>(
     get: (obj) => obj.homeState,
-    set: (obj, homeState) => obj!.copyWith(homeState: homeState),
   );
 }
 
@@ -25,12 +24,8 @@ mixin _$AppState {
   HomeState? get homeState;
   AppState copyWith({
     Presents<AppDestination<HomeState, LoginState>>? destination,
-    HomeState? homeState,
   }) {
-    return AppState._(
-      destination: destination ?? this.destination,
-      homeState: homeState ?? this.homeState,
-    );
+    return AppState._(destination: destination ?? this.destination);
   }
 
   @override

@@ -12,12 +12,6 @@ import 'testimonials.dart';
 
 part 'app.g.dart';
 
-@CaseKeyPathable()
-sealed class AppDestination<
-  Home extends HomeState, //
-  Login extends LoginState
-> {}
-
 @KeyPathable()
 final class AppState with _$AppState, Presentable {
   @override
@@ -26,14 +20,19 @@ final class AppState with _$AppState, Presentable {
   @override
   final HomeState? homeState;
 
-  AppState._({
-    Presents<AppDestination>? destination,
-    this.homeState, //
-  }) : destination = destination ?? Presents(AppDestinationEnum.login());
-
   AppState({this.homeState})
     : destination = Presents(AppDestinationEnum.login());
+
+  AppState._({Presents<AppDestination>? destination})
+    : destination = destination ?? Presents(AppDestinationEnum.login()),
+      homeState = null;
 }
+
+@CaseKeyPathable()
+sealed class AppDestination<
+  Home extends HomeState, //
+  Login extends LoginState
+> {}
 
 @CaseKeyPathable()
 sealed class AppAction<
@@ -63,7 +62,9 @@ final class AppFeature extends Feature<AppState, AppAction> {
             return Effect.future(() async {
               final result = await authClient.getAuthToken();
               if (result == null) {
-                return AppActionEnum.onAuthResult(AppDestinationEnum.login());
+                return AppActionEnum.onAuthResult(
+                  AppDestinationEnum.login(), //
+                );
               } else {
                 return AppActionEnum.onAuthResult(
                   AppDestinationEnum.home(state.value.homeState),

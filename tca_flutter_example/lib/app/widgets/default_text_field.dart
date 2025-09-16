@@ -21,9 +21,7 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
   void initState() {
     super.initState();
     _controller.text = widget.value;
-    _controller.addListener(() {
-      widget.onChanged(_controller.text);
-    });
+    _controller.addListener(_onChanged);
   }
 
   @override
@@ -32,6 +30,10 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
     if (oldWidget.value != widget.value && widget.value != _controller.text) {
       _controller.text = widget.value;
     }
+  }
+
+  void _onChanged() {
+    widget.onChanged(_controller.text);
   }
 
   @override
@@ -47,6 +49,7 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
 
   @override
   void dispose() {
+    _controller.removeListener(_onChanged);
     _controller.dispose();
     super.dispose();
   }
