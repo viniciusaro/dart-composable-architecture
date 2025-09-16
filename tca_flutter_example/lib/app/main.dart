@@ -12,9 +12,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // final prefs = await SharedPreferences.getInstance();
   // sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
-  sharedPreferencesClient = InMemoryPreferencesClient.list([
-    sharedFile0,
-    sharedFile1,
+  sharedPreferencesClient = InMemoryPreferencesClient.items([
+    [sharedFile0, sharedFile1],
+    [testimonial0, testimonial1],
   ]);
 
   // authClient = loggedOutAuthClient(onLogin: User(name: "Vini"));

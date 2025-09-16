@@ -67,13 +67,18 @@ mixin _$HomeState {
 extension HomeActionEnum on HomeAction {
   static HomeAction files(FilesAction<dynamic> p) => HomeActionFiles(p);
   static HomeAction testimonials(
-    TestimonialsAction<dynamic, TestimonialComposeAction> p,
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String, dynamic>>
+    p,
   ) => HomeActionTestimonials(p);
 }
 
 final class HomeActionFiles<
   A extends FilesAction<dynamic>,
-  B extends TestimonialsAction<dynamic, TestimonialComposeAction>
+  B extends TestimonialsAction<
+    dynamic,
+    int,
+    TestimonialComposeAction<String, dynamic>
+  >
 >
     extends HomeAction<A, B> {
   final A files;
@@ -94,7 +99,11 @@ final class HomeActionFiles<
 
 final class HomeActionTestimonials<
   A extends FilesAction<dynamic>,
-  B extends TestimonialsAction<dynamic, TestimonialComposeAction>
+  B extends TestimonialsAction<
+    dynamic,
+    int,
+    TestimonialComposeAction<String, dynamic>
+  >
 >
     extends HomeAction<A, B> {
   final B testimonials;
@@ -130,7 +139,7 @@ extension HomeActionPath on HomeAction {
   );
   static final testimonials = WritableKeyPath<
     HomeAction,
-    TestimonialsAction<dynamic, TestimonialComposeAction>?
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String, dynamic>>?
   >(
     get: (action) {
       if (action is HomeActionTestimonials) {

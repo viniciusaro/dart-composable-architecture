@@ -178,3 +178,13 @@ extension WritableKeyPathPresentsOptional<Root, Prop> //
     });
   }
 }
+
+WritableKeyPath<List<E>, E> listPath<E>(int index) {
+  return WritableKeyPath(
+      get: (list) => list[index],
+      set: (list, element) {
+        final updated = list ?? [];
+        updated[index] = element;
+        return updated;
+      });
+}

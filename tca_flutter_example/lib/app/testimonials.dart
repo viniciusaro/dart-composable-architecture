@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart' hide NavigationDestination;
 import 'package:tca_flutter_example/app/clients/models/models.fixtures.dart';
@@ -33,6 +31,7 @@ sealed class TestimonialDestination<
 @CaseKeyPathable()
 sealed class TestimonialsAction<
   OnWriteButtonTapped,
+  OnEditButtonTapped extends int,
   TestimonialComposition extends TestimonialComposeAction
 > {}
 
@@ -52,11 +51,30 @@ final class TestimonialsFeature extends Feature<State, Action> {
       Reduce((state, action) {
         switch (action) {
           case TestimonialsActionOnWriteButtonTapped():
+            state.value.testimonials.set((list) => [draft(), ...list]);
+
             state.mutate(
               (s) => s.copyWith(
                 destination: Presents(
                   TestimonialDestinationEnum.testimonialComposition(
-                    TestimonialComposeState(testimonial: draft()),
+                    TestimonialComposeState(
+                      testimonial: state.value.testimonials.get(listPath(0)),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            return Effect.none();
+          case TestimonialsActionOnEditButtonTapped():
+            state.mutate(
+              (s) => s.copyWith(
+                destination: Presents(
+                  TestimonialDestinationEnum.testimonialComposition(
+                    TestimonialComposeState(
+                      testimonial: state.value.testimonials.get(
+                        listPath(action.onEditButtonTapped),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -97,12 +115,12 @@ final class TestimonialsWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               final testimonial = viewStore.state.testimonials.value[index];
               return ListTile(
-                title: Text(
-                  testimonial.text.substring(
-                    0,
-                    min(20, testimonial.text.length - 1),
-                  ),
-                ),
+                title: Text(testimonial.preview),
+                onTap: () {
+                  viewStore.send(
+                    TestimonialsActionEnum.onEditButtonTapped(index),
+                  );
+                },
               );
             },
           ),

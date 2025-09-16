@@ -185,11 +185,15 @@ extension TestimonialPath on Testimonial {
     get: (obj) => obj.recipient,
     set: (obj, recipient) => obj!.copyWith(recipient: recipient),
   );
+  static final preview = KeyPath<Testimonial, String>(
+    get: (obj) => obj.preview,
+  );
 }
 
 mixin _$Testimonial {
   String get text;
   Member get recipient;
+  String get preview;
   Testimonial copyWith({String? text, Member? recipient}) {
     return Testimonial(
       text: text ?? this.text,
@@ -203,11 +207,12 @@ mixin _$Testimonial {
       other is Testimonial &&
           runtimeType == other.runtimeType &&
           const DeepCollectionEquality().equals(text, other.text) &&
-          const DeepCollectionEquality().equals(recipient, other.recipient);
+          const DeepCollectionEquality().equals(recipient, other.recipient) &&
+          const DeepCollectionEquality().equals(preview, other.preview);
   @override
-  int get hashCode => Object.hash(runtimeType, text, recipient);
+  int get hashCode => Object.hash(runtimeType, text, recipient, preview);
   @override
   String toString() {
-    return "Testimonial(text: $text, recipient: $recipient)";
+    return "Testimonial(text: $text, recipient: $recipient, preview: $preview)";
   }
 }

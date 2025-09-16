@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 
 part 'models.g.dart';
@@ -66,6 +68,16 @@ final class Testimonial with _$Testimonial {
 
   @override
   final Member recipient;
+
+  @override
+  String get preview {
+    final value = text.substring(0, min(20, text.length));
+    return value.isEmpty
+        ? "..."
+        : value.length >= 20
+        ? "$value..."
+        : value;
+  }
 
   Testimonial({required this.text, required this.recipient});
 }

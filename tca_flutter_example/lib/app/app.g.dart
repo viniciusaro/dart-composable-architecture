@@ -136,7 +136,11 @@ extension AppActionEnum on AppAction {
   static AppAction home(
     HomeAction<
       FilesAction<dynamic>,
-      TestimonialsAction<dynamic, TestimonialComposeAction>
+      TestimonialsAction<
+        dynamic,
+        int,
+        TestimonialComposeAction<String, dynamic>
+      >
     >
     p,
   ) => AppActionHome(p);
@@ -148,7 +152,7 @@ final class AppActionOnAppStart<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, TestimonialComposeAction>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String, dynamic>>
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -172,7 +176,7 @@ final class AppActionOnAuthResult<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, TestimonialComposeAction>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String, dynamic>>
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -198,7 +202,7 @@ final class AppActionHome<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, TestimonialComposeAction>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String, dynamic>>
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -224,7 +228,7 @@ final class AppActionLogin<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, TestimonialComposeAction>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String, dynamic>>
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -279,7 +283,11 @@ extension AppActionPath on AppAction {
     AppAction,
     HomeAction<
       FilesAction<dynamic>,
-      TestimonialsAction<dynamic, TestimonialComposeAction>
+      TestimonialsAction<
+        dynamic,
+        int,
+        TestimonialComposeAction<String, dynamic>
+      >
     >?
   >(
     get: (action) {

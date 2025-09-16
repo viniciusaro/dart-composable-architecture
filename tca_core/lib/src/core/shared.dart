@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 
+import 'store.dart';
+
 bool get isExpectedStateClosure => Zone.current[#expectedStateClosure] == true;
 
 mixin SharedSource<T> {
@@ -36,6 +38,13 @@ final class Shared<T> {
     Zone.current[#sharedZoneValues]?.didRunSharedSet = true;
     _source.set(update(_source.get()));
     return Shared<T>(_source);
+  }
+
+  Shared<Prop> get<Prop>(WritableKeyPath<T, Prop> path) {
+    return Shared(_ManualSource(
+        getter: () => path.get(value),
+        setter: (newValue) => _source.set(path.set(value, newValue)) //
+        ));
   }
 
   @override
@@ -97,6 +106,19 @@ final class ConstSource<T> with SharedSource<T> {
   static void _overrideValue<T>(T value) {
     _constOverrides[T.toString()] = value;
   }
+}
+
+final class _ManualSource<T> with SharedSource<T> {
+  final T Function() getter;
+  final void Function(T) setter;
+
+  _ManualSource({required this.getter, required this.setter});
+
+  @override
+  T get() => getter();
+
+  @override
+  void set(T newValue) => setter(newValue);
 }
 
 B Function(B) overrideSharedValue<A, B>(A value, B Function(B) update) {

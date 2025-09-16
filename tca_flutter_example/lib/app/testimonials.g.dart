@@ -105,16 +105,19 @@ extension TestimonialDestinationPath on TestimonialDestination {
 extension TestimonialsActionEnum on TestimonialsAction {
   static TestimonialsAction onWriteButtonTapped() =>
       TestimonialsActionOnWriteButtonTapped();
+  static TestimonialsAction onEditButtonTapped(int p) =>
+      TestimonialsActionOnEditButtonTapped(p);
   static TestimonialsAction testimonialComposition(
-    TestimonialComposeAction p,
+    TestimonialComposeAction<String, dynamic> p,
   ) => TestimonialsActionTestimonialComposition(p);
 }
 
 final class TestimonialsActionOnWriteButtonTapped<
   A,
-  B extends TestimonialComposeAction
+  B extends int,
+  C extends TestimonialComposeAction<String, dynamic>
 >
-    extends TestimonialsAction<A, B> {
+    extends TestimonialsAction<A, B, C> {
   TestimonialsActionOnWriteButtonTapped() : super();
 
   @override
@@ -130,12 +133,36 @@ final class TestimonialsActionOnWriteButtonTapped<
   }
 }
 
+final class TestimonialsActionOnEditButtonTapped<
+  A,
+  B extends int,
+  C extends TestimonialComposeAction<String, dynamic>
+>
+    extends TestimonialsAction<A, B, C> {
+  final B onEditButtonTapped;
+  TestimonialsActionOnEditButtonTapped(this.onEditButtonTapped) : super();
+
+  @override
+  int get hashCode => onEditButtonTapped.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is TestimonialsActionOnEditButtonTapped &&
+      other.onEditButtonTapped == onEditButtonTapped;
+
+  @override
+  String toString() {
+    return "TestimonialsActionOnEditButtonTapped.$onEditButtonTapped";
+  }
+}
+
 final class TestimonialsActionTestimonialComposition<
   A,
-  B extends TestimonialComposeAction
+  B extends int,
+  C extends TestimonialComposeAction<String, dynamic>
 >
-    extends TestimonialsAction<A, B> {
-  final B testimonialComposition;
+    extends TestimonialsAction<A, B, C> {
+  final C testimonialComposition;
   TestimonialsActionTestimonialComposition(this.testimonialComposition)
     : super();
 
@@ -171,21 +198,35 @@ extension TestimonialsActionPath on TestimonialsAction {
       return rootAction!;
     },
   );
-  static final testimonialComposition =
-      WritableKeyPath<TestimonialsAction, TestimonialComposeAction?>(
-        get: (action) {
-          if (action is TestimonialsActionTestimonialComposition) {
-            return action.testimonialComposition;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = TestimonialsActionEnum.testimonialComposition(
-              propAction,
-            );
-          }
-          return rootAction!;
-        },
-      );
+  static final onEditButtonTapped = WritableKeyPath<TestimonialsAction, int?>(
+    get: (action) {
+      if (action is TestimonialsActionOnEditButtonTapped) {
+        return action.onEditButtonTapped;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = TestimonialsActionEnum.onEditButtonTapped(propAction);
+      }
+      return rootAction!;
+    },
+  );
+  static final testimonialComposition = WritableKeyPath<
+    TestimonialsAction,
+    TestimonialComposeAction<String, dynamic>?
+  >(
+    get: (action) {
+      if (action is TestimonialsActionTestimonialComposition) {
+        return action.testimonialComposition;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = TestimonialsActionEnum.testimonialComposition(propAction);
+      }
+      return rootAction!;
+    },
+  );
 }
