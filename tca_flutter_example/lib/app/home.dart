@@ -64,11 +64,11 @@ final class HomeWidget extends StatelessWidget {
         final compositionStatePath = HomeStatePath
             .testimonials //
             .path(TestimonialsStatePath.destination)
-            .path(TestimonialDestinationPath.testimonialComposition);
+            .path(TestimonialDestinationPath.testimonialCompose);
 
         final compositionActionPath = HomeActionPath
             .testimonials //
-            .path(TestimonialsActionPath.testimonialComposition);
+            .path(TestimonialsActionPath.testimonialCompose);
 
         final filesStore = viewStore.view(
           state: HomeStatePath.files,

@@ -54,11 +54,11 @@
             "program": "lib/form/form.dart",
         },
         {
-            "name": "Example - App",
+            "name": "Example - App (Debug)",
             "cwd": "tca_flutter_example",
             "request": "launch",
             "type": "dart",
-            "program": "lib/app/main.dart",
+            "program": "lib/app/main.debug.dart",
         },
     ]
 }

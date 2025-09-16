@@ -19,8 +19,7 @@ final class TestimonialComposeState with _$TestimonialComposeState {
 
 @CaseKeyPathable()
 sealed class TestimonialComposeAction<
-  OnValueUpdate extends String, //
-  OnSaveButtonTapped
+  OnValueUpdate extends String //
 > {}
 
 final class TestimonialComposeFeature extends Feature<State, Action> {
@@ -32,8 +31,6 @@ final class TestimonialComposeFeature extends Feature<State, Action> {
           state.value.testimonial.set(
             (t) => t.copyWith(text: action.onValueUpdate),
           );
-          return Effect.none();
-        case TestimonialComposeActionOnSaveButtonTapped():
           return Effect.none();
       }
     });

@@ -55,45 +55,43 @@ mixin _$TestimonialsState {
 // **************************************************************************
 
 extension TestimonialDestinationEnum on TestimonialDestination {
-  static TestimonialDestination testimonialComposition(
-    TestimonialComposeState p,
-  ) => TestimonialDestinationTestimonialComposition(p);
+  static TestimonialDestination testimonialCompose(TestimonialComposeState p) =>
+      TestimonialDestinationTestimonialCompose(p);
 }
 
-final class TestimonialDestinationTestimonialComposition<
+final class TestimonialDestinationTestimonialCompose<
   A extends TestimonialComposeState
 >
     extends TestimonialDestination<A> {
-  final A testimonialComposition;
-  TestimonialDestinationTestimonialComposition(this.testimonialComposition)
-    : super();
+  final A testimonialCompose;
+  TestimonialDestinationTestimonialCompose(this.testimonialCompose) : super();
 
   @override
-  int get hashCode => testimonialComposition.hashCode ^ 31;
+  int get hashCode => testimonialCompose.hashCode ^ 31;
 
   @override
   bool operator ==(Object other) =>
-      other is TestimonialDestinationTestimonialComposition &&
-      other.testimonialComposition == testimonialComposition;
+      other is TestimonialDestinationTestimonialCompose &&
+      other.testimonialCompose == testimonialCompose;
 
   @override
   String toString() {
-    return "TestimonialDestinationTestimonialComposition.$testimonialComposition";
+    return "TestimonialDestinationTestimonialCompose.$testimonialCompose";
   }
 }
 
 extension TestimonialDestinationPath on TestimonialDestination {
-  static final testimonialComposition =
+  static final testimonialCompose =
       WritableKeyPath<TestimonialDestination, TestimonialComposeState?>(
         get: (action) {
-          if (action is TestimonialDestinationTestimonialComposition) {
-            return action.testimonialComposition;
+          if (action is TestimonialDestinationTestimonialCompose) {
+            return action.testimonialCompose;
           }
           return null;
         },
         set: (rootAction, propAction) {
           if (propAction != null) {
-            rootAction = TestimonialDestinationEnum.testimonialComposition(
+            rootAction = TestimonialDestinationEnum.testimonialCompose(
               propAction,
             );
           }
@@ -107,15 +105,15 @@ extension TestimonialsActionEnum on TestimonialsAction {
       TestimonialsActionOnWriteButtonTapped();
   static TestimonialsAction onEditButtonTapped(int p) =>
       TestimonialsActionOnEditButtonTapped(p);
-  static TestimonialsAction testimonialComposition(
-    TestimonialComposeAction<String, dynamic> p,
-  ) => TestimonialsActionTestimonialComposition(p);
+  static TestimonialsAction testimonialCompose(
+    TestimonialComposeAction<String> p,
+  ) => TestimonialsActionTestimonialCompose(p);
 }
 
 final class TestimonialsActionOnWriteButtonTapped<
   A,
   B extends int,
-  C extends TestimonialComposeAction<String, dynamic>
+  C extends TestimonialComposeAction<String>
 >
     extends TestimonialsAction<A, B, C> {
   TestimonialsActionOnWriteButtonTapped() : super();
@@ -136,7 +134,7 @@ final class TestimonialsActionOnWriteButtonTapped<
 final class TestimonialsActionOnEditButtonTapped<
   A,
   B extends int,
-  C extends TestimonialComposeAction<String, dynamic>
+  C extends TestimonialComposeAction<String>
 >
     extends TestimonialsAction<A, B, C> {
   final B onEditButtonTapped;
@@ -156,27 +154,26 @@ final class TestimonialsActionOnEditButtonTapped<
   }
 }
 
-final class TestimonialsActionTestimonialComposition<
+final class TestimonialsActionTestimonialCompose<
   A,
   B extends int,
-  C extends TestimonialComposeAction<String, dynamic>
+  C extends TestimonialComposeAction<String>
 >
     extends TestimonialsAction<A, B, C> {
-  final C testimonialComposition;
-  TestimonialsActionTestimonialComposition(this.testimonialComposition)
-    : super();
+  final C testimonialCompose;
+  TestimonialsActionTestimonialCompose(this.testimonialCompose) : super();
 
   @override
-  int get hashCode => testimonialComposition.hashCode ^ 31;
+  int get hashCode => testimonialCompose.hashCode ^ 31;
 
   @override
   bool operator ==(Object other) =>
-      other is TestimonialsActionTestimonialComposition &&
-      other.testimonialComposition == testimonialComposition;
+      other is TestimonialsActionTestimonialCompose &&
+      other.testimonialCompose == testimonialCompose;
 
   @override
   String toString() {
-    return "TestimonialsActionTestimonialComposition.$testimonialComposition";
+    return "TestimonialsActionTestimonialCompose.$testimonialCompose";
   }
 }
 
@@ -212,21 +209,19 @@ extension TestimonialsActionPath on TestimonialsAction {
       return rootAction!;
     },
   );
-  static final testimonialComposition = WritableKeyPath<
-    TestimonialsAction,
-    TestimonialComposeAction<String, dynamic>?
-  >(
-    get: (action) {
-      if (action is TestimonialsActionTestimonialComposition) {
-        return action.testimonialComposition;
-      }
-      return null;
-    },
-    set: (rootAction, propAction) {
-      if (propAction != null) {
-        rootAction = TestimonialsActionEnum.testimonialComposition(propAction);
-      }
-      return rootAction!;
-    },
-  );
+  static final testimonialCompose =
+      WritableKeyPath<TestimonialsAction, TestimonialComposeAction<String>?>(
+        get: (action) {
+          if (action is TestimonialsActionTestimonialCompose) {
+            return action.testimonialCompose;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = TestimonialsActionEnum.testimonialCompose(propAction);
+          }
+          return rootAction!;
+        },
+      );
 }

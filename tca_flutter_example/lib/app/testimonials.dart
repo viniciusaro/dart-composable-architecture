@@ -25,14 +25,14 @@ final class TestimonialsState with _$TestimonialsState, Presentable {
 
 @CaseKeyPathable()
 sealed class TestimonialDestination<
-  TestimonialComposition extends TestimonialComposeState //
+  TestimonialCompose extends TestimonialComposeState //
 > {}
 
 @CaseKeyPathable()
 sealed class TestimonialsAction<
   OnWriteButtonTapped,
   OnEditButtonTapped extends int,
-  TestimonialComposition extends TestimonialComposeAction
+  TestimonialCompose extends TestimonialComposeAction
 > {}
 
 final class TestimonialsFeature extends Feature<State, Action> {
@@ -40,12 +40,12 @@ final class TestimonialsFeature extends Feature<State, Action> {
   Reducer<State, Action> build() {
     final compositionPath = TestimonialsStatePath
         .destination //
-        .path(TestimonialDestinationPath.testimonialComposition);
+        .path(TestimonialDestinationPath.testimonialCompose);
 
     return Reduce.combine([
       IfLet(
         state: compositionPath,
-        action: TestimonialsActionPath.testimonialComposition,
+        action: TestimonialsActionPath.testimonialCompose,
         reducer: TestimonialComposeFeature(), //
       ),
       Reduce((state, action) {
@@ -56,7 +56,7 @@ final class TestimonialsFeature extends Feature<State, Action> {
             state.mutate(
               (s) => s.copyWith(
                 destination: Presents(
-                  TestimonialDestinationEnum.testimonialComposition(
+                  TestimonialDestinationEnum.testimonialCompose(
                     TestimonialComposeState(
                       testimonial: state.value.testimonials.get(listPath(0)),
                     ),
@@ -69,7 +69,7 @@ final class TestimonialsFeature extends Feature<State, Action> {
             state.mutate(
               (s) => s.copyWith(
                 destination: Presents(
-                  TestimonialDestinationEnum.testimonialComposition(
+                  TestimonialDestinationEnum.testimonialCompose(
                     TestimonialComposeState(
                       testimonial: state.value.testimonials.get(
                         listPath(action.onEditButtonTapped),
@@ -80,7 +80,7 @@ final class TestimonialsFeature extends Feature<State, Action> {
               ),
             );
             return Effect.none();
-          case TestimonialsActionTestimonialComposition():
+          case TestimonialsActionTestimonialCompose():
             return Effect.none();
         }
       }),

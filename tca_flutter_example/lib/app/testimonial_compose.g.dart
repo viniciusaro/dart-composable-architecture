@@ -43,12 +43,10 @@ mixin _$TestimonialComposeState {
 extension TestimonialComposeActionEnum on TestimonialComposeAction {
   static TestimonialComposeAction onValueUpdate(String p) =>
       TestimonialComposeActionOnValueUpdate(p);
-  static TestimonialComposeAction onSaveButtonTapped() =>
-      TestimonialComposeActionOnSaveButtonTapped();
 }
 
-final class TestimonialComposeActionOnValueUpdate<A extends String, B>
-    extends TestimonialComposeAction<A, B> {
+final class TestimonialComposeActionOnValueUpdate<A extends String>
+    extends TestimonialComposeAction<A> {
   final A onValueUpdate;
   TestimonialComposeActionOnValueUpdate(this.onValueUpdate) : super();
 
@@ -63,23 +61,6 @@ final class TestimonialComposeActionOnValueUpdate<A extends String, B>
   @override
   String toString() {
     return "TestimonialComposeActionOnValueUpdate.$onValueUpdate";
-  }
-}
-
-final class TestimonialComposeActionOnSaveButtonTapped<A extends String, B>
-    extends TestimonialComposeAction<A, B> {
-  TestimonialComposeActionOnSaveButtonTapped() : super();
-
-  @override
-  int get hashCode => runtimeType.hashCode ^ 31;
-
-  @override
-  bool operator ==(Object other) =>
-      other is TestimonialComposeActionOnSaveButtonTapped;
-
-  @override
-  String toString() {
-    return "TestimonialComposeActionOnSaveButtonTapped()";
   }
 }
 
@@ -99,21 +80,4 @@ extension TestimonialComposeActionPath on TestimonialComposeAction {
           return rootAction!;
         },
       );
-  static final onSaveButtonTapped = WritableKeyPath<
-    TestimonialComposeAction,
-    TestimonialComposeActionOnSaveButtonTapped?
-  >(
-    get: (action) {
-      if (action is TestimonialComposeActionOnSaveButtonTapped) {
-        return action;
-      }
-      return null;
-    },
-    set: (rootAction, propAction) {
-      if (propAction != null) {
-        rootAction = TestimonialComposeActionEnum.onSaveButtonTapped();
-      }
-      return rootAction!;
-    },
-  );
 }
