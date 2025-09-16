@@ -14,14 +14,23 @@ extension AppStatePath on AppState {
     get: (obj) => obj.destination,
     set: (obj, destination) => obj!.copyWith(destination: destination),
   );
+  static final homeState = WritableKeyPath<AppState, HomeState?>(
+    get: (obj) => obj.homeState,
+    set: (obj, homeState) => obj!.copyWith(homeState: homeState),
+  );
 }
 
 mixin _$AppState {
   Presents<AppDestination<HomeState, LoginState>> get destination;
+  HomeState? get homeState;
   AppState copyWith({
     Presents<AppDestination<HomeState, LoginState>>? destination,
+    HomeState? homeState,
   }) {
-    return AppState(destination: destination ?? this.destination);
+    return AppState._(
+      destination: destination ?? this.destination,
+      homeState: homeState ?? this.homeState,
+    );
   }
 
   @override
@@ -29,12 +38,16 @@ mixin _$AppState {
       identical(this, other) ||
       other is AppState &&
           runtimeType == other.runtimeType &&
-          const DeepCollectionEquality().equals(destination, other.destination);
+          const DeepCollectionEquality().equals(
+            destination,
+            other.destination,
+          ) &&
+          const DeepCollectionEquality().equals(homeState, other.homeState);
   @override
-  int get hashCode => Object.hash(runtimeType, destination);
+  int get hashCode => Object.hash(runtimeType, destination, homeState);
   @override
   String toString() {
-    return "AppState(destination: $destination)";
+    return "AppState(destination: $destination, homeState: $homeState)";
   }
 }
 
@@ -120,14 +133,16 @@ extension AppActionEnum on AppAction {
   static AppAction onAppStart() => AppActionOnAppStart();
   static AppAction onAuthResult(AppDestination<HomeState, LoginState> p) =>
       AppActionOnAuthResult(p);
-  static AppAction home(HomeAction<FilesAction<dynamic>> p) => AppActionHome(p);
+  static AppAction home(
+    HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>> p,
+  ) => AppActionHome(p);
   static AppAction login(LoginAction<LoginInfo, User> p) => AppActionLogin(p);
 }
 
 final class AppActionOnAppStart<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>>,
+  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -148,7 +163,7 @@ final class AppActionOnAppStart<
 final class AppActionOnAuthResult<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>>,
+  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -171,7 +186,7 @@ final class AppActionOnAuthResult<
 final class AppActionHome<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>>,
+  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -194,7 +209,7 @@ final class AppActionHome<
 final class AppActionLogin<
   A,
   B extends AppDestination<HomeState, LoginState>,
-  C extends HomeAction<FilesAction<dynamic>>,
+  C extends HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>,
   D extends LoginAction<LoginInfo, User>
 >
     extends AppAction<A, B, C, D> {
@@ -244,21 +259,23 @@ extension AppActionPath on AppAction {
           return rootAction!;
         },
       );
-  static final home =
-      WritableKeyPath<AppAction, HomeAction<FilesAction<dynamic>>?>(
-        get: (action) {
-          if (action is AppActionHome) {
-            return action.home;
-          }
-          return null;
-        },
-        set: (rootAction, propAction) {
-          if (propAction != null) {
-            rootAction = AppActionEnum.home(propAction);
-          }
-          return rootAction!;
-        },
-      );
+  static final home = WritableKeyPath<
+    AppAction,
+    HomeAction<FilesAction<dynamic>, TestimonialsAction<dynamic>>?
+  >(
+    get: (action) {
+      if (action is AppActionHome) {
+        return action.home;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = AppActionEnum.home(propAction);
+      }
+      return rootAction!;
+    },
+  );
   static final login =
       WritableKeyPath<AppAction, LoginAction<LoginInfo, User>?>(
         get: (action) {

@@ -1,7 +1,9 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tca_flutter_example/app/testimonials.dart';
 
 import 'files.dart';
+import 'widgets/default_tab_bar_view.dart';
 
 part 'home.g.dart';
 
@@ -10,22 +12,39 @@ final class HomeState with _$HomeState {
   @override
   final FilesState files;
 
-  HomeState({FilesState? files}) : files = files ?? FilesState();
+  @override
+  final TestimonialsState testimonials;
+
+  @override
+  final int selectedIndex;
+
+  HomeState({
+    FilesState? files,
+    TestimonialsState? testimonials, //
+    this.selectedIndex = 0,
+  }) : files = files ?? FilesState(),
+       testimonials = testimonials ?? TestimonialsState();
 }
 
 @CaseKeyPathable()
 sealed class HomeAction<
-  Files extends FilesAction //
+  Files extends FilesAction,
+  Testimonials extends TestimonialsAction
 > {}
 
 final class HomeFeature extends Feature<HomeState, HomeAction> {
   @override
-  Reducer<HomeState, HomeAction<FilesAction>> build() {
+  Reducer<HomeState, HomeAction> build() {
     return Reduce.combine([
       Scope(
         state: HomeStatePath.files,
         action: HomeActionPath.files,
         reducer: FilesFeature(),
+      ),
+      Scope(
+        state: HomeStatePath.testimonials,
+        action: HomeActionPath.testimonials,
+        reducer: TestimonialsFeature(),
       ),
     ]);
   }
@@ -46,24 +65,38 @@ final class HomeWidget extends StatelessWidget {
           action: HomeActionPath.files,
         );
 
-        return DefaultTabController(
-          length: 1,
-          child: Scaffold(
-            body: TabBarView(
-              children: [
-                FilesWidget(store: filesStore), //
-              ],
-            ),
-            bottomNavigationBar: const Material(
-              child: SafeArea(
-                child: TabBar(
-                  tabs: [
-                    Tab(icon: Icon(Icons.home), text: "Arquivos"), //
-                  ],
+        final testimonialsStore = viewStore.view(
+          state: HomeStatePath.testimonials,
+          action: HomeActionPath.testimonials,
+        );
+
+        return DefaultTabBarView(
+          selectedIndex: viewStore.state.selectedIndex,
+          children: [
+            FilesWidget(store: filesStore),
+            TestimonialsWidget(store: testimonialsStore),
+          ],
+          builder: (context, child) {
+            return Scaffold(
+              body: child,
+              bottomNavigationBar: const Material(
+                child: SafeArea(
+                  child: DefaultTabBar(
+                    tabs: [
+                      Tab(
+                        icon: Icon(Icons.home),
+                        text: "Arquivos", //
+                      ), //
+                      Tab(
+                        icon: Icon(Icons.menu_book_rounded),
+                        text: "Testimonials",
+                      ), //
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

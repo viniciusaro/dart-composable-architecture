@@ -1,5 +1,6 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tca_flutter_example/app/home.dart';
 
 import 'app.dart';
 import 'clients/auth_client.dart';
@@ -23,7 +24,7 @@ void main() async {
     MaterialApp(
       home: AppWidget(
         store: Store(
-          initialState: AppState(),
+          initialState: AppState(homeState: HomeState(selectedIndex: 1)),
           reducer: AppFeature(), //
         ),
       ),

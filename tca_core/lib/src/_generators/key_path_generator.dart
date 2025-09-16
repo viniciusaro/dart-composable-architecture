@@ -117,17 +117,23 @@ static final $prop = KeyPath<$rootType, $propType>(
       return existsInConstructor != null;
     });
 
+    final hasPrivateConstructor =
+        element.constructors.where((c) => c.isPrivate).isNotEmpty;
+
     // copyWith
     if (filteredFields.isNotEmpty) {
-      final params = fields
+      final initializer =
+          hasPrivateConstructor ? "${element.name}._" : element.name;
+
+      final params = filteredFields
           .map((f) =>
               '${f.type.getDisplayStringWithoutFinalNullability()}? ${f.name}')
           .join(', ');
-      final args = fields
+      final args = filteredFields
           .map((f) => '${f.name}: ${f.name} ?? this.${f.name}')
           .join(', ');
       code +=
-          '  ${element.name} copyWith({$params}) {\n    return ${element.name}($args);\n  }\n';
+          '  ${element.name} copyWith({$params}) {\n    return $initializer($args);\n  }\n';
     } else {
       code += '\n';
     }

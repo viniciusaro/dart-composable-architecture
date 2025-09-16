@@ -58,3 +58,14 @@ final class SharedFiles with _$SharedFiles {
 
   SharedFiles({required this.items});
 }
+
+@KeyPathable()
+final class Testimonial with _$Testimonial {
+  @override
+  final String text;
+
+  @override
+  final Member recipient;
+
+  Testimonial({required this.text, required this.recipient});
+}

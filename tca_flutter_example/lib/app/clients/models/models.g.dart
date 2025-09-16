@@ -175,3 +175,39 @@ mixin _$SharedFiles {
     return "SharedFiles(items: $items)";
   }
 }
+
+extension TestimonialPath on Testimonial {
+  static final text = WritableKeyPath<Testimonial, String>(
+    get: (obj) => obj.text,
+    set: (obj, text) => obj!.copyWith(text: text),
+  );
+  static final recipient = WritableKeyPath<Testimonial, Member>(
+    get: (obj) => obj.recipient,
+    set: (obj, recipient) => obj!.copyWith(recipient: recipient),
+  );
+}
+
+mixin _$Testimonial {
+  String get text;
+  Member get recipient;
+  Testimonial copyWith({String? text, Member? recipient}) {
+    return Testimonial(
+      text: text ?? this.text,
+      recipient: recipient ?? this.recipient,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Testimonial &&
+          runtimeType == other.runtimeType &&
+          const DeepCollectionEquality().equals(text, other.text) &&
+          const DeepCollectionEquality().equals(recipient, other.recipient);
+  @override
+  int get hashCode => Object.hash(runtimeType, text, recipient);
+  @override
+  String toString() {
+    return "Testimonial(text: $text, recipient: $recipient)";
+  }
+}

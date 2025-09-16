@@ -9,18 +9,17 @@ part 'login.g.dart';
 @KeyPathable()
 final class LoginState with _$LoginState {}
 
-class LoginInfo {
-  final String username;
-  final String password;
-
-  LoginInfo({required this.username, required this.password});
-}
-
 @CaseKeyPathable()
 sealed class LoginAction<
   OnLoginButtonTapped extends LoginInfo, //
   OnLoggedIn extends User
 > {}
+
+class LoginInfo {
+  final String username;
+  final String password;
+  LoginInfo({required this.username, required this.password});
+}
 
 final class LoginFeature extends Feature<LoginState, LoginAction> {
   @override

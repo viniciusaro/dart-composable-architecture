@@ -11,12 +11,30 @@ extension HomeStatePath on HomeState {
     get: (obj) => obj.files,
     set: (obj, files) => obj!.copyWith(files: files),
   );
+  static final testimonials = WritableKeyPath<HomeState, TestimonialsState>(
+    get: (obj) => obj.testimonials,
+    set: (obj, testimonials) => obj!.copyWith(testimonials: testimonials),
+  );
+  static final selectedIndex = WritableKeyPath<HomeState, int>(
+    get: (obj) => obj.selectedIndex,
+    set: (obj, selectedIndex) => obj!.copyWith(selectedIndex: selectedIndex),
+  );
 }
 
 mixin _$HomeState {
   FilesState get files;
-  HomeState copyWith({FilesState? files}) {
-    return HomeState(files: files ?? this.files);
+  TestimonialsState get testimonials;
+  int get selectedIndex;
+  HomeState copyWith({
+    FilesState? files,
+    TestimonialsState? testimonials,
+    int? selectedIndex,
+  }) {
+    return HomeState(
+      files: files ?? this.files,
+      testimonials: testimonials ?? this.testimonials,
+      selectedIndex: selectedIndex ?? this.selectedIndex,
+    );
   }
 
   @override
@@ -24,12 +42,21 @@ mixin _$HomeState {
       identical(this, other) ||
       other is HomeState &&
           runtimeType == other.runtimeType &&
-          const DeepCollectionEquality().equals(files, other.files);
+          const DeepCollectionEquality().equals(files, other.files) &&
+          const DeepCollectionEquality().equals(
+            testimonials,
+            other.testimonials,
+          ) &&
+          const DeepCollectionEquality().equals(
+            selectedIndex,
+            other.selectedIndex,
+          );
   @override
-  int get hashCode => Object.hash(runtimeType, files);
+  int get hashCode =>
+      Object.hash(runtimeType, files, testimonials, selectedIndex);
   @override
   String toString() {
-    return "HomeState(files: $files)";
+    return "HomeState(files: $files, testimonials: $testimonials, selectedIndex: $selectedIndex)";
   }
 }
 
@@ -39,10 +66,15 @@ mixin _$HomeState {
 
 extension HomeActionEnum on HomeAction {
   static HomeAction files(FilesAction<dynamic> p) => HomeActionFiles(p);
+  static HomeAction testimonials(TestimonialsAction<dynamic> p) =>
+      HomeActionTestimonials(p);
 }
 
-final class HomeActionFiles<A extends FilesAction<dynamic>>
-    extends HomeAction<A> {
+final class HomeActionFiles<
+  A extends FilesAction<dynamic>,
+  B extends TestimonialsAction<dynamic>
+>
+    extends HomeAction<A, B> {
   final A files;
   HomeActionFiles(this.files) : super();
 
@@ -56,6 +88,27 @@ final class HomeActionFiles<A extends FilesAction<dynamic>>
   @override
   String toString() {
     return "HomeActionFiles.$files";
+  }
+}
+
+final class HomeActionTestimonials<
+  A extends FilesAction<dynamic>,
+  B extends TestimonialsAction<dynamic>
+>
+    extends HomeAction<A, B> {
+  final B testimonials;
+  HomeActionTestimonials(this.testimonials) : super();
+
+  @override
+  int get hashCode => testimonials.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HomeActionTestimonials && other.testimonials == testimonials;
+
+  @override
+  String toString() {
+    return "HomeActionTestimonials.$testimonials";
   }
 }
 
@@ -74,4 +127,19 @@ extension HomeActionPath on HomeAction {
       return rootAction!;
     },
   );
+  static final testimonials =
+      WritableKeyPath<HomeAction, TestimonialsAction<dynamic>?>(
+        get: (action) {
+          if (action is HomeActionTestimonials) {
+            return action.testimonials;
+          }
+          return null;
+        },
+        set: (rootAction, propAction) {
+          if (propAction != null) {
+            rootAction = HomeActionEnum.testimonials(propAction);
+          }
+          return rootAction!;
+        },
+      );
 }

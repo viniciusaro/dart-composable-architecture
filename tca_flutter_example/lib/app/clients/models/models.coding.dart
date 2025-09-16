@@ -61,3 +61,23 @@ final class SharedFileEncoder with Encoder<SharedFile> {
     };
   }
 }
+
+final class TestimonialDecoder with Decoder<Testimonial> {
+  @override
+  Testimonial call(Map<String, dynamic> args) {
+    return Testimonial(
+      text: args["text"],
+      recipient: MemberDecoder().call(args["recipient"]),
+    );
+  }
+}
+
+final class TestimonialEncoder with Encoder<Testimonial> {
+  @override
+  Map<String, dynamic> call(Testimonial value) {
+    return {
+      'text': value.text,
+      'recipient': MemberEncoder().call(value.recipient),
+    };
+  }
+}

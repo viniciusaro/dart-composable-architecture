@@ -13,6 +13,8 @@ Decoder<T> _getDecoder<T>() {
       decoder = SharedFileDecoder();
     case "List<SharedFile>":
       decoder = ListDecoder(SharedFileDecoder());
+    case "List<Testimonial>":
+      decoder = ListDecoder(TestimonialDecoder());
   }
 
   return decoder;
@@ -31,6 +33,8 @@ Encoder<T> _getEncoder<T>() {
       encoder = SharedFileEncoder();
     case "List<SharedFile>":
       encoder = ListEncoder(SharedFileEncoder());
+    case "List<Testimonial>":
+      encoder = ListEncoder(TestimonialEncoder());
   }
 
   return encoder;

@@ -7,6 +7,7 @@ import 'clients/models/models.dart';
 import 'files.dart';
 import 'home.dart';
 import 'login.dart';
+import 'testimonials.dart';
 
 part 'app.g.dart';
 
@@ -21,9 +22,16 @@ final class AppState with _$AppState, Presentable {
   @override
   final Presents<AppDestination> destination;
 
-  AppState({
-    Presents<AppDestination>? destination, //
+  @override
+  final HomeState? homeState;
+
+  AppState._({
+    Presents<AppDestination>? destination,
+    this.homeState, //
   }) : destination = destination ?? Presents(AppDestinationEnum.login());
+
+  AppState({this.homeState})
+    : destination = Presents(AppDestinationEnum.login());
 }
 
 @CaseKeyPathable()
@@ -56,7 +64,9 @@ final class AppFeature extends Feature<AppState, AppAction> {
               if (result == null) {
                 return AppActionEnum.onAuthResult(AppDestinationEnum.login());
               } else {
-                return AppActionEnum.onAuthResult(AppDestinationEnum.home());
+                return AppActionEnum.onAuthResult(
+                  AppDestinationEnum.home(state.value.homeState),
+                );
               }
             });
           case AppActionOnAuthResult():
@@ -70,7 +80,9 @@ final class AppFeature extends Feature<AppState, AppAction> {
               case LoginActionOnLoggedIn():
                 state.mutate(
                   (s) => s.copyWith(
-                    destination: Presents(AppDestinationEnum.home()),
+                    destination: Presents(
+                      AppDestinationEnum.home(state.value.homeState),
+                    ),
                   ),
                 );
                 return Effect.none();
