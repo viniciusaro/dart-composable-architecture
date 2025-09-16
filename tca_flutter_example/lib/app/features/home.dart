@@ -1,10 +1,11 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart' hide NavigationDestination;
 
+import '../widgets/default_tab_bar_view.dart';
+
 import 'files.dart';
 import 'testimonial_compose.dart';
 import 'testimonials.dart';
-import 'widgets/default_tab_bar_view.dart';
 
 part 'home.g.dart';
 

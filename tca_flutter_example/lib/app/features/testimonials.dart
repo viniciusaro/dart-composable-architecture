@@ -1,9 +1,11 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart' hide NavigationDestination;
-import 'package:tca_flutter_example/app/clients/models/models.fixtures.dart';
-import 'package:tca_flutter_example/app/testimonial_compose.dart';
-import 'clients/models/models.dart';
-import 'shared.extensions.dart';
+
+import '../clients/models/models.dart';
+import '../clients/models/models.fixtures.dart';
+import '../extensions/shared.extensions.dart';
+
+import 'testimonial_compose.dart';
 
 part 'testimonials.g.dart';
 

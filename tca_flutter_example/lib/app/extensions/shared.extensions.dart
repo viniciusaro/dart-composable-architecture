@@ -1,7 +1,7 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
-import 'clients/shared_preferences_client.dart';
-import 'clients/models/models.coding.dart';
+import '../clients/shared_preferences_client.dart';
+import '../clients/models/models.coding.dart';
 
 part 'shared.extensions.coding.dart';
 

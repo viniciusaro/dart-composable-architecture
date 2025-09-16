@@ -1,17 +1,17 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:tca_flutter_example/app/shared.extensions.dart';
-import 'package:tca_flutter_example/app/testimonial_compose.dart';
-import 'package:tca_flutter_example/app/testimonials.dart';
+import 'package:tca_flutter_example/app/extensions/shared.extensions.dart';
+import 'package:tca_flutter_example/app/features/testimonial_compose.dart';
+import 'package:tca_flutter_example/app/features/testimonials.dart';
 
-import 'app.dart';
+import 'features/app.dart';
 import 'clients/auth_client.dart';
 import 'clients/auth_client.mock.dart';
 import 'clients/models/models.dart';
 import 'clients/models/models.fixtures.dart';
 import 'clients/shared_preferences_client.dart';
 import 'clients/shared_preferences_client.mock.dart';
-import 'home.dart';
+import 'features/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

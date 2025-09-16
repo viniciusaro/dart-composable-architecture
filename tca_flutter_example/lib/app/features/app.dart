@@ -1,8 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
-import 'clients/auth_client.dart';
-import 'clients/models/models.dart';
+import '../clients/auth_client.dart';
+import '../clients/models/models.dart';
 
 import 'files.dart';
 import 'home.dart';

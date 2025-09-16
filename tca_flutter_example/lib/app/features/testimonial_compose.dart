@@ -1,8 +1,8 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
 
-import 'clients/models/models.dart';
-import 'widgets/default_text_field.dart';
+import '../clients/models/models.dart';
+import '../widgets/default_text_field.dart';
 
 part 'testimonial_compose.g.dart';
 

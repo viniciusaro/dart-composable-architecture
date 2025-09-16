@@ -2,7 +2,7 @@ import 'package:composable_architecture_flutter/composable_architecture_flutter.
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app.dart';
+import 'features/app.dart';
 import 'clients/auth_client.dart';
 import 'clients/auth_client.live.dart';
 import 'clients/models/models.dart';
