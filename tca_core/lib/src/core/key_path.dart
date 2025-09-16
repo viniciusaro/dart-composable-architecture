@@ -100,8 +100,7 @@ final class WritableKeyPath<Root, Prop> implements KeyPath<Root, Prop> {
 /// and another KeyPath that allows read/write from B to C,
 /// this function creates a new KeyPath that is able
 /// to read/write from A to C.
-extension WritableKeyPathObject<Root, Prop extends Object>
-    on WritableKeyPath<Root, Prop> {
+extension WritableKeyPathObject<Root, Prop> on WritableKeyPath<Root, Prop> {
   WritableKeyPath<Root, Deeper> path<Deeper>(
     WritableKeyPath<Prop, Deeper> deeper,
   ) {

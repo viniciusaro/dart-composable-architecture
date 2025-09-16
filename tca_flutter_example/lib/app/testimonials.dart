@@ -9,6 +9,9 @@ import 'shared.extensions.dart';
 
 part 'testimonials.g.dart';
 
+typedef State = TestimonialsState;
+typedef Action = TestimonialsAction;
+
 @KeyPathable()
 final class TestimonialsState with _$TestimonialsState, Presentable {
   @override
@@ -33,27 +36,37 @@ sealed class TestimonialsAction<
   TestimonialComposition extends TestimonialComposeAction
 > {}
 
-final class TestimonialsFeature
-    extends Feature<TestimonialsState, TestimonialsAction> {
+final class TestimonialsFeature extends Feature<State, Action> {
   @override
-  Reducer<TestimonialsState, TestimonialsAction> build() {
-    return Reduce((state, action) {
-      switch (action) {
-        case TestimonialsActionOnWriteButtonTapped():
-          state.mutate(
-            (s) => s.copyWith(
-              destination: Presents(
-                TestimonialDestinationEnum.testimonialComposition(
-                  TestimonialComposeState(testimonial: draft()),
+  Reducer<State, Action> build() {
+    final compositionPath = TestimonialsStatePath
+        .destination //
+        .path(TestimonialDestinationPath.testimonialComposition);
+
+    return Reduce.combine([
+      IfLet(
+        state: compositionPath,
+        action: TestimonialsActionPath.testimonialComposition,
+        reducer: TestimonialComposeFeature(), //
+      ),
+      Reduce((state, action) {
+        switch (action) {
+          case TestimonialsActionOnWriteButtonTapped():
+            state.mutate(
+              (s) => s.copyWith(
+                destination: Presents(
+                  TestimonialDestinationEnum.testimonialComposition(
+                    TestimonialComposeState(testimonial: draft()),
+                  ),
                 ),
               ),
-            ),
-          );
-          return Effect.none();
-        case TestimonialsActionTestimonialComposition():
-          return Effect.none();
-      }
-    });
+            );
+            return Effect.none();
+          case TestimonialsActionTestimonialComposition():
+            return Effect.none();
+        }
+      }),
+    ]);
   }
 }
 
@@ -64,49 +77,34 @@ final class TestimonialsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final compositionDestinationPath = TestimonialsStatePath
-        .destination //
-        .path(TestimonialDestinationPath.testimonialComposition);
-
     return WithViewStore(
       store,
       body: (viewStore) {
-        return NavigationDestination(
-          viewStore.view(
-            state: compositionDestinationPath,
-            action: TestimonialsActionPath.testimonialComposition,
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Testimonials"),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  viewStore.send(TestimonialsActionEnum.onWriteButtonTapped());
+                },
+                icon: Icon(Icons.edit),
+              ),
+            ],
           ),
-          builder: (context, store) {
-            return TestimonialComposeWidget(store: store);
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text("Testimonials"),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    viewStore.send(
-                      TestimonialsActionEnum.onWriteButtonTapped(),
-                    );
-                  },
-                  icon: Icon(Icons.edit),
-                ),
-              ],
-            ),
-            body: ListView.builder(
-              itemCount: viewStore.state.testimonials.value.length,
-              itemBuilder: (context, index) {
-                final testimonial = viewStore.state.testimonials.value[index];
-                return ListTile(
-                  title: Text(
-                    testimonial.text.substring(
-                      0,
-                      min(20, testimonial.text.length - 1),
-                    ),
+          body: ListView.builder(
+            itemCount: viewStore.state.testimonials.value.length,
+            itemBuilder: (context, index) {
+              final testimonial = viewStore.state.testimonials.value[index];
+              return ListTile(
+                title: Text(
+                  testimonial.text.substring(
+                    0,
+                    min(20, testimonial.text.length - 1),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         );
       },

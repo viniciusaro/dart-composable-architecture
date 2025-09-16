@@ -1,13 +1,12 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:tca_flutter_example/app/home.dart';
-import 'package:tca_flutter_example/app/testimonials.dart';
 
 import 'app.dart';
 import 'clients/auth_client.dart';
 import 'clients/models/models.dart';
 import 'clients/models/models.fixtures.dart';
 import 'clients/shared_preferences_client.dart';
+import 'home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,12 +28,6 @@ void main() async {
           reducer: AppFeature(), //
         ),
       ),
-      // home: TestimonialsWidget(
-      //   store: Store(
-      //     initialState: TestimonialsState(),
-      //     reducer: TestimonialsFeature(),
-      //   ),
-      // ),
     ),
   );
 }

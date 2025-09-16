@@ -1,5 +1,5 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDestination;
 
 import 'files.dart';
 import 'testimonial_compose.dart';
@@ -9,7 +9,7 @@ import 'widgets/default_tab_bar_view.dart';
 part 'home.g.dart';
 
 @KeyPathable()
-final class HomeState with _$HomeState {
+final class HomeState with _$HomeState, Presentable {
   @override
   final FilesState files;
 
@@ -61,6 +61,15 @@ final class HomeWidget extends StatelessWidget {
     return WithViewStore(
       store,
       body: (viewStore) {
+        final compositionStatePath = HomeStatePath
+            .testimonials //
+            .path(TestimonialsStatePath.destination)
+            .path(TestimonialDestinationPath.testimonialComposition);
+
+        final compositionActionPath = HomeActionPath
+            .testimonials //
+            .path(TestimonialsActionPath.testimonialComposition);
+
         final filesStore = viewStore.view(
           state: HomeStatePath.files,
           action: HomeActionPath.files,
@@ -71,33 +80,42 @@ final class HomeWidget extends StatelessWidget {
           action: HomeActionPath.testimonials,
         );
 
-        return DefaultTabBarView(
-          selectedIndex: viewStore.state.selectedIndex,
-          children: [
-            FilesWidget(store: filesStore),
-            TestimonialsWidget(store: testimonialsStore),
-          ],
-          builder: (context, child) {
-            return Scaffold(
-              body: child,
-              bottomNavigationBar: const Material(
-                child: SafeArea(
-                  child: DefaultTabBar(
-                    tabs: [
-                      Tab(
-                        icon: Icon(Icons.home),
-                        text: "Arquivos", //
-                      ), //
-                      Tab(
-                        icon: Icon(Icons.menu_book_rounded),
-                        text: "Testimonials",
-                      ), //
-                    ],
+        return NavigationDestination(
+          viewStore.view(
+            state: compositionStatePath,
+            action: compositionActionPath, //
+          ),
+          builder: (context, store) {
+            return TestimonialComposeWidget(store: store);
+          },
+          child: DefaultTabBarView(
+            selectedIndex: viewStore.state.selectedIndex,
+            children: [
+              FilesWidget(store: filesStore!),
+              TestimonialsWidget(store: testimonialsStore!),
+            ],
+            builder: (context, child) {
+              return Scaffold(
+                body: child,
+                bottomNavigationBar: const Material(
+                  child: SafeArea(
+                    child: DefaultTabBar(
+                      tabs: [
+                        Tab(
+                          icon: Icon(Icons.home),
+                          text: "Arquivos", //
+                        ), //
+                        Tab(
+                          icon: Icon(Icons.menu_book_rounded),
+                          text: "Testimonials",
+                        ), //
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
