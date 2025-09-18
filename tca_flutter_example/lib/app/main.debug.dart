@@ -36,6 +36,22 @@ void main() async {
     ),
   );
 
+  final _ = SharedX.userPrefs(<Testimonial>[]).getProp(
+    (list) => list[0],
+    (list, e) => list.set(0, e), //
+  );
+
+  final _ = SharedX.userPrefs(testimonial0).getProp(
+    (t) => t.recipient,
+    (t, r) => t.copyWith(recipient: r), //
+  );
+
+  final _ = SharedX.userPrefs(<Testimonial>[]) //
+      .get(listPath(0)) //
+      .get(TestimonialPath.recipient);
+
+  final _ = SharedX.userPrefs(<Testimonial>[]).recipient;
+
   runApp(
     MaterialApp(
       home: AppWidget(
@@ -46,4 +62,20 @@ void main() async {
       ),
     ),
   );
+}
+
+extension SettableList<T> on List<T> {
+  List<T> set(int index, T value) {
+    this[index] = value;
+    return this;
+  }
+}
+
+extension on Shared<List<Testimonial>> {
+  Shared<Member> get recipient {
+    return getProp(
+      (list) => list[0].recipient,
+      (list, r) => list.set(0, list[0].copyWith(recipient: r)),
+    );
+  }
 }

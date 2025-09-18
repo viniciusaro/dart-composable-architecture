@@ -47,6 +47,13 @@ final class Shared<T> {
         ));
   }
 
+  Shared<Prop> getProp<Prop>(Prop Function(T) get, T Function(T, Prop) set) {
+    return Shared(_ManualSource(
+        getter: () => get(value),
+        setter: (newValue) => _source.set(set(value, newValue)) //
+        ));
+  }
+
   @override
   int get hashCode => runtimeType.hashCode ^ value.hashCode ^ 31;
 
