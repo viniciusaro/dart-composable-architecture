@@ -16,6 +16,7 @@ class CaseKeyPathGenerator extends GeneratorForAnnotation<CaseKeyPathable> {
     code += await buildDeclarationsForClass(clazz);
     code += await buildTypesForClass(clazz);
     code += await buildKeyPathsForClass(clazz);
+    code += await buildSharedListenersForClass(clazz);
     return code;
   }
 
@@ -164,6 +165,39 @@ extension ${clazz.name}Path on ${clazz.name} {
     code += "\n}\n\n";
     return code;
   }
+}
+
+FutureOr<String> buildSharedListenersForClass(ClassElement clazz) {
+  final sharedActionTypes = clazz.typeParameters
+      .where((type) => extendsOf(type).startsWith("SharedAction"));
+
+  if (sharedActionTypes.isEmpty) {
+    return "";
+  }
+
+  String code = """
+extension ${clazz.name}SharedListeners on ${clazz.name} {
+""";
+
+  for (final type in sharedActionTypes) {
+    final genericTypeName = extendsOf(type);
+    final sharedTypeName = genericTypeName.replaceAll("SharedAction", "");
+    final sharedCode =
+        """Effect<${clazz.name}${type.name}> Function(Shared$sharedTypeName) get ${type.name.lowerCaseFirst()} {
+          return (shared) => Effect.stream(
+            () => shared
+              .listen()
+              .map(SharedAction.new)
+              .map(${clazz.name}${type.name}.new),
+          );
+        }
+        """;
+    print("code: $sharedCode");
+    code += sharedCode;
+  }
+
+  code += "}";
+  return code;
 }
 
 extension on String {

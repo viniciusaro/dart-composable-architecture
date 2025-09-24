@@ -8,6 +8,7 @@ bool get isExpectedStateClosure => Zone.current[#expectedStateClosure] == true;
 
 mixin SharedSource<T> {
   T get();
+  Stream<T> listen();
   void set(T newValue);
 }
 
@@ -15,12 +16,21 @@ final class SharedZoneValues {
   bool didRunSharedSet = false;
 }
 
+final class SharedAction<T> {
+  final T value;
+  SharedAction(this.value);
+}
+
 final class Shared<T> {
   final SharedSource<T> _source;
 
   Shared(
     SharedSource<T> source,
-  ) : _source = isExpectedStateClosure ? ConstSource<T>(source.get()) : source;
+  ) : _source = isExpectedStateClosure ? ConstSource<T>(source.get()) : source {
+    _source.listen().listen((value) {
+      //
+    });
+  }
 
   factory Shared.constant(T initialValue) {
     return Shared(ConstSource(initialValue));
@@ -34,6 +44,10 @@ final class Shared<T> {
     return _source.get();
   }
 
+  Stream<T> listen() {
+    return _source.listen();
+  }
+
   Shared<T> set(T Function(T) update) {
     Zone.current[#sharedZoneValues]?.didRunSharedSet = true;
     _source.set(update(_source.get()));
@@ -42,16 +56,18 @@ final class Shared<T> {
 
   Shared<Prop> get<Prop>(WritableKeyPath<T, Prop> path) {
     return Shared(_ManualSource(
-        getter: () => path.get(value),
-        setter: (newValue) => _source.set(path.set(value, newValue)) //
-        ));
+      getter: () => path.get(value),
+      setter: (newValue) => _source.set(path.set(value, newValue)), //
+      listener: () => _source.listen().map((v) => path.get(v)),
+    ));
   }
 
   Shared<Prop> getProp<Prop>(Prop Function(T) get, T Function(T, Prop) set) {
     return Shared(_ManualSource(
-        getter: () => get(value),
-        setter: (newValue) => _source.set(set(value, newValue)) //
-        ));
+      getter: () => get(value),
+      setter: (newValue) => _source.set(set(value, newValue)),
+      listener: () => _source.listen().map((v) => get(v)),
+    ));
   }
 
   @override
@@ -91,6 +107,11 @@ final class InMemorySource<T> with SharedSource<T> {
   void set(T newValue) {
     _inMemoryStorage[T.toString()] = newValue;
   }
+
+  @override
+  Stream<T> listen() {
+    return Stream.value(get());
+  }
 }
 
 var _constOverrides = <String, dynamic>{};
@@ -113,19 +134,29 @@ final class ConstSource<T> with SharedSource<T> {
   static void _overrideValue<T>(T value) {
     _constOverrides[T.toString()] = value;
   }
+
+  @override
+  Stream<T> listen() {
+    return Stream.value(get());
+  }
 }
 
 final class _ManualSource<T> with SharedSource<T> {
   final T Function() getter;
   final void Function(T) setter;
+  final Stream<T> Function() listener;
 
-  _ManualSource({required this.getter, required this.setter});
+  _ManualSource(
+      {required this.getter, required this.setter, required this.listener});
 
   @override
   T get() => getter();
 
   @override
   void set(T newValue) => setter(newValue);
+
+  @override
+  Stream<T> listen() => listener();
 }
 
 B Function(B) overrideSharedValue<A, B>(A value, B Function(B) update) {

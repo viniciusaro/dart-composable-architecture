@@ -4,11 +4,32 @@ import 'package:tca_flutter_example/app/extensions/shared.extensions.dart';
 
 part 'members.g.dart';
 
+typedef State = MembersState;
+typedef Action = MembersAction;
+
 @KeyPathable()
 final class MembersState with _$MembersState {
   @override
-  final members = SharedX.userPrefs(<List<Member>>[]);
+  final members = SharedX.userPrefs(<Member>[]);
 }
 
 @CaseKeyPathable()
-sealed class MembersAction {}
+sealed class MembersAction<
+  OnStart,
+  MemberListUpdate extends SharedAction<List<Member>> //
+> {}
+
+final class MembersFeature extends Feature<State, Action> {
+  @override
+  Reducer<State, Action> build() {
+    return Reduce((state, action) {
+      switch (action) {
+        case MembersActionOnStart():
+          return action.memberListUpdate(state.value.members);
+        case MembersActionMemberListUpdate():
+          state.value.members.set((_) => action.memberListUpdate.value);
+          return Effect.none();
+      }
+    });
+  }
+}

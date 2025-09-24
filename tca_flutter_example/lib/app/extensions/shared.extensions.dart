@@ -9,6 +9,10 @@ extension SharedX<T> on Shared<T> {
   static Shared<T> userPrefs<T>(T initialValue) {
     return Shared(UserPreferences(initialValue));
   }
+
+  static Shared<T> firebase<T>(T initialValue) {
+    return Shared(Firebase(initialValue));
+  }
 }
 
 final class UserPreferences<T> with SharedSource<T> {
@@ -25,5 +29,31 @@ final class UserPreferences<T> with SharedSource<T> {
   @override
   void set(T newValue) {
     userPreferencesClient.set(T.toString(), newValue, _getEncoder<T>());
+  }
+
+  @override
+  Stream<T> listen() {
+    throw UnimplementedError();
+  }
+}
+
+final class Firebase<T> with SharedSource<T> {
+  final T initialValue;
+
+  Firebase(this.initialValue);
+
+  @override
+  T get() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void set(T newValue) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<T> listen() {
+    throw UnimplementedError();
   }
 }
