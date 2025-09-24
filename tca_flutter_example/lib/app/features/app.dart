@@ -12,6 +12,9 @@ import 'testimonials.dart';
 
 part 'app.g.dart';
 
+typedef State = AppState;
+typedef Action = AppAction;
+
 @KeyPathable()
 final class AppState with _$AppState, Presentable {
   @override
@@ -42,9 +45,9 @@ sealed class AppAction<
   Login extends LoginAction
 > {}
 
-final class AppFeature extends Feature<AppState, AppAction> {
+final class AppFeature extends Feature<State, Action> {
   @override
-  Reducer<AppState, AppAction> build() {
+  Reducer<State, Action> build() {
     return Reduce.combine([
       IfLet(
         state: AppStatePath.destination.path(AppDestinationPath.home),
@@ -100,7 +103,7 @@ final class AppFeature extends Feature<AppState, AppAction> {
 }
 
 final class AppWidget extends StatelessWidget {
-  final Store<AppState, AppAction> store;
+  final Store<State, Action> store;
 
   const AppWidget({super.key, required this.store});
 

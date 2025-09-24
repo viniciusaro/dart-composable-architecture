@@ -6,6 +6,9 @@ import '../clients/models/models.dart';
 
 part 'login.g.dart';
 
+typedef State = LoginState;
+typedef Action = LoginAction;
+
 @KeyPathable()
 final class LoginState with _$LoginState {}
 
@@ -21,9 +24,9 @@ class LoginInfo {
   LoginInfo({required this.username, required this.password});
 }
 
-final class LoginFeature extends Feature<LoginState, LoginAction> {
+final class LoginFeature extends Feature<State, Action> {
   @override
-  Reducer<LoginState, LoginAction> build() {
+  Reducer<State, Action> build() {
     return Reduce((state, action) {
       switch (action) {
         case LoginActionOnLoginButtonTapped():
@@ -42,7 +45,7 @@ final class LoginFeature extends Feature<LoginState, LoginAction> {
 }
 
 final class LoginWidget extends StatelessWidget {
-  final Store<LoginState, LoginAction> store;
+  final Store<State, Action> store;
 
   const LoginWidget({super.key, required this.store});
 

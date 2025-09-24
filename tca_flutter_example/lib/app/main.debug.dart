@@ -9,14 +9,14 @@ import 'clients/auth_client.dart';
 import 'clients/auth_client.mock.dart';
 import 'clients/models/models.dart';
 import 'clients/models/models.fixtures.dart';
-import 'clients/shared_preferences_client.dart';
-import 'clients/shared_preferences_client.mock.dart';
+import 'clients/user_preferences_client.dart';
+import 'clients/user_preferences_client.mock.dart';
 import 'features/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  sharedPreferencesClient = InMemoryPreferencesClient.items([
+  userPreferencesClient = InMemoryPreferencesClient.items([
     [sharedFile0, sharedFile1],
     [testimonial0, testimonial1],
   ]);

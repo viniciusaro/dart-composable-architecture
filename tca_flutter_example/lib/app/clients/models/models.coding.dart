@@ -1,4 +1,4 @@
-import '../shared_preferences_client.dart';
+import '../user_preferences_client.dart';
 import 'models.dart';
 
 final class FileDecoder with Decoder<File> {

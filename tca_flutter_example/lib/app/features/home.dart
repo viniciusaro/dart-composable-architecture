@@ -9,6 +9,9 @@ import 'testimonials.dart';
 
 part 'home.g.dart';
 
+typedef State = HomeState;
+typedef Action = HomeAction;
+
 @KeyPathable()
 final class HomeState with _$HomeState, Presentable {
   @override
@@ -34,9 +37,9 @@ sealed class HomeAction<
   Testimonials extends TestimonialsAction
 > {}
 
-final class HomeFeature extends Feature<HomeState, HomeAction> {
+final class HomeFeature extends Feature<State, Action> {
   @override
-  Reducer<HomeState, HomeAction> build() {
+  Reducer<State, Action> build() {
     return Reduce.combine([
       Scope(
         state: HomeStatePath.files,
@@ -53,7 +56,7 @@ final class HomeFeature extends Feature<HomeState, HomeAction> {
 }
 
 final class HomeWidget extends StatelessWidget {
-  final Store<HomeState, HomeAction> store;
+  final Store<State, Action> store;
 
   const HomeWidget({super.key, required this.store});
 

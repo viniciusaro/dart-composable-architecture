@@ -6,13 +6,13 @@ import 'features/app.dart';
 import 'clients/auth_client.dart';
 import 'clients/auth_client.live.dart';
 import 'clients/models/models.dart';
-import 'clients/shared_preferences_client.dart';
-import 'clients/shared_preferences_client.live.dart';
+import 'clients/user_preferences_client.dart';
+import 'clients/user_preferences_client.live.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-  sharedPreferencesClient = LiveSharedPreferencesClient(prefs);
+  userPreferencesClient = LiveUserPreferencesClient(prefs);
   authClient = liveAuthClient(User(name: "Vini"));
 
   runApp(

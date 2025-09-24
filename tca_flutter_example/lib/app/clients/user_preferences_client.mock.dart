@@ -1,6 +1,6 @@
-import 'shared_preferences_client.dart';
+import 'user_preferences_client.dart';
 
-final class UnimplementedSharedPreferencesClient with SharedPreferencesClient {
+final class UnimplementedUserPreferencesClient with UserPreferencesClient {
   @override
   T? get<T>(String key, Decoder<T> decoder) {
     throw UnimplementedError();
@@ -12,7 +12,7 @@ final class UnimplementedSharedPreferencesClient with SharedPreferencesClient {
   }
 }
 
-final class FixedPreferencesClient<A> with SharedPreferencesClient {
+final class FixedPreferencesClient<A> with UserPreferencesClient {
   final List<A> items;
 
   FixedPreferencesClient({required this.items});
@@ -35,7 +35,7 @@ final class FixedPreferencesClient<A> with SharedPreferencesClient {
   }
 }
 
-final class InMemoryPreferencesClient with SharedPreferencesClient {
+final class InMemoryPreferencesClient with UserPreferencesClient {
   final Map<String, dynamic> _storage;
 
   InMemoryPreferencesClient({Map<String, dynamic>? storage})

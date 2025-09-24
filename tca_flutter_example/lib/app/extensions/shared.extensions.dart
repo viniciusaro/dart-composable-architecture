@@ -1,6 +1,6 @@
 import 'package:composable_architecture/composable_architecture.dart';
 
-import '../clients/shared_preferences_client.dart';
+import '../clients/user_preferences_client.dart';
 import '../clients/models/models.coding.dart';
 
 part 'shared.extensions.coding.dart';
@@ -18,12 +18,12 @@ final class UserPreferences<T> with SharedSource<T> {
 
   @override
   T get() {
-    final value = sharedPreferencesClient.get(T.toString(), _getDecoder<T>());
+    final value = userPreferencesClient.get(T.toString(), _getDecoder<T>());
     return value ?? initialValue;
   }
 
   @override
   void set(T newValue) {
-    sharedPreferencesClient.set(T.toString(), newValue, _getEncoder<T>());
+    userPreferencesClient.set(T.toString(), newValue, _getEncoder<T>());
   }
 }

@@ -6,6 +6,9 @@ import '../extensions/shared.extensions.dart';
 
 part 'files.g.dart';
 
+typedef State = FilesState;
+typedef Action = FilesAction;
+
 @KeyPathable()
 final class FilesState with _$FilesState {
   @override
@@ -17,9 +20,9 @@ sealed class FilesAction<
   OnAddFileButtonTapped //
 > {}
 
-final class FilesFeature extends Feature<FilesState, FilesAction> {
+final class FilesFeature extends Feature<State, Action> {
   @override
-  Reducer<FilesState, FilesAction> build() {
+  Reducer<State, Action> build() {
     return Reduce((state, action) {
       switch (action) {
         case FilesActionOnAddFileButtonTapped():
@@ -44,7 +47,7 @@ final class FilesFeature extends Feature<FilesState, FilesAction> {
 }
 
 final class FilesWidget extends StatelessWidget {
-  final Store<FilesState, FilesAction> store;
+  final Store<State, Action> store;
 
   const FilesWidget({super.key, required this.store});
 

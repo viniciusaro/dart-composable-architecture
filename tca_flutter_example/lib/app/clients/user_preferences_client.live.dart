@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'shared_preferences_client.dart';
+import 'user_preferences_client.dart';
 
-final class LiveSharedPreferencesClient with SharedPreferencesClient {
+final class LiveUserPreferencesClient with UserPreferencesClient {
   final SharedPreferences _prefs;
 
-  LiveSharedPreferencesClient(this._prefs);
+  LiveUserPreferencesClient(this._prefs);
 
   @override
   T? get<T>(String key, Decoder<T> decoder) {
