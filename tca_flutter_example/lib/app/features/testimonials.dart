@@ -18,7 +18,7 @@ final class TestimonialsState with _$TestimonialsState, Presentable {
   final Presents<TestimonialDestination?> destination;
 
   @override
-  final testimonials = SharedX.userPrefs(<Testimonial>[]);
+  final testimonials = Shared.x.userPrefs(<Testimonial>[]);
 
   TestimonialsState({
     Presents<TestimonialDestination?>? destination, //

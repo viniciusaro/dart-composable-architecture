@@ -10,7 +10,7 @@ typedef Action = MembersAction;
 @KeyPathable()
 final class MembersState with _$MembersState {
   @override
-  final members = SharedX.userPrefs(<Member>[]);
+  final members = Shared.x.userPrefs(<Member>[]);
 }
 
 @CaseKeyPathable()

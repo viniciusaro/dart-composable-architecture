@@ -24,13 +24,11 @@ final class SharedAction<T> {
 final class Shared<T> {
   final SharedSource<T> _source;
 
+  static SharedExtensions get x => SharedExtensions();
+
   Shared(
     SharedSource<T> source,
-  ) : _source = isExpectedStateClosure ? ConstSource<T>(source.get()) : source {
-    _source.listen().listen((value) {
-      //
-    });
-  }
+  ) : _source = isExpectedStateClosure ? ConstSource<T>(source.get()) : source;
 
   factory Shared.constant(T initialValue) {
     return Shared(ConstSource(initialValue));
@@ -84,6 +82,8 @@ final class Shared<T> {
     return "Shared<$T>($value)";
   }
 }
+
+final class SharedExtensions<T> {}
 
 var _inMemoryStorage = <String, dynamic>{};
 

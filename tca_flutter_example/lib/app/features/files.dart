@@ -12,7 +12,7 @@ typedef Action = FilesAction;
 @KeyPathable()
 final class FilesState with _$FilesState {
   @override
-  final files = SharedX.userPrefs(<SharedFile>[]);
+  final files = Shared.x.userPrefs(<SharedFile>[]);
 }
 
 @CaseKeyPathable()

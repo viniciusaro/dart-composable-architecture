@@ -5,12 +5,12 @@ import '../clients/models/models.coding.dart';
 
 part 'shared.extensions.coding.dart';
 
-extension SharedX<T> on Shared<T> {
-  static Shared<T> userPrefs<T>(T initialValue) {
+extension SharedX on SharedExtensions {
+  Shared<T> userPrefs<T>(T initialValue) {
     return Shared(UserPreferences(initialValue));
   }
 
-  static Shared<T> firebase<T>(T initialValue) {
+  Shared<T> firebase<T>(T initialValue) {
     return Shared(Firebase(initialValue));
   }
 }

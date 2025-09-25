@@ -29,28 +29,33 @@ void main() async {
       destination: Presents(
         TestimonialDestinationEnum.testimonialCompose(
           TestimonialComposeState(
-            testimonial: SharedX.userPrefs(<Testimonial>[]).get(listPath(0)),
+            testimonial: Shared.x.userPrefs(<Testimonial>[]).get(listPath(0)),
           ),
         ),
       ),
     ),
   );
 
-  final _ = SharedX.userPrefs(<Testimonial>[]).getProp(
-    (list) => list[0],
-    (list, e) => list.set(0, e), //
-  );
+  final _ = Shared.x
+      .userPrefs(<Testimonial>[])
+      .getProp(
+        (list) => list[0],
+        (list, e) => list.set(0, e), //
+      );
 
-  final _ = SharedX.userPrefs(testimonial0).getProp(
-    (t) => t.recipient,
-    (t, r) => t.copyWith(recipient: r), //
-  );
+  final _ = Shared.x
+      .userPrefs(testimonial0)
+      .getProp(
+        (t) => t.recipient,
+        (t, r) => t.copyWith(recipient: r), //
+      );
 
-  final _ = SharedX.userPrefs(<Testimonial>[]) //
+  final _ = Shared.x
+      .userPrefs(<Testimonial>[]) //
       .get(listPath(0)) //
       .get(TestimonialPath.recipient);
 
-  final _ = SharedX.userPrefs(<Testimonial>[]).recipient;
+  final _ = Shared.x.userPrefs(<Testimonial>[]).recipient;
 
   runApp(
     MaterialApp(
