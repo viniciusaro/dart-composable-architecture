@@ -1,5 +1,6 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tca_flutter_example/app/features/testimonials.dart';
 
 import '../clients/models/models.dart';
 import '../widgets/default_text_field.dart';
@@ -46,6 +47,7 @@ final class TestimonialComposeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return WithViewStore(
       store,
+      prop: KeyPath.identity<State>(),
       body: (viewStore) {
         return Scaffold(
           appBar: AppBar(

@@ -27,7 +27,7 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Home")),
-      body: WithViewStore(
+      body: WithViewStore.identity(
         store,
         body: (viewStore) {
           return Center(

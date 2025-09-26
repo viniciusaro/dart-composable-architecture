@@ -43,7 +43,7 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore(
+    return WithViewStore.identity(
       store,
       onInitState: (store) {
         return store.send(AppActionEnum.onInitState());

@@ -1,5 +1,6 @@
 import 'package:composable_architecture_flutter/composable_architecture_flutter.dart';
 import 'package:flutter/material.dart' hide NavigationDestination;
+import 'package:tca_flutter_example/app/features/profile.dart';
 
 import '../widgets/default_tab_bar_view.dart';
 
@@ -21,20 +22,26 @@ final class HomeState with _$HomeState, Presentable {
   final TestimonialsState testimonials;
 
   @override
+  final ProfileState profile;
+
+  @override
   final int selectedIndex;
 
   HomeState({
     FilesState? files,
     TestimonialsState? testimonials, //
+    ProfileState? profile,
     this.selectedIndex = 1,
   }) : files = files ?? FilesState(),
-       testimonials = testimonials ?? TestimonialsState();
+       testimonials = testimonials ?? TestimonialsState(),
+       profile = profile ?? ProfileState();
 }
 
 @CaseKeyPathable()
 sealed class HomeAction<
   Files extends FilesAction,
-  Testimonials extends TestimonialsAction
+  Testimonials extends TestimonialsAction,
+  Profile extends ProfileAction
 > {}
 
 final class HomeFeature extends Feature<State, Action> {
@@ -51,6 +58,11 @@ final class HomeFeature extends Feature<State, Action> {
         action: HomeActionPath.testimonials,
         reducer: TestimonialsFeature(),
       ),
+      Scope(
+        state: HomeStatePath.profile,
+        action: HomeActionPath.profile,
+        reducer: EmptyReducer(),
+      ),
     ]);
   }
 }
@@ -62,7 +74,7 @@ final class HomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore(
+    return WithViewStore.identity(
       store,
       body: (viewStore) {
         final compositionStatePath = HomeStatePath
@@ -84,6 +96,11 @@ final class HomeWidget extends StatelessWidget {
           action: HomeActionPath.testimonials,
         );
 
+        final profileStore = viewStore.view(
+          state: HomeStatePath.profile,
+          action: HomeActionPath.profile,
+        );
+
         return NavigationDestination(
           viewStore.view(
             state: compositionStatePath,
@@ -92,33 +109,14 @@ final class HomeWidget extends StatelessWidget {
           builder: (context, store) {
             return TestimonialComposeWidget(store: store);
           },
-          child: DefaultTabBarView(
-            selectedIndex: viewStore.state.selectedIndex,
-            children: [
-              FilesWidget(store: filesStore!),
-              TestimonialsWidget(store: testimonialsStore!),
-            ],
-            builder: (context, child) {
-              return Scaffold(
-                body: child,
-                bottomNavigationBar: const Material(
-                  child: SafeArea(
-                    child: DefaultTabBar(
-                      tabs: [
-                        Tab(
-                          icon: Icon(Icons.home),
-                          text: "Arquivos", //
-                        ), //
-                        Tab(
-                          icon: Icon(Icons.menu_book_rounded),
-                          text: "Testimonials",
-                        ), //
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
+          child: Scaffold(
+            body: Row(
+              children: [
+                Flexible(child: FilesWidget(store: filesStore!)),
+                Flexible(child: TestimonialsWidget(store: testimonialsStore!)),
+                Flexible(child: ProfileWidget(store: profileStore!)),
+              ],
+            ),
           ),
         );
       },

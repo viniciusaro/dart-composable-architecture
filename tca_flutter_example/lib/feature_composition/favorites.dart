@@ -45,7 +45,7 @@ class FavoritesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Favorites")),
-      body: WithViewStore(
+      body: WithViewStore.identity(
         store,
         body: (viewStore) {
           final items = viewStore.state.favorites;

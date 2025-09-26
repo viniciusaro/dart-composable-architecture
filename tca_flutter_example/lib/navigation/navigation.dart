@@ -73,7 +73,7 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore(
+    return WithViewStore.identity(
       store,
       body: (store) {
         final tiles = store.state.items.map(

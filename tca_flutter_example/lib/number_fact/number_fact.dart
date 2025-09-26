@@ -77,7 +77,7 @@ class NumberFactWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithViewStore(
+    return WithViewStore.identity(
       store,
       body: (viewStore) {
         return Center(

@@ -52,7 +52,7 @@ final class LoginWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WithViewStore(
+      body: WithViewStore.identity(
         store,
         body: (viewStore) {
           return Center(

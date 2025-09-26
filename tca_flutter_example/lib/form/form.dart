@@ -125,7 +125,7 @@ final class FormWidget extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Form example')),
-      body: WithViewStore(
+      body: WithViewStore.identity(
         store,
         body: (viewStore) {
           switch (viewStore.state.step.value) {

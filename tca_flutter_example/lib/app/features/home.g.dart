@@ -15,6 +15,10 @@ extension HomeStatePath on HomeState {
     get: (obj) => obj.testimonials,
     set: (obj, testimonials) => obj!.copyWith(testimonials: testimonials),
   );
+  static final profile = WritableKeyPath<HomeState, ProfileState>(
+    get: (obj) => obj.profile,
+    set: (obj, profile) => obj!.copyWith(profile: profile),
+  );
   static final selectedIndex = WritableKeyPath<HomeState, int>(
     get: (obj) => obj.selectedIndex,
     set: (obj, selectedIndex) => obj!.copyWith(selectedIndex: selectedIndex),
@@ -24,15 +28,18 @@ extension HomeStatePath on HomeState {
 mixin _$HomeState {
   FilesState get files;
   TestimonialsState get testimonials;
+  ProfileState get profile;
   int get selectedIndex;
   HomeState copyWith({
     FilesState? files,
     TestimonialsState? testimonials,
+    ProfileState? profile,
     int? selectedIndex,
   }) {
     return HomeState(
       files: files ?? this.files,
       testimonials: testimonials ?? this.testimonials,
+      profile: profile ?? this.profile,
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
@@ -47,16 +54,17 @@ mixin _$HomeState {
             testimonials,
             other.testimonials,
           ) &&
+          const DeepCollectionEquality().equals(profile, other.profile) &&
           const DeepCollectionEquality().equals(
             selectedIndex,
             other.selectedIndex,
           );
   @override
   int get hashCode =>
-      Object.hash(runtimeType, files, testimonials, selectedIndex);
+      Object.hash(runtimeType, files, testimonials, profile, selectedIndex);
   @override
   String toString() {
-    return "HomeState(files: $files, testimonials: $testimonials, selectedIndex: $selectedIndex)";
+    return "HomeState(files: $files, testimonials: $testimonials, profile: $profile, selectedIndex: $selectedIndex)";
   }
 }
 
@@ -69,13 +77,15 @@ extension HomeActionEnum on HomeAction {
   static HomeAction testimonials(
     TestimonialsAction<dynamic, int, TestimonialComposeAction<String>> p,
   ) => HomeActionTestimonials(p);
+  static HomeAction profile(ProfileAction p) => HomeActionProfile(p);
 }
 
 final class HomeActionFiles<
   A extends FilesAction<dynamic>,
-  B extends TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+  B extends TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+  C extends ProfileAction
 >
-    extends HomeAction<A, B> {
+    extends HomeAction<A, B, C> {
   final A files;
   HomeActionFiles(this.files) : super();
 
@@ -94,9 +104,10 @@ final class HomeActionFiles<
 
 final class HomeActionTestimonials<
   A extends FilesAction<dynamic>,
-  B extends TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+  B extends TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+  C extends ProfileAction
 >
-    extends HomeAction<A, B> {
+    extends HomeAction<A, B, C> {
   final B testimonials;
   HomeActionTestimonials(this.testimonials) : super();
 
@@ -110,6 +121,28 @@ final class HomeActionTestimonials<
   @override
   String toString() {
     return "HomeActionTestimonials.$testimonials";
+  }
+}
+
+final class HomeActionProfile<
+  A extends FilesAction<dynamic>,
+  B extends TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+  C extends ProfileAction
+>
+    extends HomeAction<A, B, C> {
+  final C profile;
+  HomeActionProfile(this.profile) : super();
+
+  @override
+  int get hashCode => profile.hashCode ^ 31;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HomeActionProfile && other.profile == profile;
+
+  @override
+  String toString() {
+    return "HomeActionProfile.$profile";
   }
 }
 
@@ -141,6 +174,20 @@ extension HomeActionPath on HomeAction {
     set: (rootAction, propAction) {
       if (propAction != null) {
         rootAction = HomeActionEnum.testimonials(propAction);
+      }
+      return rootAction!;
+    },
+  );
+  static final profile = WritableKeyPath<HomeAction, ProfileAction?>(
+    get: (action) {
+      if (action is HomeActionProfile) {
+        return action.profile;
+      }
+      return null;
+    },
+    set: (rootAction, propAction) {
+      if (propAction != null) {
+        rootAction = HomeActionEnum.profile(propAction);
       }
       return rootAction!;
     },

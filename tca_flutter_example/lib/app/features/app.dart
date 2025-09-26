@@ -7,6 +7,7 @@ import '../clients/models/models.dart';
 import 'files.dart';
 import 'home.dart';
 import 'login.dart';
+import 'profile.dart';
 import 'testimonial_compose.dart';
 import 'testimonials.dart';
 
@@ -109,7 +110,7 @@ final class AppWidget extends StatelessWidget {
 
   @override
   Widget build(Object context) {
-    return WithViewStore(
+    return WithViewStore.identity(
       store,
       onInitState: (viewStore) {
         viewStore.send(AppActionEnum.onAppStart());

@@ -44,7 +44,7 @@ class LoginWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
-      body: WithViewStore(
+      body: WithViewStore.identity(
         store,
         body: (viewStore) {
           return Center(

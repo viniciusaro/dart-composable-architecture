@@ -131,7 +131,8 @@ extension AppActionEnum on AppAction {
   static AppAction home(
     HomeAction<
       FilesAction<dynamic>,
-      TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+      TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+      ProfileAction
     >
     p,
   ) => AppActionHome(p);
@@ -143,7 +144,8 @@ final class AppActionOnAppStart<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+    ProfileAction
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -167,7 +169,8 @@ final class AppActionOnAuthResult<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+    ProfileAction
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -193,7 +196,8 @@ final class AppActionHome<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+    ProfileAction
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -219,7 +223,8 @@ final class AppActionLogin<
   B extends AppDestination<HomeState, LoginState>,
   C extends HomeAction<
     FilesAction<dynamic>,
-    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+    TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+    ProfileAction
   >,
   D extends LoginAction<LoginInfo, User>
 >
@@ -274,7 +279,8 @@ extension AppActionPath on AppAction {
     AppAction,
     HomeAction<
       FilesAction<dynamic>,
-      TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>
+      TestimonialsAction<dynamic, int, TestimonialComposeAction<String>>,
+      ProfileAction
     >?
   >(
     get: (action) {

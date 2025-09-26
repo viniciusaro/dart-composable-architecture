@@ -41,7 +41,7 @@ class CounterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Realtime Counter Sync")),
-      body: WithViewStore(
+      body: WithViewStore.identity(
         store,
         body: (viewStore) {
           return Center(
